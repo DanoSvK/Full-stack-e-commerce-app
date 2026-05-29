@@ -10,13 +10,20 @@ import {
   deleteProduct,
 } from "../controllers/productController.js";
 import { protect } from "../controllers/authController.js";
+import reviewRouter from "./reviewRoutes.js";
+import { restrictTo } from "../controllers/authController.js";
 
-router.get("/", protect, getAllProducts);
+router
+  .route("/")
+  .get(protect, getAllProducts)
+  .post(protect, restrictTo("admin"), createProduct);
 
-router.get("/:prodId", getProduct);
+router
+  .route("/:prodId")
+  .get(getProduct)
+  .patch(protect, restrictTo("admin"), updateProduct);
 
-router.post("/", createProduct);
-
-router.patch("/:prodId", updateProduct);
+// /api/v1/products/:prodId/reviews
+router.use("/:prodId/reviews", reviewRouter);
 
 export default router;

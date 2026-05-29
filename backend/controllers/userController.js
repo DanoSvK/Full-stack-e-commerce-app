@@ -12,7 +12,7 @@ const filterObj = (obj, ...allowedFields) => {
 
 export const deleteUser = catchAsync(async (req, res) => {
   const { userId } = req.params;
-  const user = await prisma.user.delete({
+  const user = await prisma.users.delete({
     where: { id: parseInt(userId) },
   });
   if (!user) {
@@ -40,7 +40,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, "name", "email");
 
   // 3) Update user record
-  const updatedUser = await prisma.user.update({
+  const updatedUser = await prisma.users.update({
     where: { id: req.user.id },
     data: filteredBody,
   });
@@ -54,7 +54,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
 });
 
 export const deleteMe = catchAsync(async (req, res, next) => {
-  await prisma.user.update({
+  await prisma.users.update({
     where: {
       id: req.user.id,
     },
@@ -76,7 +76,7 @@ export const createUser = catchAsync(async (req, res, next) => {});
 export const updateUser = catchAsync(async (req, res, next) => {});
 
 export const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await prisma.user.findMany({
+  const users = await prisma.users.findMany({
     where: {
       active: {
         not: false,
@@ -87,7 +87,6 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
       username: true,
       email: true,
       role: true,
-      passwordChangedAt: true,
     },
   });
 

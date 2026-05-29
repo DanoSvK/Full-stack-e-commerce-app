@@ -8,6 +8,7 @@ import AppError from "./utils/appError.js";
 import globalErrorHandler from "./controllers/errorController.js";
 import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
+import reviewRouter from "./routes/reviewRoutes.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -55,7 +56,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
-
+app.use("/api/v1/reviews", reviewRouter);
 // Catches everything else that doesn't match any route
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

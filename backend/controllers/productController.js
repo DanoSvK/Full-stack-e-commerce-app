@@ -2,7 +2,9 @@ import { prisma } from "../lib/prisma.js";
 import catchAsync from "../utils/catchAsync.js";
 
 export const getAllProducts = catchAsync(async (req, res) => {
-  const products = await prisma.product.findMany();
+  const products = await prisma.products.findMany({
+    include: { product_categories: true },
+  });
 
   res.status(200).json({
     status: "success",
@@ -16,10 +18,10 @@ export const getAllProducts = catchAsync(async (req, res) => {
 export const getProduct = catchAsync(async (req, res) => {
   const { prodId } = req.params;
 
-  const product = await prisma.product.findUnique({
+  const product = await prisma.products.findUnique({
     where: { id: parseInt(prodId) },
     include: {
-      categories: true,
+      product_categories: true,
     },
   });
 
@@ -32,15 +34,15 @@ export const getProduct = catchAsync(async (req, res) => {
 });
 
 export const createProduct = catchAsync(async (req, res) => {
-  const { title, description, price, quantity, imageUrl } = req.body;
+  const { title, description, price, quantity, image_url } = req.body;
 
-  const product = await prisma.product.create({
+  const product = await prisma.products.create({
     data: {
       title,
       description,
       price,
       quantity,
-      imageUrl,
+      image_url,
     },
   });
 
@@ -54,15 +56,15 @@ export const createProduct = catchAsync(async (req, res) => {
 
 export const updateProduct = catchAsync(async (req, res) => {
   const { prodId } = req.params;
-  const { title, description, price, quantity, imageUrl } = req.body;
-  const product = await prisma.product.update({
+  const { title, description, price, quantity, image_url } = req.body;
+  const product = await prisma.products.update({
     where: { id: parseInt(prodId) },
     data: {
       title,
       description,
       price,
       quantity,
-      imageUrl,
+      image_url,
     },
   });
 

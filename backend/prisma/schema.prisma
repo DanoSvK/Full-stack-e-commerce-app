@@ -7,166 +7,146 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  USER
-  ADMIN
-  MODERATOR
+model addresses {
+  id         Int          @id @default(autoincrement())
+  full_name  String
+  street     String
+  city       String
+  zip        String
+  country    String
+  type       address_type
+  user_id    Int
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  users      users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
-model User {
-  id                   Int       @id @default(autoincrement())
-  email                String    @unique
-  username             String?
-  password             String
-  role                 Role      @default(USER)
-  createdAt            DateTime  @default(now())
-  resetToken           String?   @unique
-  resetTokenExpiration DateTime?
-  passwordChangedAt    DateTime?
-  passwordResetToken   String?   @unique
-  passwordResetExpires DateTime?
-  active               Boolean   @default(true)
+model cart_items {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+  price      Int
+  cart_id    Int
+  product_id Int
+  carts      carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  addresses Address[]
-  reviews   Review[]
-  orders    Order[]
-
-  createdProducts Product[] @relation("ProductCreator")
-  updatedProducts Product[] @relation("ProductUpdater")
-  cart            Cart?
+  @@unique([cart_id, product_id], map: "unique_cart_product")
 }
 
-enum AddressType {
+model carts {
+  id         Int          @id @default(autoincrement())
+  status     String
+  created_at DateTime     @default(now()) @db.Timestamptz(6)
+  user_id    Int          @unique
+  cart_items cart_items[]
+  users      users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model categories {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique
+  slug               String               @unique
+  product_categories product_categories[]
+}
+
+model order_items {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+  price      Int
+  order_id   Int
+  product_id Int
+  orders     orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([order_id, product_id], map: "unique_order_product")
+}
+
+model orders {
+  id          Int           @id @default(autoincrement())
+  total_price Int
+  status      order_status
+  user_id     Int
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  order_items order_items[]
+  users       users         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model product_categories {
+  product_id  Int
+  category_id Int
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  categories  categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products    products   @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([product_id, category_id])
+}
+
+model products {
+  id                                  Int                  @id @default(autoincrement())
+  title                               String               @unique
+  description                         String
+  price                               Int
+  quantity                            Int
+  image_url                           String
+  created_by_id                       Int?
+  updated_by_id                       Int?
+  created_at                          DateTime             @default(now()) @db.Timestamptz(6)
+  cart_items                          cart_items[]
+  order_items                         order_items[]
+  product_categories                  product_categories[]
+  users_products_created_by_idTousers users?               @relation("products_created_by_idTousers", fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_products_updated_by_idTousers users?               @relation("products_updated_by_idTousers", fields: [updated_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviews                             reviews[]
+}
+
+model reviews {
+  id         Int      @id @default(autoincrement())
+  comment    String?
+  rating     Int
+  status     String
+  user_id    Int
+  product_id Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, product_id], map: "unique_user_product")
+}
+
+model users {
+  id                                     Int         @id @default(autoincrement())
+  email                                  String      @unique
+  username                               String?
+  password                               String
+  role                                   role        @default(USER)
+  created_at                             DateTime    @default(now()) @db.Timestamptz(6)
+  reset_token                            String?     @unique
+  reset_token_expiration                 DateTime?   @db.Timestamptz(6)
+  password_changed_at                    DateTime?   @db.Timestamptz(6)
+  password_reset_token                   String?     @unique
+  password_reset_expires                 DateTime?   @db.Timestamptz(6)
+  active                                 Boolean     @default(true)
+  addresses                              addresses[]
+  carts                                  carts?
+  orders                                 orders[]
+  products_products_created_by_idTousers products[]  @relation("products_created_by_idTousers")
+  products_products_updated_by_idTousers products[]  @relation("products_updated_by_idTousers")
+  reviews                                reviews[]
+}
+
+enum address_type {
   SHIPPING
   BILLING
 }
 
-model Address {
-  id Int @id @default(autoincrement())
-
-  fullName String
-  street   String
-  city     String
-  zip      String
-  country  String
-  type     AddressType // billing/shipping
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-}
-
-model Review {
-  id      Int     @id @default(autoincrement())
-  comment String?
-  rating  Int
-  status  String
-
-  userId          Int
-  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId       Int
-  reviewedProduct Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, productId])
-}
-
-model Product {
-  id          Int    @id @default(autoincrement())
-  title       String @unique
-  description String
-  price       Int
-  quantity    Int
-  imageUrl    String
-
-  categories ProductCategory[]
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-  reviews    Review[]
-
-  createdById Int?
-  createdBy   User? @relation("ProductCreator", fields: [createdById], references: [id])
-
-  updatedById Int?
-  updatedBy   User? @relation("ProductUpdater", fields: [updatedById], references: [id])
-
-  createdAt DateTime @default(now())
-}
-
-enum OrderStatus {
+enum order_status {
   PENDING
   PAID
   SHIPPED
   CANCELLED
 }
 
-model Order {
-  id         Int         @id @default(autoincrement())
-  totalPrice Int
-  status     OrderStatus
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  orderItems OrderItem[]
-
-  createdAt DateTime @default(now())
-}
-
-model OrderItem {
-  id       Int @id @default(autoincrement())
-  quantity Int
-  price    Int
-
-  orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([orderId, productId])
-}
-
-model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  slug String @unique
-
-  products ProductCategory[]
-}
-
-model ProductCategory {
-  productId Int
-
-  product    Product  @relation(fields: [productId], references: [id])
-  categoryId Int
-  category   Category @relation(fields: [categoryId], references: [id])
-  createdAt  DateTime @default(now())
-
-  @@id([productId, categoryId]) // composite primary key
-}
-
-model Cart {
-  id        Int      @id @default(autoincrement())
-  status    String
-  createdAt DateTime @default(now())
-
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  cartItems CartItem[]
-}
-
-model CartItem {
-  id       Int @id @default(autoincrement())
-  quantity Int
-  price    Int
-
-  cartId    Int
-  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  productId Int
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@unique([cartId, productId])
+enum role {
+  USER
+  ADMIN
+  MODERATOR
 }

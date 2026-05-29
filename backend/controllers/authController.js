@@ -49,12 +49,12 @@ export const signup = catchAsync(async (req, res, next) => {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const newUser = await prisma.user.create({
+  const newUser = await prisma.users.create({
     data: {
       username,
       email,
       password: hashedPassword,
-      passwordChangedAt,
+      password_changed_at: passwordChangedAt,
     },
   });
 
@@ -69,7 +69,7 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password", 400));
   }
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { email },
     select: { id: true, email: true, password: true },
   });
@@ -121,13 +121,13 @@ export const protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   //  3) Check if user still exists
-  const currentUser = await prisma.user.findUnique({
+  const currentUser = await prisma.users.findUnique({
     where: { id: decoded.id },
     select: {
       id: true,
       email: true,
       role: true,
-      passwordChangedAt: true, // ✅ must be selected
+      password_changed_at: true, // ✅ must be selected
     },
   });
 
@@ -183,7 +183,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   };
 
   // 1) Get user based on POSTed email
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { email: req.body.email },
   });
 
@@ -196,11 +196,11 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     .update(resetToken)
     .digest("hex");
 
-  await prisma.user.update({
+  await prisma.users.update({
     where: { id: user.id },
     data: {
-      passwordResetToken: resetTokenHash,
-      passwordResetExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      password_reset_token: resetTokenHash,
+      password_reset_expires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
     },
   });
 
@@ -217,11 +217,11 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 
     return genericResponse();
   } catch (err) {
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: user.id },
       data: {
-        passwordResetToken: undefined,
-        passwordResetExpires: undefined,
+        password_reset_token: undefined,
+        password_reset_expires: undefined,
       },
     });
 
@@ -239,10 +239,10 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.users.findFirst({
     where: {
-      passwordResetToken: hashedToken,
-      passwordResetExpires: { gt: new Date() },
+      password_reset_token: hashedToken,
+      password_reset_expires: { gt: new Date() },
     },
   });
 
@@ -260,13 +260,13 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   }
 
   // 3) Update changedPasswordAt property for the user
-  await prisma.user.update({
+  await prisma.users.update({
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.password, 12),
-      passwordResetToken: undefined,
-      passwordResetExpires: undefined,
-      passwordChangedAt: new Date(Date.now() - 1000),
+      password_reset_token: undefined,
+      password_reset_expires: undefined,
+      password_changed_at: new Date(Date.now() - 1000),
     },
   });
 
@@ -277,7 +277,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
 export const updatePassword = catchAsync(async (req, res, next) => {
   // 1) Get user from model
-  const user = await prisma.user.findUnique({
+  const user = await prisma.users.findUnique({
     where: { id: req.user.id },
     select: { id: true, password: true },
   });
@@ -298,11 +298,11 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   }
 
   // 3) If so, update password
-  await prisma.user.update({
+  await prisma.users.update({
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.newPassword, 12),
-      passwordChangedAt: new Date(Date.now() - 1000),
+      password_changed_at: new Date(Date.now() - 1000),
     },
   });
 
