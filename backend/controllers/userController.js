@@ -1,6 +1,13 @@
-import { prisma } from "../lib/prisma.js";
+import prisma from "../lib/prisma.js";
 import AppError from "../utils/appError.js";
 import catchAsync from "../utils/catchAsync.js";
+import {
+  createOne,
+  deleteOne,
+  updateOne,
+  getOne,
+  getAll,
+} from "./handlerFactory.js";
 
 const filterObj = (obj, ...allowedFields) => {
   Object.keys(obj).forEach((el) => {
@@ -10,20 +17,10 @@ const filterObj = (obj, ...allowedFields) => {
   return obj;
 };
 
-export const deleteUser = catchAsync(async (req, res) => {
-  const { userId } = req.params;
-  const user = await prisma.users.delete({
-    where: { id: parseInt(userId) },
-  });
-  if (!user) {
-    return next(new AppError("User not found", 404));
-  }
-
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
+export const getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 export const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
@@ -69,32 +66,22 @@ export const deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getUser = catchAsync(async (req, res, next) => {});
-
-export const createUser = catchAsync(async (req, res, next) => {});
-
-export const updateUser = catchAsync(async (req, res, next) => {});
-
-export const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await prisma.users.findMany({
-    where: {
-      active: {
-        not: false,
-      },
+const getAllOptions = {
+  where: {
+    active: {
+      not: false,
     },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      role: true,
-    },
-  });
+  },
+  select: {
+    id: true,
+    username: true,
+    email: true,
+    role: true,
+  },
+};
 
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
+export const createUser = createOne("users");
+export const deleteUser = deleteOne("users");
+export const updateUser = updateOne("users");
+export const getUser = getOne("users");
+export const getAllUsers = getAll("users", getAllOptions);

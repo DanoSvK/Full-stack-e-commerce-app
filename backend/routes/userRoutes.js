@@ -14,24 +14,49 @@ import {
 } from "../controllers/authController.js";
 
 import {
+  createUser,
   deleteUser,
   updateMe,
   deleteMe,
+  updateUser,
   getAllUsers,
+  getUser,
+  getMe,
 } from "../controllers/userController.js";
 
-router.post("/signup", signup);
-router.post("/login", login);
+import validate from "../utils/validator.js";
+import {
+  createUserSchema,
+  updateUserSchema,
+  updateUserPasswordSchema,
+} from "../validators/userValidators.js";
 
+router.post("/signup", validate(createUserSchema), signup);
+router.post("/login", login);
+router.get("/logout", logout);
 router.post("/forgotPassword", forgotPassword);
 router.patch("/resetPassword/:token", resetPassword);
 
-router.get("/logout", logout);
-router.delete("/deleteUser/:userId", protect, restrictTo("admin"), deleteUser);
+// Protect all routes after this middleware
+router.use(protect);
 
-router.patch("/updateMe", protect, updateMe);
-router.delete("/deleteMe", protect, deleteMe);
-router.patch("/updateMyPassword", protect, updatePassword);
-router.get("/", getAllUsers);
+router.patch(
+  "/updateMyPassword",
+  validate(updateUserPasswordSchema),
+  updatePassword,
+);
+router.get("/me", getMe, getUser);
+router.patch("/updateMe", validate(updateUserSchema), updateMe);
+router.delete("/deleteMe", deleteMe);
+
+// Restrict all routes after this middleware to admin only
+router.use(restrictTo("admin"));
+
+router.route("/").get(getAllUsers).post(validate(createUserSchema), createUser);
+router
+  .route("/:id")
+  .get(getUser)
+  .patch(validate(updateUserSchema), updateUser)
+  .delete(deleteUser);
 
 export default router;

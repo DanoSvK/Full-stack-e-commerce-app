@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import catchAsync from "../utils/catchAsync.js";
 import bcrypt from "bcryptjs";
-import { prisma } from "../lib/prisma.js";
+import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
@@ -42,10 +42,6 @@ const createSendToken = (user, statusCode, res) => {
 export const signup = catchAsync(async (req, res, next) => {
   const { username, email, password, confirmPassword, passwordChangedAt } =
     req.body;
-
-  if (password !== confirmPassword) {
-    return next(new AppError("Passwords do not match", 400));
-  }
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -163,7 +159,7 @@ export const protect = catchAsync(async (req, res, next) => {
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
     // roles is an array of roles that are allowed to access the route
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role.toLowerCase())) {
       return next(
         new AppError("You do not have permission to perform this action", 403),
       );
@@ -255,10 +251,6 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Password is required", 400));
   }
 
-  if (req.body.password !== req.body.passwordConfirm) {
-    return next(new AppError("Passwords do not match", 400));
-  }
-
   // 3) Update changedPasswordAt property for the user
   await prisma.users.update({
     where: { id: user.id },
@@ -290,11 +282,6 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   const isValid = await bcrypt.compare(req.body.currentPassword, user.password);
   if (!isValid) {
     return next(new AppError("Your current password is incorrect.", 401));
-  }
-
-  // 3) Check if new password and confirm password match
-  if (req.body.newPassword !== req.body.passwordConfirm) {
-    return next(new AppError("New passwords do not match", 400));
   }
 
   // 3) If so, update password

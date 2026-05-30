@@ -12,16 +12,32 @@ import {
 import { protect } from "../controllers/authController.js";
 import reviewRouter from "./reviewRoutes.js";
 import { restrictTo } from "../controllers/authController.js";
+import validate from "../utils/validator.js";
+import {
+  createProductSchema,
+  updateProductSchema,
+} from "../validators/productValidators.js";
 
 router
   .route("/")
-  .get(protect, getAllProducts)
-  .post(protect, restrictTo("admin"), createProduct);
+  .get(getAllProducts)
+  .post(
+    protect,
+    restrictTo("admin"),
+    validate(createProductSchema),
+    createProduct,
+  );
 
 router
-  .route("/:prodId")
+  .route("/:id")
   .get(getProduct)
-  .patch(protect, restrictTo("admin"), updateProduct);
+  .patch(
+    protect,
+    restrictTo("admin"),
+    validate(updateProductSchema),
+    updateProduct,
+  )
+  .delete(protect, restrictTo("admin"), deleteProduct);
 
 // /api/v1/products/:prodId/reviews
 router.use("/:prodId/reviews", reviewRouter);

@@ -96,13 +96,15 @@ model products {
   users_products_created_by_idTousers users?               @relation("products_created_by_idTousers", fields: [created_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_products_updated_by_idTousers users?               @relation("products_updated_by_idTousers", fields: [updated_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reviews                             reviews[]
+  ratingsAverage                      Float?               @default(0)
+  ratingsQuantity                     Int?                 @default(0)
 }
 
 model reviews {
   id         Int      @id @default(autoincrement())
   comment    String?
   rating     Int
-  status     String
+  status     String   @default("PENDING")
   user_id    Int
   product_id Int
   created_at DateTime @default(now()) @db.Timestamptz(6)
