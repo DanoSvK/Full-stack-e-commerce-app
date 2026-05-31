@@ -7,13 +7,14 @@ const schema = z.object({});
 
 export const getAll = (Model, queryOptions) =>
   catchAsync(async (req, res) => {
+    console.log(Model);
     const options = { ...queryOptions };
 
     // To allow for nested GET reviews on product
     if (req.params.prodId) {
       options.where = {
         ...(options.where || {}),
-        product_id: Number(req.params.prodId),
+        productId: Number(req.params.prodId),
       };
     }
 
@@ -36,13 +37,13 @@ export const getOne = (Model, queryOptions) =>
 
     if (queryOptions) options.include = queryOptions;
 
-    const doc = await prisma[Model].findUnique(options);
+    const record = await prisma[Model].findUnique(options);
 
-    if (!doc) return next(new AppError("No document found", 404));
+    if (!record) return next(new AppError("No record found", 404));
 
     res.status(200).json({
       status: "success",
-      data: { data: doc },
+      data: { data: record },
     });
   });
 
@@ -65,7 +66,7 @@ export const deleteOne = (Model) =>
 export const updateOne = (Model) =>
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { title, description, price, quantity, image_url } = req.body;
+    const { title, description, price, quantity, imageUrl } = req.body;
 
     const record = await prisma[Model].update({
       where: { id: parseInt(id) },
@@ -74,7 +75,7 @@ export const updateOne = (Model) =>
         description,
         price,
         quantity,
-        image_url,
+        imageUrl,
       },
     });
 

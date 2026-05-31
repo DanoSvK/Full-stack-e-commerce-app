@@ -92,6 +92,9 @@ model Product {
   updatedById Int?
   updatedBy   User? @relation("ProductUpdater", fields: [updatedById], references: [id])
 
+  ratingsAverage                      Float?               @default(0)
+  ratingsQuantity                     Int?                 @default(0)
+
   createdAt DateTime @default(now())
 }
 

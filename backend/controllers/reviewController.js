@@ -11,18 +11,18 @@ import {
 
 export const setProductUserIds = (req, res, next) => {
   // Allow nested routes - if not nested, check the body, if nested check params
-  req.body.user_id = req.user.id; // always from auth, never from body
-  if (!req.body.product_id) req.body.product_id = parseInt(req.params.prodId);
+  req.body.userId = req.user.id; // always from auth, never from body
+  if (!req.body.productId) req.body.productId = parseInt(req.params.prodId);
 
   next();
 };
 
 export const checkExistingReview = catchAsync(async (req, res, next) => {
-  const { product_id, user_id } = req.body; // destructure after setting
+  const { productId, userId } = req.body; // destructure after setting
 
-  const existingReview = await prisma.reviews.findUnique({
+  const existingReview = await prisma.review.findUnique({
     where: {
-      user_id_product_id: { user_id, product_id },
+      userId_productId: { userId, productId },
     },
   });
 
@@ -33,15 +33,15 @@ export const checkExistingReview = catchAsync(async (req, res, next) => {
   next();
 });
 
-const getallOptions = {
+const getAllOptions = {
   include: {
-    users: { select: { id: true, username: true, email: true, role: true } },
-    products: true,
+    user: { select: { id: true, username: true, email: true, role: true } },
+    product: true,
   },
 };
 
-export const createReview = createOne("reviews");
-export const deleteReview = deleteOne("reviews");
-export const getReview = getOne("reviews");
-export const getAllReviews = getAll("reviews", getallOptions);
-export const updateReview = updateOne("reviews");
+export const createReview = createOne("review");
+export const deleteReview = deleteOne("review");
+export const getReview = getOne("review");
+export const getAllReviews = getAll("review", getAllOptions);
+export const updateReview = updateOne("review");

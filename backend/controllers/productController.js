@@ -8,10 +8,10 @@ import {
   getAll,
 } from "./handlerFactory.js";
 
-export const createProduct = createOne("products");
-export const updateProduct = updateOne("products");
-export const deleteProduct = deleteOne("products");
-export const getProduct = getOne("products", { product_categories: true });
-export const getAllProducts = getAll("products", {
-  include: { product_categories: true },
+export const createProduct = createOne("product");
+export const updateProduct = updateOne("product");
+export const deleteProduct = deleteOne("product");
+export const getProduct = getOne("product", { categories: true });
+export const getAllProducts = getAll("product", {
+  include: { categories: true },
 });

@@ -3,7 +3,7 @@ import morgan from "morgan";
 import expressRateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
-
+import prisma from "./lib/prisma.js";
 import AppError from "./utils/appError.js";
 import globalErrorHandler from "./controllers/errorController.js";
 import userRouter from "./routes/userRoutes.js";

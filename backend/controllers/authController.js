@@ -45,12 +45,12 @@ export const signup = catchAsync(async (req, res, next) => {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const newUser = await prisma.users.create({
+  const newUser = await prisma.user.create({
     data: {
       username,
       email,
       password: hashedPassword,
-      password_changed_at: passwordChangedAt,
+      passwordChangedAt,
     },
   });
 
@@ -65,7 +65,7 @@ export const login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password", 400));
   }
 
-  const user = await prisma.users.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email },
     select: { id: true, email: true, password: true },
   });
@@ -117,13 +117,13 @@ export const protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   //  3) Check if user still exists
-  const currentUser = await prisma.users.findUnique({
+  const currentUser = await prisma.user.findUnique({
     where: { id: decoded.id },
     select: {
       id: true,
       email: true,
       role: true,
-      password_changed_at: true, // ✅ must be selected
+      passwordChangedAt: true, // ✅ must be selected
     },
   });
 
@@ -179,7 +179,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   };
 
   // 1) Get user based on POSTed email
-  const user = await prisma.users.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: req.body.email },
   });
 
@@ -192,11 +192,11 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     .update(resetToken)
     .digest("hex");
 
-  await prisma.users.update({
+  await prisma.user.update({
     where: { id: user.id },
     data: {
-      password_reset_token: resetTokenHash,
-      password_reset_expires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      passwordResetToken: resetTokenHash,
+      passwordResetExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
     },
   });
 
@@ -213,11 +213,11 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 
     return genericResponse();
   } catch (err) {
-    await prisma.users.update({
+    await prisma.user.update({
       where: { id: user.id },
       data: {
-        password_reset_token: undefined,
-        password_reset_expires: undefined,
+        passwordResetToken: undefined,
+        passwordResetExpires: undefined,
       },
     });
 
@@ -235,10 +235,10 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  const user = await prisma.users.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
-      password_reset_token: hashedToken,
-      password_reset_expires: { gt: new Date() },
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { gt: new Date() },
     },
   });
 
@@ -256,9 +256,9 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.password, 12),
-      password_reset_token: undefined,
-      password_reset_expires: undefined,
-      password_changed_at: new Date(Date.now() - 1000),
+      passwordResetToken: undefined,
+      passwordResetExpires: undefined,
+      passwordChangedAt: new Date(Date.now() - 1000),
     },
   });
 
@@ -269,7 +269,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 
 export const updatePassword = catchAsync(async (req, res, next) => {
   // 1) Get user from model
-  const user = await prisma.users.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: req.user.id },
     select: { id: true, password: true },
   });
@@ -289,7 +289,7 @@ export const updatePassword = catchAsync(async (req, res, next) => {
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.newPassword, 12),
-      password_changed_at: new Date(Date.now() - 1000),
+      passwordChangedAt: new Date(Date.now() - 1000),
     },
   });
 

@@ -37,7 +37,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
   const filteredBody = filterObj(req.body, "name", "email");
 
   // 3) Update user record
-  const updatedUser = await prisma.users.update({
+  const updatedUser = await prisma.user.update({
     where: { id: req.user.id },
     data: filteredBody,
   });
@@ -51,7 +51,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
 });
 
 export const deleteMe = catchAsync(async (req, res, next) => {
-  await prisma.users.update({
+  await prisma.user.update({
     where: {
       id: req.user.id,
     },
@@ -80,8 +80,8 @@ const getAllOptions = {
   },
 };
 
-export const createUser = createOne("users");
-export const deleteUser = deleteOne("users");
-export const updateUser = updateOne("users");
-export const getUser = getOne("users");
-export const getAllUsers = getAll("users", getAllOptions);
+export const createUser = createOne("user");
+export const deleteUser = deleteOne("user");
+export const updateUser = updateOne("user");
+export const getUser = getOne("user");
+export const getAllUsers = getAll("user", getAllOptions);
