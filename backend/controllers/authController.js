@@ -14,7 +14,7 @@ const signToken = (userId) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+export const createSendToken = (user, statusCode, res) => {
   const token = signToken(user.id);
 
   const cookieOptions = {

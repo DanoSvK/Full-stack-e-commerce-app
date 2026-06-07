@@ -2,6 +2,8 @@ import express from "express";
 import { Router } from "express";
 const router = Router();
 
+import { oauthLogin, oauthCallback } from "../controllers/oauthController.js";
+
 import {
   signup,
   login,
@@ -31,6 +33,9 @@ import {
   updateUserSchema,
   updateUserPasswordSchema,
 } from "../validators/userValidators.js";
+
+router.get("/oauth/login", oauthLogin);
+router.get("/oauth/callback", oauthCallback);
 
 router.post("/signup", validate(createUserSchema), signup);
 router.post("/login", login);
