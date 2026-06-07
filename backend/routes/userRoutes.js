@@ -11,6 +11,7 @@ import {
   forgotPassword,
   resetPassword,
   updatePassword,
+  optionalAuth,
 } from "../controllers/authController.js";
 
 import {
@@ -35,7 +36,13 @@ router.post("/signup", validate(createUserSchema), signup);
 router.post("/login", login);
 router.get("/logout", logout);
 router.post("/forgotPassword", forgotPassword);
-router.patch("/resetPassword/:token", resetPassword);
+router.patch(
+  "/resetPassword/:token",
+  validate(updateUserPasswordSchema),
+  resetPassword,
+);
+
+router.get("/me", optionalAuth, getMe);
 
 // Protect all routes after this middleware
 router.use(protect);
@@ -45,7 +52,7 @@ router.patch(
   validate(updateUserPasswordSchema),
   updatePassword,
 );
-router.get("/me", getMe, getUser);
+
 router.patch("/updateMe", validate(updateUserSchema), updateMe);
 router.delete("/deleteMe", deleteMe);
 

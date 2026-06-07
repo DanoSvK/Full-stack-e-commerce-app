@@ -15,6 +15,8 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.4.1",
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "cross-env": "^10.1.0",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
@@ -23,6 +25,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
     "nodemailer": "^8.0.9",
+    "openid-client": "^6.8.4",
     "pg": "^8.21.0",
     "zod": "^4.4.3"
   },

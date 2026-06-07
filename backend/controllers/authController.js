@@ -33,15 +33,12 @@ const createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: "success",
     token,
-    data: {
-      user,
-    },
+    data: { user },
   });
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  const { username, email, password, confirmPassword, passwordChangedAt } =
-    req.body;
+  const { username, email, password, confirmPassword } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -50,7 +47,13 @@ export const signup = catchAsync(async (req, res, next) => {
       username,
       email,
       password: hashedPassword,
-      passwordChangedAt,
+      role: "USER",
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      role: true,
     },
   });
 
@@ -91,7 +94,7 @@ export const login = catchAsync(async (req, res, next) => {
 
 export const logout = (req, res) => {
   res.cookie("jwt", "loggedout", {
-    expires: new Date(Date.now() + 10 * 1000),
+    expires: new Date(Date.now() + 1000),
     httpOnly: true,
   });
   res.status(200).json({ status: "success" });
@@ -105,6 +108,8 @@ export const protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
 
   if (!token) {
@@ -114,7 +119,12 @@ export const protect = catchAsync(async (req, res, next) => {
   }
 
   // 2) Verification token - decoded contains the payload we signed using jwt.sign() method (user id, iat, exp)
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  let decoded;
+  try {
+    decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return next(new AppError("Invalid token. Please log in again.", 401));
+  }
 
   //  3) Check if user still exists
   const currentUser = await prisma.user.findUnique({
@@ -153,6 +163,30 @@ export const protect = catchAsync(async (req, res, next) => {
   }
 
   req.user = currentUser; // Grant access to protected route
+  next();
+});
+
+// Used ONLY for /me route that checks logged in user, so there are no protect errors when no user is logged in
+// Checks if token exists, if not, return user = null. If there is token but user is not found, return user. Otherwise return user data.
+export const optionalAuth = catchAsync(async (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (!token) {
+    req.user = null;
+    return next(); // no error, just no user
+  }
+
+  try {
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const currentUser = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: { id: true, email: true, role: true },
+    });
+    req.user = currentUser || null;
+  } catch (err) {
+    req.user = null; // bad token, treat as logged out
+  }
+
   next();
 });
 
@@ -201,8 +235,16 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   });
 
   // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
-  const message = `Forgot your password? Submit a request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
+  // const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword?token=${resetToken}`;
+  const resetURL = `http://localhost:5173/reset-password?token=${resetToken}`;
+  const message = `
+  <p>Forgot your password?</p>
+  <p>
+    Submit a request with your new password.
+    <a href="${resetURL}">Reset password</a>
+  </p>
+  <p>If you didn't forget your password, please ignore this email!</p>
+`;
 
   try {
     await sendEmail({
@@ -229,7 +271,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 export const resetPassword = catchAsync(async (req, res, next) => {
-  // 1) Get user based on the token
+  // 1) Get user based on the user's password reset token
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
@@ -252,7 +294,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   }
 
   // 3) Update changedPasswordAt property for the user
-  await prisma.users.update({
+  await prisma.user.update({
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.password, 12),
@@ -263,7 +305,6 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   });
 
   // 4) Log the user in, send JWT
-  // 4) Log user in, send JWT
   createSendToken(user, 200, res);
 });
 
@@ -273,7 +314,9 @@ export const updatePassword = catchAsync(async (req, res, next) => {
     where: { id: req.user.id },
     select: { id: true, password: true },
   });
-
+  console.log(req.body);
+  console.log(req.body.currentPassword);
+  console.log(user);
   if (!user) {
     return next(new AppError("User not found", 404));
   }
@@ -285,7 +328,7 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   }
 
   // 3) If so, update password
-  await prisma.users.update({
+  await prisma.user.update({
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.newPassword, 12),

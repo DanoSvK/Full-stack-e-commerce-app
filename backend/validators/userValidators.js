@@ -25,7 +25,7 @@ export const createUserSchema = userBaseSchema
   .extend({
     password: passwordSchema,
 
-    passwordConfirm: passwordSchema,
+    passwordConfirm: z.string(),
 
     role: z.nativeEnum(Role).default(Role.USER),
   })
@@ -36,11 +36,13 @@ export const createUserSchema = userBaseSchema
 
 export const updateUserPasswordSchema = z
   .object({
-    password: passwordSchema,
+    currentPassword: z.string(),
+
+    newPassword: passwordSchema,
 
     passwordConfirm: passwordSchema,
   })
-  .refine((data) => data.password === data.passwordConfirm, {
+  .refine((data) => data.newPassword === data.passwordConfirm, {
     message: "Passwords do not match",
     path: ["passwordConfirm"],
   });

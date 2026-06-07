@@ -1,5 +1,3 @@
-import prisma from "../lib/prisma.js";
-import catchAsync from "../utils/catchAsync.js";
 import {
   deleteOne,
   updateOne,
@@ -7,6 +5,7 @@ import {
   getOne,
   getAll,
 } from "./handlerFactory.js";
+import APIFeatures from "../utils/apiFeatures.js";
 
 export const createProduct = createOne("product");
 export const updateProduct = updateOne("product");

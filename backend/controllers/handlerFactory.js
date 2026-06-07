@@ -1,5 +1,6 @@
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+import APIFeatures from "../utils/apiFeatures.js";
 import prisma from "../lib/prisma.js";
 import * as z from "zod";
 
@@ -7,18 +8,17 @@ const schema = z.object({});
 
 export const getAll = (Model, queryOptions) =>
   catchAsync(async (req, res) => {
-    console.log(Model);
-    const options = { ...queryOptions };
+    const features = new APIFeatures(req.query)
+      .filter()
+      .sort()
+      .fieldLimit()
+      .paginate();
 
-    // To allow for nested GET reviews on product
     if (req.params.prodId) {
-      options.where = {
-        ...(options.where || {}),
-        productId: Number(req.params.prodId),
-      };
+      features.prismaQuery.where.productId = Number(req.params.prodId);
     }
 
-    const records = await prisma[Model].findMany(options);
+    const records = await prisma[Model].findMany(features.prismaQuery);
 
     res.status(200).json({
       status: "success",
@@ -28,6 +28,16 @@ export const getAll = (Model, queryOptions) =>
       },
     });
   });
+
+catchAsync(async (req, res, next) => {
+  const products = await prisma.product.findMany(features.prismaQuery);
+
+  res.status(200).json({
+    status: "success",
+    results: products.length,
+    data: { products },
+  });
+});
 
 export const getOne = (Model, queryOptions) =>
   catchAsync(async (req, res, next) => {
@@ -43,7 +53,7 @@ export const getOne = (Model, queryOptions) =>
 
     res.status(200).json({
       status: "success",
-      data: { data: record },
+      data: record,
     });
   });
 

@@ -21,7 +21,10 @@ const handlePrismaKnownRequestError = (err) => {
       const fields =
         err.meta?.driverAdapterError?.cause?.constraint?.fields?.join(", ") ??
         "field";
-      return new AppError(`Duplicate value for: ${fields}`, 409);
+      return new AppError(
+        `${fields.charAt(0).toUpperCase() + fields.slice(1)} already exists`,
+        409,
+      );
     }
     case "P2025":
       return new AppError("Record not found", 404);

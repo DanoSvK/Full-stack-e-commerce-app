@@ -34,7 +34,7 @@ enum AddressType {
 model User {
   id                   Int       @id @default(autoincrement())
   email                String    @unique
-  username             String?
+  username             String?   @unique
   password             String
   role                 Role      @default(USER)
   createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)

@@ -10,7 +10,8 @@ import {
 } from "./handlerFactory.js";
 
 export const setProductUserIds = (req, res, next) => {
-  // Allow nested routes - if not nested, check the body, if nested check params
+  // Allow nested routes
+  // If not nested, check the body, if nested check params
   req.body.userId = req.user.id; // always from auth, never from body
   if (!req.body.productId) req.body.productId = parseInt(req.params.prodId);
 
@@ -18,7 +19,7 @@ export const setProductUserIds = (req, res, next) => {
 };
 
 export const checkExistingReview = catchAsync(async (req, res, next) => {
-  const { productId, userId } = req.body; // destructure after setting
+  const { productId, userId } = req.body;
 
   const existingReview = await prisma.review.findUnique({
     where: {
