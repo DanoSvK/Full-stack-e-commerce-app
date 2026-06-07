@@ -1,6 +1,18 @@
 import { Key } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
 function Security() {
+  const [currentPassword, setCurrentPassword] = useState();
+  const [newPassword, setNewPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
+  const { error, updatePassword } = useAuth();
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    updatePassword(currentPassword, newPassword, confirmPassword);
+  }
+
   return (
     <>
       <h2 className="text-3xl font-black tracking-tighter text-white uppercase mb-8">
@@ -20,10 +32,9 @@ function Security() {
           </div>
         </header>
 
-        <form className="space-y-4">
+        {error?.message && <p className="text-red-500 mb-4">{error.message}</p>}
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <fieldset>
-            <legend className="sr-only">Change password</legend>
-
             <div className="mb-2">
               <label
                 className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
@@ -36,6 +47,9 @@ function Security() {
                 id="password"
                 type="password"
                 placeholder="********"
+                onInput={(e) => {
+                  setCurrentPassword(e.target.value);
+                }}
               />
             </div>
 
@@ -51,7 +65,13 @@ function Security() {
                 id="new-password"
                 type="password"
                 placeholder="********"
+                onInput={(e) => {
+                  setNewPassword(e.target.value);
+                }}
               />
+              {error?.fieldErrors?.newPassword && (
+                <p className="text-red-500 mb-4">{error.message}</p>
+              )}
             </div>
 
             <div className="mb-2">
@@ -66,7 +86,13 @@ function Security() {
                 id="confirm-password"
                 type="password"
                 placeholder="********"
+                onInput={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
               />
+              {error?.fieldErrors?.confirmPassword && (
+                <p className="text-red-500 mb-4">{error.message}</p>
+              )}
             </div>
           </fieldset>
 

@@ -2,11 +2,21 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Logo from "../ui/Logo";
 
-import { Search, ShoppingCart, User, LogOut, Menu, X } from "lucide-react";
+import {
+  Search,
+  ShoppingCart,
+  User,
+  LogOut,
+  Menu,
+  X,
+  LogIn,
+} from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
   const { totalCartCount } = useCart();
+  const { logout, user } = useAuth();
 
   return (
     <header className="backdrop-blur-md py-5 sticky top-0 z-15 bg-zinc-950/80 shadow-lg mb-24 w-full border-b border-white/10 m-auto">
@@ -26,19 +36,34 @@ function Header() {
               </span>
             )}
           </Link>
-          <Link
-            to="/account"
-            className="hidden sm:block hover:text-accent"
-            aria-label="Open user account"
-          >
-            <User />
-          </Link>
-          <Link
-            className="hidden sm:block hover:text-red-500"
-            aria-label="Logout"
-          >
-            <LogOut />
-          </Link>
+          {user && (
+            <Link
+              to="/account"
+              className="hidden sm:block hover:text-accent "
+              aria-label="Open user account"
+            >
+              <User />
+            </Link>
+          )}
+          {user ? (
+            <button
+              type="submit"
+              className="hidden sm:block hover:text-red-500 cursor-pointer"
+              aria-label="Logout"
+              onClick={logout}
+            >
+              <LogOut />
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              type="submit"
+              className="hidden sm:block hover:text-green-500 cursor-pointer"
+              aria-label="Login"
+            >
+              <LogIn />
+            </Link>
+          )}
           <Link
             className="md:hidden hover:text-accent"
             aria-label="Open menu bar"

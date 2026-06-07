@@ -1,6 +1,9 @@
 import { User, Heart, Shield, Package, LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 function AccountSidebar({ onHandleActive, activeTab, items }) {
+  const { logout } = useAuth();
+
   const btnClassName =
     "w-full flex items-center gap-3 px-4 py-3 cursor-pointer rounded-xl text-sm font-medium transition-all font-bold";
 
@@ -34,7 +37,10 @@ function AccountSidebar({ onHandleActive, activeTab, items }) {
             <span>{label}</span>
           </button>
         ))}
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all mt-8">
+        <button
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all mt-8 cursor-pointer"
+          onClick={logout}
+        >
           <LogOut size={20} aria-hidden="true" />
           <span>Logout</span>
         </button>
