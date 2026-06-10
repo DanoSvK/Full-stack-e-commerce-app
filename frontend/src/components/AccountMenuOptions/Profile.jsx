@@ -1,5 +1,8 @@
+import { QueryClient } from "@tanstack/react-query";
 import { IdCard, Edit2, Plus } from "lucide-react";
 import { useState } from "react";
+import { useCustomerProperties } from "../../api/api";
+import { useUpdateCustomerProperty } from "../../api/useEditCustomerProperties";
 
 const user = {
   ids: {
@@ -20,12 +23,23 @@ function Profile() {
   const [details, setDetails] = useState(user);
   const [isEditingIds, setIsEditingIds] = useState(false);
   const [isEditingProps, setIsEditingProps] = useState(false);
+  const [newPropertyKey, setNewPropertyKey] = useState(null);
+  const [newPropertyValue, setNewPropertyValue] = useState(null);
+
+  const { customerProperties, isPending, error } = useCustomerProperties();
+  const { isUpdating, updateCustomerProperties } = useUpdateCustomerProperty();
 
   function updateUserData(key, value, dataType) {
     setDetails((prev) => ({
       ...prev,
       [dataType]: { ...prev[dataType], [key]: value },
     }));
+  }
+
+  function handleAddProperty() {
+    user.properties[newPropertyKey] = newPropertyValue;
+    console.log(user);
+    console.log(newPropertyKey, newPropertyValue);
   }
 
   return (
@@ -41,36 +55,22 @@ function Profile() {
 
           <button
             type="button"
-            className="self-end flex items-center gap-2 text-accent text-sm font-bold hover:underline"
+            className="self-end flex items-center gap-2 text-accent text-sm font-bold hover:underline cursor-pointer"
             onClick={() => setIsEditingIds((prev) => !prev)}
-          >
-            <Edit2 size={16} aria-hidden="true" />
-            <span>{!isEditingIds ? "Edit IDs" : "Save Changes"}</span>
-          </button>
+          ></button>
         </header>
 
         {/* USER DETAILS */}
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.entries(details.ids).map(([key, value]) => (
-            <div className="glass-card p-6 rounded-2xl space-y-4">
+            <div className="glass-card p-6 rounded-2xl space-y-4" key={key}>
               <dt className="flex items-center text-[10px] gap-3">
                 <IdCard size={16} aria-hidden="true" />{" "}
                 <span className="text-[10px] uppercase font-bold tracking-widest">
                   {key.toUpperCase()}
                 </span>
               </dt>
-              {!isEditingIds ? (
-                <dd className="text-white font-bold">{value}</dd>
-              ) : (
-                <input
-                  type="text"
-                  defaultValue={value}
-                  className="input-field w-full text-sm"
-                  onChange={(e) => {
-                    updateUserData(key, e.target.value, "ids");
-                  }}
-                />
-              )}
+              <dd className="text-white font-bold">{value}</dd>
             </div>
           ))}
         </dl>
@@ -85,7 +85,7 @@ function Profile() {
           <div className="space-y-4">
             <button
               type="button"
-              className="flex items-center gap-2 text-accent text-xs font-bold hover:underline"
+              className="flex items-center gap-2 text-accent text-xs font-bold hover:underline cursor-pointer"
               onClick={() => setIsEditingProps((prev) => !prev)}
             >
               <Edit2 size={16} />
@@ -95,7 +95,7 @@ function Profile() {
             </button>
             <button
               type="button"
-              className="ml-auto flex items-center gap-2 text-accent text-xs font-bold hover:underline"
+              className="ml-auto flex items-center gap-2 text-accent text-xs font-bold hover:underline cursor-pointer"
             >
               <Plus size={16} />
               <span>Add Property</span>
@@ -104,21 +104,61 @@ function Profile() {
         </header>
 
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {Object.entries(details.properties).map(([key, value]) => (
-            <div className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex flex-col text-[10px] justify-between group">
+          {isEditingProps && (
+            <div className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex flex-col text-[10px] justify-between group space-y-1">
               <dt className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest">
-                {key.toUpperCase()}
+                Add new property
+              </dt>
+              <input
+                type="text"
+                className="input-field w-full text-sm h-1"
+                placeholder="Property name"
+                onInput={(e) => {
+                  setNewPropertyKey(e.target.value);
+                }}
+              />
+
+              <input
+                type="text"
+                className="input-field w-full text-sm h-2"
+                placeholder="Property value"
+                onInput={(e) => {
+                  setNewPropertyValue(e.target.value);
+                }}
+              />
+              <button
+                className="text-accent hover:underline cursor-pointer"
+                type="submit"
+                onClick={handleAddProperty}
+              >
+                + Add New
+              </button>
+            </div>
+          )}
+          {customerProperties?.map((property) => (
+            <div
+              className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex flex-col text-[10px] justify-between group"
+              key={property.key}
+            >
+              <dt className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest">
+                {property.key.toUpperCase()}
               </dt>
 
               {!isEditingProps ? (
-                <dd className="text-white text-sm font-bold">{value}</dd>
+                <dd className="text-white text-sm font-bold">
+                  {property.value}
+                </dd>
               ) : (
                 <input
                   type="text"
-                  defaultValue={value}
+                  defaultValue={property.value}
                   className="input-field w-full text-sm"
-                  onChange={(e) => {
-                    updateUserData(key, e.target.value, "properties");
+                  onBlur={(e) => {
+                    updateCustomerProperties({
+                      action: "update",
+                      key: property.key,
+                      value: e.target.value,
+                    });
                   }}
                 />
               )}

@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, user, error, loading } = useAuth();
-  const navigate = useNavigate();
+  const { login, loginWithGoogle, user, error, loading } = useAuth();
 
   if (user) {
-    navigate("/home");
-    return; // or a loading spinner
+    return <Navigate to="/home" replace />;
   }
 
   function handleSubmit(e) {
@@ -58,6 +56,7 @@ function LoginPage() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+        <button onClick={loginWithGoogle}>Login with Google</button>
         <div className="text-sm text-gray-500 flex justify-between">
           <p>
             Don't have an account?{" "}
