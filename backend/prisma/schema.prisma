@@ -32,28 +32,40 @@ enum AddressType {
 }
 
 model User {
-  id                   Int       @id @default(autoincrement())
-  email                String    @unique
-  username             String?   @unique
+  id                   Int            @id @default(autoincrement())
+  email                String         @unique
+  username             String         @unique
   password             String
-  role                 Role      @default(USER)
-  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  resetToken           String?   @unique @map("reset_token")
-  resetTokenExpiration DateTime? @map("reset_token_expiration") @db.Timestamptz(6)
-  passwordChangedAt    DateTime? @map("password_changed_at") @db.Timestamptz(6)
-  passwordResetToken   String?   @unique @map("password_reset_token")
-  passwordResetExpires DateTime? @map("password_reset_expires") @db.Timestamptz(6)
-  active               Boolean   @default(true)
-
-  addresses Address[]
-  cart      Cart?
-  orders    Order[]
-  reviews   Review[]
+  role                 Role           @default(USER)
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  resetToken           String?        @unique @map("reset_token")
+  resetTokenExpiration DateTime?      @map("reset_token_expiration") @db.Timestamptz(6)
+  passwordChangedAt    DateTime?      @map("password_changed_at") @db.Timestamptz(6)
+  passwordResetToken   String?        @unique @map("password_reset_token")
+  passwordResetExpires DateTime?      @map("password_reset_expires") @db.Timestamptz(6)
+  active               Boolean        @default(true)
+  properties           UserProperty[]
+  addresses            Address[]
+  cart                 Cart?
+  orders               Order[]
+  reviews              Review[]
 
   createdProducts Product[] @relation("ProductCreator")
   updatedProducts Product[] @relation("ProductUpdater")
 
   @@map("users")
+}
+
+model UserProperty {
+  id Int @id @default(autoincrement())
+
+  userId Int    @map("user_id")
+  key    String
+  value  String
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, key])
 }
 
 model Address {

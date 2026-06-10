@@ -8,7 +8,7 @@ import crypto from "crypto";
 import AppError from "../utils/appError.js";
 import sendEmail from "../utils/email.js";
 
-const signToken = (userId) => {
+export const signToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });

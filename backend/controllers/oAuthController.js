@@ -1,7 +1,7 @@
 import * as client from "openid-client";
 import catchAsync from "../utils/catchAsync.js";
 import prisma from "../lib/prisma.js";
-import { createSendToken } from "./authController.js";
+import { createSendToken, signToken } from "./authController.js";
 
 let oauthClient;
 let config;
@@ -79,5 +79,15 @@ export const oauthCallback = catchAsync(async (req, res) => {
     });
   }
 
-  createSendToken(user, 200, res);
+  // Replace createSendToken with this:
+  const token = signToken(user.id);
+
+  res.cookie("jwt", token, {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+  });
+
+  res.redirect("http://localhost:5173"); // ← sends user back to your React app
 });

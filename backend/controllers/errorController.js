@@ -33,13 +33,13 @@ const handlePrismaKnownRequestError = (err) => {
       return new AppError(`Related record not found for: ${field}`, 400);
     }
     default:
-      return new AppError(`Database error (${err.code})`, 400);
+      return new AppError(`Internal server error`, 500);
   }
 };
 
 // Unexpected DB errors with no specific code
 const handlePrismaUnknownRequestError = () => {
-  return new AppError("An unexpected database error occurred", 500);
+  return new AppError("Internal server error", 500);
 };
 
 const handleJWTError = () => {

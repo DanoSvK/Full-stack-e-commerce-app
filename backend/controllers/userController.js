@@ -48,7 +48,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
   }
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(req.body, "name", "email");
+  const filteredBody = filterObj(req.body, "username", "email");
 
   // 3) Update user record
   const updatedUser = await prisma.user.update({
@@ -61,6 +61,71 @@ export const updateMe = catchAsync(async (req, res, next) => {
     data: {
       user: updatedUser,
     },
+  });
+});
+
+export const createUpdateCustomerProperties = catchAsync(
+  async (req, res, next) => {
+    const { key, value, action } = req.body;
+    if (!req.body.action) {
+      return next(
+        new AppError(
+          "Please, define action key with vlaue of create or update",
+        ),
+      );
+    }
+    let result;
+
+    if (action === "create") {
+      try {
+        result = await prisma.userProperty.create({
+          data: {
+            userId: req.user.id,
+            key,
+            value,
+          },
+        });
+      } catch (err) {
+        return next(new Error("Property already exists"));
+      }
+    }
+
+    if (action === "update") {
+      try {
+        result = await prisma.userProperty.update({
+          where: {
+            userId_key: {
+              userId: req.user.id,
+              key,
+            },
+          },
+          data: {
+            value,
+          },
+        });
+      } catch (err) {
+        return next(new Error("Property does not exist"));
+      }
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: {
+        property: result,
+      },
+    });
+  },
+);
+
+export const getCustomerProperties = catchAsync(async (req, res, next) => {
+  const customerProperties = await prisma.userProperty.findMany({
+    where: { userId: req.user.id },
+  });
+
+  res.status(200).json({
+    status: "success",
+    result: customerProperties.length,
+    data: { customerProperties },
   });
 });
 
