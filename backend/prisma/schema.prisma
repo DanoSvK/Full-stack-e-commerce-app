@@ -61,7 +61,7 @@ model UserProperty {
 
   userId Int    @map("user_id")
   key    String
-  value  String
+  value  Json
 
   user User @relation(fields: [userId], references: [id])
 
@@ -85,12 +85,16 @@ model Address {
 }
 
 model Product {
-  id          Int    @id @default(autoincrement())
-  title       String @unique
-  description String
-  price       Int
-  quantity    Int
-  imageUrl    String @map("image_url")
+  id                  Int    @id @default(autoincrement())
+  title               String @unique
+  description         String
+  extendedDescription String @map("extended_description")
+  price               Int
+  currency            String
+  stock               Int
+  quantity            Int
+  imageUrl            String @map("image_url")
+  variants            Json
 
   ratingsAverage  Float? @default(0)
   ratingsQuantity Int?   @default(0)
@@ -102,10 +106,11 @@ model Product {
   createdBy   User? @relation("ProductCreator", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction)
   updatedBy   User? @relation("ProductUpdater", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  categories ProductCategory[]
-  cartItems  CartItem[]
-  orderItems OrderItem[]
-  reviews    Review[]
+  productCategories    ProductCategory[]
+  productSubcategories ProductSubcategory[]
+  cartItems            CartItem[]
+  orderItems           OrderItem[]
+  reviews              Review[]
 
   @@map("products")
 }
@@ -115,7 +120,9 @@ model Category {
   name String @unique
   slug String @unique
 
-  products ProductCategory[]
+  products              ProductCategory[]
+  subcategories         ProductSubcategory[]
+  categorySubcategories CategorySubcategory[]
 
   @@map("categories")
 }
@@ -130,6 +137,41 @@ model ProductCategory {
 
   @@id([productId, categoryId])
   @@map("product_categories")
+}
+
+model Subcategory {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  categories CategorySubcategory[]
+  products   ProductSubcategory[]
+
+  @@map("subcategories")
+}
+
+model CategorySubcategory {
+  categoryId    Int
+  subcategoryId Int
+
+  category    Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subcategory Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, subcategoryId])
+  @@map("category_subcategory")
+}
+
+model ProductSubcategory {
+  productId     Int
+  subcategoryId Int
+
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subcategory Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+
+  @@id([productId, subcategoryId])
+  @@map("product_subcategories")
 }
 
 model Review {

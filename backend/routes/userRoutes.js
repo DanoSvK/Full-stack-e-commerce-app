@@ -27,6 +27,7 @@ import {
   getMe,
   createUpdateCustomerProperties,
   getCustomerProperties,
+  deleteCustomerProperty,
 } from "../controllers/userController.js";
 
 import validate from "../utils/validator.js";
@@ -60,6 +61,7 @@ router.patch(
   updatePassword,
 );
 router.patch("/createUpdateCustomerProperties", createUpdateCustomerProperties);
+router.delete("/deleteCustomerProperty", deleteCustomerProperty);
 router.get("/getCustomerProperties", getCustomerProperties);
 router.patch("/updateMe", validate(updateUserSchema), updateMe);
 router.delete("/deleteMe", deleteMe);

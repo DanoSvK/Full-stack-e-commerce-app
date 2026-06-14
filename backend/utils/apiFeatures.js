@@ -8,10 +8,43 @@ const buildPrismaWhere = (query) => {
     // Check if the key contains an operator pattern like "price_gte"
     const match = key.match(/(.+)_(gte|lte|gt|lt|ne)/);
 
+    // First check if query is categroy or subcategory
+    if (key === "category") {
+      where.productCategories = {
+        some: {
+          category: {
+            slug: value,
+          },
+        },
+      };
+
+      continue;
+    }
+
+    if (key === "subcategory") {
+      where.productSubcategories = {
+        some: {
+          subcategory: {
+            slug: value,
+          },
+        },
+      };
+
+      continue;
+    }
+
     // CASE 1: No operator → simple equality filter
     // Example: ?category=phone → { category: "phone" }
+
     if (!match) {
-      where[key] = value;
+      if (key === "title") {
+        where[key] = {
+          contains: value,
+          mode: "insensitive",
+        };
+      } else {
+        where[key] = value;
+      }
       continue;
     }
 

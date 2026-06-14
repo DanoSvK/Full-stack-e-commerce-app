@@ -70,10 +70,15 @@ export const createUpdateCustomerProperties = catchAsync(
     if (!req.body.action) {
       return next(
         new AppError(
-          "Please, define action key with vlaue of create or update",
+          "Please, define action key with value of create or update",
         ),
       );
     }
+
+    if (!req.body.key || !req.body.value) {
+      return next(new AppError("Property must have a key and a value"));
+    }
+
     let result;
 
     if (action === "create") {
@@ -116,6 +121,17 @@ export const createUpdateCustomerProperties = catchAsync(
     });
   },
 );
+
+export const deleteCustomerProperty = catchAsync(async (req, res, next) => {
+  const customerProperty = await prisma.userProperty.delete({
+    where: { userId_key: { userId: req.user.id, key: req.body.key } },
+  });
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
 
 export const getCustomerProperties = catchAsync(async (req, res, next) => {
   const customerProperties = await prisma.userProperty.findMany({

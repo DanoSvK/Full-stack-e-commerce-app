@@ -18,6 +18,10 @@ export const getAll = (Model, queryOptions) =>
       features.prismaQuery.where.productId = Number(req.params.prodId);
     }
 
+    if (queryOptions?.include) {
+      features.prismaQuery.include = queryOptions.include;
+    }
+
     const records = await prisma[Model].findMany(features.prismaQuery);
 
     res.status(200).json({
@@ -45,7 +49,7 @@ export const getOne = (Model, queryOptions) =>
       where: { id: parseInt(req.params.id) },
     };
 
-    if (queryOptions) options.include = queryOptions;
+    if (queryOptions?.include) options.include = queryOptions.include;
 
     const record = await prisma[Model].findUnique(options);
 
