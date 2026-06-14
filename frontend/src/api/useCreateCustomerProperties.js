@@ -2,21 +2,21 @@ import { createUpdateCustomerProperties } from "../services/apiCustomerPropertie
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-export function useUpdateCustomerProperty() {
+export function useCreateCustomerProperty() {
   const queryClient = useQueryClient();
   const {
-    mutate: updateCustomerProperties,
-    isPending: isUpdating,
+    mutate: createCustomerProperties,
+    isPending: isCreating,
     error,
   } = useMutation({
     mutationFn: ({ action, key, value }) =>
       createUpdateCustomerProperties(action, key, value),
     onSuccess: () => {
-      toast.success("Customer property successfully edited");
+      toast.success("Customer property successfully created");
       queryClient.invalidateQueries({ queryKey: ["customerProperty"] });
     },
     onError: (err) => toast.error(err.message),
   });
 
-  return { isUpdating, updateCustomerProperties, error };
+  return { isCreating, createCustomerProperties, error };
 }

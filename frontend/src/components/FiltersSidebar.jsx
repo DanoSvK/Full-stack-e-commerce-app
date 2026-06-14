@@ -1,6 +1,10 @@
 import { Search, AlertCircle } from "lucide-react";
 import CategoryButton from "./CategoryButton";
 import SubcategoryButton from "./SubcategoryButton";
+import { useProducts } from "../api/useProducts";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 
 function FiltersSidebar({
   onUpdateFilter,
@@ -8,6 +12,39 @@ function FiltersSidebar({
   categories,
   subcategories,
 }) {
+  const { products, isFetching } = useProducts();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState();
+  const [categoryQuery, setCategoryQuery] = useState();
+
+  const handleClick = (searchQuery) => {
+    setSearchParams((prev) => {
+      const next = { ...prev };
+
+      if (searchQuery) {
+        next.title = searchQuery;
+      } else {
+        delete next.title;
+      }
+
+      return next;
+    });
+  };
+
+  const handleCategory = (categoryQuery) => {
+    setSearchParams((prev) => {
+      const next = { ...prev };
+
+      if (categoryQuery === "all") {
+        delete next.category;
+      } else {
+        next.category = categoryQuery;
+      }
+
+      return next;
+    });
+  };
+  console.log(categories);
   return (
     <section>
       <h3 className="text-white font-black text-xl tracking-tighter uppercase mb-8">
@@ -23,18 +60,30 @@ function FiltersSidebar({
             Search
           </label>
           <div className="relative">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 z-10"
-              aria-hidden="true"
-            />
+            <button
+              type="submit"
+              className="cursor-pointer"
+              aria-label="search"
+              onClick={() => {
+                handleClick(searchQuery);
+              }}
+            >
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 z-10"
+                aria-hidden="true"
+              />
+            </button>
             <input
               type="text"
               id="search"
               placeholder="Product name..."
               className="input-field w-full pl-10! text-sm relative"
-              onInput={(e) => {
-                onUpdateFilter("search", e.target.value);
+              onInput={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleClick(searchQuery);
+                }
               }}
             />
           </div>
@@ -78,8 +127,9 @@ function FiltersSidebar({
               <CategoryButton
                 key={category}
                 label={category.charAt(0).toUpperCase() + category.slice(1)}
-                active={filters.category === category}
+                active={filters.category.includes(category)}
                 onUpdateFilter={onUpdateFilter}
+                // onCategory={handleCategory}
               />
             ))}
           </div>

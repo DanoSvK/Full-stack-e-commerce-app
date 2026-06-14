@@ -2,12 +2,11 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { bre } from "../utils/bloomreach";
+import { API_BASE_URL } from "../globalVariables";
 
 const sdk = bre();
 
 const AuthContext = createContext();
-
-const API = "http://localhost:3000/api/v1"; // your base URL
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -20,7 +19,7 @@ function AuthProvider({ children }) {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const res = await fetch(`${API}/users/me`, {
+        const res = await fetch(`${API_BASE_URL}/users/me`, {
           credentials: "include",
           cache: "no-store",
         });
@@ -47,7 +46,7 @@ function AuthProvider({ children }) {
   const signup = async (username, email, password, passwordConfirm) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/users/signup`, {
+      const res = await fetch(`${API_BASE_URL}/users/signup`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +83,7 @@ function AuthProvider({ children }) {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/users/login`, {
+      const res = await fetch(`${API_BASE_URL}/users/login`, {
         method: "POST",
         credentials: "include", // sends/receives the httpOnly cookie
         headers: { "Content-Type": "application/json" },
@@ -107,11 +106,12 @@ function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = () => {
-    window.location.href = "http://localhost:3000/api/v1/users/oauth/login";
+    window.location.href =
+      "http://localhost:3000/API_BASE_URL/v1/users/oauth/login";
   };
 
   const logout = async () => {
-    const res = await fetch(`${API}/users/logout`, {
+    const res = await fetch(`${API_BASE_URL}/users/logout`, {
       method: "GET",
       credentials: "include",
     });
@@ -123,7 +123,7 @@ function AuthProvider({ children }) {
   const forgotPassword = async (email) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/users/forgotPassword`, {
+      const res = await fetch(`${API_BASE_URL}/users/forgotPassword`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -142,7 +142,7 @@ function AuthProvider({ children }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API}/users/resetPassword/${resetPasswordToken}`,
+        `${API_BASE_URL}/users/resetPassword/${resetPasswordToken}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -173,7 +173,7 @@ function AuthProvider({ children }) {
   ) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/users/updateMyPassword`, {
+      const res = await fetch(`${API_BASE_URL}/users/updateMyPassword`, {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

@@ -1,25 +1,30 @@
 import ProductCard from "../components/ProductCard";
 import ProductList from "../components/ProductList";
 import FiltersSidebar from "../components/FiltersSidebar";
-
+import { useProducts } from "../api/useProducts";
 import { useState } from "react";
-import { products } from "../../products";
 import { Filter, ChevronDown, LayoutGrid, List } from "lucide-react";
+import Pagination from "../ui/Pagination";
 
 function ProductPage() {
   const [filters, setFilters] = useState({
     search: "",
     productId: "",
-    category: "all",
+    category: ["all"],
     subcategory: "all",
     priceRange: { min: 0, max: 1000 },
     stockLevel: "all",
   });
+  const { products = [], isFetching } = useProducts();
 
   // DERIVE CATEGORIES FROM PRODUCTS FOR FILTER
   const categories = [
     "all",
-    ...new Set(products.map((p) => p.category.toLowerCase())),
+    ...new Set(
+      products?.flatMap((p) =>
+        p.productCategories.map((prodCategory) => prodCategory.category.slug),
+      ),
+    ),
   ];
 
   function CalcStockLevel(stock) {
@@ -29,20 +34,22 @@ function ProductPage() {
   }
 
   // DERIVE SUBCATEGORIES FROM CATEGORIES FOR FILTER
-  const subcategories =
-    filters.category === "all"
-      ? [] // no subcategories at all
-      : [
-          "all",
-          ...new Set(
-            products
-              .filter(
-                (product) =>
-                  product.category.toLowerCase() === filters.category,
-              )
-              .map((product) => product.subcategory.toLowerCase()),
-          ),
-        ];
+  const subcategories = filters.category.includes("all")
+    ? []
+    : [
+        "all",
+        ...new Set(
+          products
+            .filter((product) =>
+              product.productCategories.some((pc) =>
+                filters.category.includes(pc.category.slug),
+              ),
+            )
+            .flatMap((product) =>
+              product.productSubcategories.map((psc) => psc.subcategory.slug),
+            ),
+        ),
+      ];
 
   const handleUpdateFilter = (key, value) => {
     setFilters((prev) => ({
@@ -55,22 +62,21 @@ function ProductPage() {
     }));
   };
 
-  const filteredProducts = products.filter((product) => {
-    return (
-      product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
-      product.id.toLowerCase().includes(filters.productId.toLowerCase()) &&
-      (filters.category === "all" ||
-        product.category.toLowerCase() === filters.category) &&
-      (filters.subcategory === "all" ||
-        product.subcategory.toLowerCase() === filters.subcategory) &&
-      product.price >= filters.priceRange.min &&
-      product.price <= filters.priceRange.max
-    );
-  });
-
+  // if (filters.search)
+  // const filteredProducts = products.filter((product) => {
+  //   return (
+  //     product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
+  //     product.id.toLowerCase().includes(filters.productId.toLowerCase()) &&
+  //     (filters.category === "all" ||
+  //       product.category.toLowerCase() === filters.category) &&
+  //     (filters.subcategory === "all" ||
+  //       product.subcategory.toLowerCase() === filters.subcategory) &&
+  //     product.price >= filters.priceRange.min &&
+  //     product.price <= filters.priceRange.max
+  //   );
+  // });
   return (
     <div className="lg:flex px-4 gap-8">
-      {/* FILTERS */}
       <aside>
         <FiltersSidebar
           onUpdateFilter={handleUpdateFilter}
@@ -79,7 +85,6 @@ function ProductPage() {
           subcategories={subcategories}
         />
       </aside>
-
       {/* PRODUCTS */}
       <section className="flex-1">
         <div className="flex justify-between items-center bg-zinc-900/50 p-4 rounded-2xl border border-white/5 mb-8">
@@ -102,7 +107,8 @@ function ProductPage() {
             </button>
           </div>
         </div>
-        <ProductList products={filteredProducts} />
+        <ProductList products={products} />
+        <Pagination />
       </section>
     </div>
   );

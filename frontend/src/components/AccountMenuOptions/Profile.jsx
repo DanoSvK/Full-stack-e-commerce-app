@@ -1,8 +1,10 @@
 import { QueryClient } from "@tanstack/react-query";
-import { IdCard, Edit2, Plus } from "lucide-react";
+import { IdCard, Edit2, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useCustomerProperties } from "../../api/api";
 import { useUpdateCustomerProperty } from "../../api/useEditCustomerProperties";
+import { useCreateCustomerProperty } from "../../api/useCreateCustomerProperties";
+import { useDeleteCustomerProperty } from "../../api/useDeleteCustomerProperties";
 
 const user = {
   ids: {
@@ -23,27 +25,86 @@ function Profile() {
   const [details, setDetails] = useState(user);
   const [isEditingIds, setIsEditingIds] = useState(false);
   const [isEditingProps, setIsEditingProps] = useState(false);
-  const [newPropertyKey, setNewPropertyKey] = useState(null);
-  const [newPropertyValue, setNewPropertyValue] = useState(null);
+  const [isCreatingProperty, setIsCreatingProperty] = useState(false);
+  const [newPropertyKey, setNewPropertyKey] = useState("");
+  const [newPropertyValue, setNewPropertyValue] = useState("");
 
-  const { customerProperties, isPending, error } = useCustomerProperties();
+  const { isFetching, customerProperties } = useCustomerProperties();
   const { isUpdating, updateCustomerProperties } = useUpdateCustomerProperty();
+  const { isCreating, createCustomerProperties } = useCreateCustomerProperty();
+  const { isDeleting, deleteCustomerProperties } = useDeleteCustomerProperty();
 
-  function updateUserData(key, value, dataType) {
-    setDetails((prev) => ({
-      ...prev,
-      [dataType]: { ...prev[dataType], [key]: value },
-    }));
+  function safeParse(value) {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
   }
 
-  function handleAddProperty() {
-    user.properties[newPropertyKey] = newPropertyValue;
-    console.log(user);
-    console.log(newPropertyKey, newPropertyValue);
+  function handleCreateProperty(action) {
+    createCustomerProperties(
+      {
+        action,
+        key: newPropertyKey,
+        value: safeParse(newPropertyValue),
+      },
+      {
+        onSuccess: () => {
+          setNewPropertyKey("");
+          setNewPropertyValue("");
+          setIsCreatingProperty(false);
+        },
+      },
+    );
   }
 
   return (
     <>
+      {isCreatingProperty && (
+        <div className="absolute bg-black border p-4 rounded-xl flex flex-col text-[10px] justify-between group space-y-1 left-3/6 -translate-x-2/4 top-6/12 -translate-y-2/4  z-10">
+          <button
+            className="absolute top-2 right-2 cursor-pointer hover:text-red-600"
+            type="button"
+            aria-label="close"
+            onClick={() => setIsCreatingProperty(false)}
+          >
+            <X size="16" />
+          </button>
+          <dt className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest">
+            Add new property
+          </dt>
+          <input
+            type="text"
+            className="input-field w-full text-sm h-1"
+            placeholder="Property name"
+            value={newPropertyKey}
+            onInput={(e) => {
+              setNewPropertyKey(e.target.value);
+            }}
+          />
+
+          <input
+            type="text"
+            className="input-field w-full text-sm h-2"
+            placeholder="Property value"
+            value={newPropertyValue}
+            onInput={(e) => {
+              setNewPropertyValue(e.target.value);
+            }}
+          />
+          <button
+            className="text-zinc-950 cursor-pointer bg-accent self-center py-1 px-3 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            type="submit"
+            disabled={isCreating}
+            onClick={() => {
+              handleCreateProperty("create");
+            }}
+          >
+            {!isCreating ? "Add New" : "Adding..."}
+          </button>
+        </div>
+      )}
       <section className="mb-16">
         <header className="flex justify-between mb-8">
           <h2 className="text-3xl font-black tracking-tighter text-white uppercase">
@@ -90,12 +151,13 @@ function Profile() {
             >
               <Edit2 size={16} />
               <span>
-                {!isEditingProps ? "Edit Properties" : "Save Changes"}
+                {!isEditingProps ? "Edit Properties" : "Finish Editing"}
               </span>
             </button>
             <button
               type="button"
               className="ml-auto flex items-center gap-2 text-accent text-xs font-bold hover:underline cursor-pointer"
+              onClick={() => setIsCreatingProperty(true)}
             >
               <Plus size={16} />
               <span>Add Property</span>
@@ -104,66 +166,56 @@ function Profile() {
         </header>
 
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {isEditingProps && (
-            <div className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex flex-col text-[10px] justify-between group space-y-1">
-              <dt className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest">
-                Add new property
-              </dt>
-              <input
-                type="text"
-                className="input-field w-full text-sm h-1"
-                placeholder="Property name"
-                onInput={(e) => {
-                  setNewPropertyKey(e.target.value);
-                }}
-              />
-
-              <input
-                type="text"
-                className="input-field w-full text-sm h-2"
-                placeholder="Property value"
-                onInput={(e) => {
-                  setNewPropertyValue(e.target.value);
-                }}
-              />
-              <button
-                className="text-accent hover:underline cursor-pointer"
-                type="submit"
-                onClick={handleAddProperty}
+          {isFetching ? (
+            <img src="/loading.png" className="w-6 h-6 animate-spin" />
+          ) : (
+            customerProperties?.map((property) => (
+              <div
+                className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex text-[10px] justify-between items-center group"
+                key={property.key}
               >
-                + Add New
-              </button>
-            </div>
-          )}
-          {customerProperties?.map((property) => (
-            <div
-              className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex flex-col text-[10px] justify-between group"
-              key={property.key}
-            >
-              <dt className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest">
-                {property.key.toUpperCase()}
-              </dt>
+                <div>
+                  <dt className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest">
+                    {property.key.toUpperCase()}
+                  </dt>
 
-              {!isEditingProps ? (
-                <dd className="text-white text-sm font-bold">
-                  {property.value}
-                </dd>
-              ) : (
-                <input
-                  type="text"
-                  defaultValue={property.value}
-                  className="input-field w-full text-sm"
-                  onBlur={(e) => {
-                    updateCustomerProperties({
-                      action: "update",
-                      key: property.key,
-                      value: e.target.value,
-                    });
-                  }}
-                />
-              )}
-            </div>
-          ))}
+                  {!isEditingProps ? (
+                    <dd className="text-white text-sm font-bold">
+                      {property.value}
+                    </dd>
+                  ) : (
+                    <input
+                      type="text"
+                      defaultValue={property.value}
+                      className="input-field w-full text-sm"
+                      onBlur={(e) => {
+                        updateCustomerProperties({
+                          action: "update",
+                          key: property.key,
+                          value: e.target.value,
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+
+                {!isDeleting ? (
+                  <button
+                    className="hidden group-hover:block cursor-pointer hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    type="submit"
+                    disabled={isDeleting}
+                    onClick={() => {
+                      deleteCustomerProperties(property.key);
+                    }}
+                  >
+                    <Trash2 size="20" />
+                  </button>
+                ) : (
+                  <img src="/loading.png" className="w-6 h-6 animate-spin" />
+                )}
+              </div>
+            ))
+          )}
         </dl>
       </section>
     </>
