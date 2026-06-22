@@ -7,7 +7,7 @@ export default function Logo() {
         <span className="text-zinc-950 font-black text-xl">B</span>
       </div>
       <span className="text-white font-black tracking-tighter text-xl">
-        BESTSHOP
+        BESTshop
       </span>
     </Link>
   );

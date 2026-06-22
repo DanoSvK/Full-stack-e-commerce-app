@@ -1,6 +1,6 @@
 import { Layers } from "lucide-react";
 
-import KillSwitch from "../components/KillSwitch";
+import KillSwitch from "../ui/KillSwitch";
 import { useState } from "react";
 
 function WeblayerPage() {

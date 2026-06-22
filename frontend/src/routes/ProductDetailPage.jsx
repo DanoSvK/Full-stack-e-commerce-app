@@ -1,14 +1,11 @@
 import { Heart, Share, Star, AlertCircle, ShoppingCart } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { useProducts } from "../api/useProducts";
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import { useProduct } from "../api/useProduct";
+import { useProduct } from "../features/products/useProduct";
 
 function ProductDetailPage() {
   const { product = {}, isFetching } = useProduct();
-
   const [color, setColor] = useState(null);
   const [size, setSize] = useState(null);
   const [itemCount, setItemCount] = useState(1);
@@ -54,19 +51,16 @@ function ProductDetailPage() {
             <header>
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center text-accent text-xs font-black tracking-widest uppercase">
-                  {product.productCategories.map((category) => (
-                    <p key={category.category.name}>{category.category.name}</p>
-                  ))}
-                  /
-                  {product.productSubcategories.map((subcategory) => (
-                    <p key={subcategory.subcategory.name}>
-                      {subcategory.subcategory.name}
+                  {product.subcategory.categories.map((category) => (
+                    <p key={category.category.name} className="pr-1">
+                      {category.category.name}{" "}
                     </p>
                   ))}
+                  /<p className="pl-1">{product.subcategory.slug}</p>
                 </div>
                 <p className="flex items-center gap-1 text-accent">
                   <Star size={13} />
-                  <span className="text-sm font-bold text-white">4.8</span>{" "}
+                  <span className="text-sm font-bold text-white">4.8</span>
                   <span className="text-zinc-500 text-xs">(128 reviews)</span>
                 </p>
               </div>

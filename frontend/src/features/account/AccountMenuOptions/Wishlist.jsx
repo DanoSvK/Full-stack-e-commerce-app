@@ -1,19 +1,22 @@
 import { Heart } from "lucide-react";
 import WishlistProductList from "./WishlistProductList";
-import { products } from "../../../products";
-import { useWishlist } from "../../context/WishlistContext";
 import { Link } from "react-router-dom";
+import { useWishlist } from "../../../api/useWishlist";
 
 function Wishlist() {
-  const { wishlistProducts } = useWishlist();
+  const { wishlist, isFetchingWishlist, error: wishlistError } = useWishlist();
 
-  const currentWishlist = products.filter((product) =>
-    wishlistProducts.includes(product.id),
-  );
+  if (isFetchingWishlist) {
+    return <div>Loading</div>;
+  }
+
+  if (wishlistError) {
+    return <div>Could not load your wishlist</div>;
+  }
 
   return (
     <>
-      {!wishlistProducts.length ? (
+      {!wishlist.length ? (
         <>
           <h1 className="text-3xl font-black tracking-tighter text-white uppercase mb-8">
             My Wishlist
@@ -32,7 +35,7 @@ function Wishlist() {
         </>
       ) : (
         <section className="flex-1">
-          <WishlistProductList products={currentWishlist} />
+          <WishlistProductList products={wishlist} />
         </section>
       )}
     </>

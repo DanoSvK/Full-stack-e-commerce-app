@@ -21,7 +21,7 @@ export const getCustomerProperties = async () => {
   return data.data.customerProperties;
 };
 
-export const createUpdateCustomerProperties = async (action, key, value) => {
+export const createUpdateCustomerProperty = async (action, key, value) => {
   const res = await fetch(
     `${API_BASE_URL}/users/createUpdateCustomerProperties`,
     {

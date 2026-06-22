@@ -1,7 +1,11 @@
 import { API_BASE_URL } from "../globalVariables";
 
-export const getOneProduct = async (prodId) => {
-  const res = await fetch(`${API_BASE_URL}/products/${prodId}`);
+export const getSuggestedProducts = async (param) => {
+  if (!param) return;
+
+  const res = await fetch(
+    `${API_BASE_URL}/products/suggestions?suggestions=${param}`,
+  );
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
@@ -12,5 +16,5 @@ export const getOneProduct = async (prodId) => {
   }
 
   const data = await res.json();
-  return data.data;
+  return data;
 };

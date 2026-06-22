@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import EmptyCartPage from "../components/EmptyCartPage";
 import { ArrowLeft, ArrowRight, Tag, Ticket, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { useProducts } from "../api/useProducts";
+import { useProducts } from "../features/products/useProducts";
 
 function CartPage() {
   const { cartProducts } = useCart();

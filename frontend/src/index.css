@@ -28,6 +28,7 @@
   --animate--drop: drop 0.7s ease-in-out;
   --animate-scale-up: scaleUp 0.7s ease-in-out;
   --animate-push-up: pushUp 0.7s ease-in-out;
+  --animate-skeleton: skeletonLoading 1.5s infinite;
 
   @keyframes fadeIn {
     from {
@@ -57,6 +58,15 @@
   }
 }
 
+@keyframes skeletonLoading {
+  0%,
+  100% {
+    background-color: #27272a;
+  } /* zinc-800 */
+  50% {
+    background-color: #3f3f46;
+  } /* zinc-700 */
+}
 .glass-card {
   @supports (color: color-mix(in lab, red, red)) {
     background-color: color-mix(

@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Footer from "../ui/Footer";
+import Header from "../ui/Header";
 import ScrollToTop from "../utils/ScrollToTop";
 import { CartProvider } from "../context/CartContext";
-import Wishlist from "../components/AccountMenuOptions/Wishlist";
+import Wishlist from "../features/account/AccountMenuOptions/Wishlist";
 import { WishlistProvider } from "../context/WishlistContext";
 import { AuthProvider } from "../context/AuthContext";
 

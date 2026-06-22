@@ -1,4 +1,4 @@
-import Hero from "../components/Hero";
+import Hero from "../ui/Hero";
 import PageCard from "../components/PageCard";
 import { Layers, TestTube2, ShoppingBag, Database, User } from "lucide-react";
 

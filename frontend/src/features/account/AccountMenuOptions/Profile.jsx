@@ -1,10 +1,10 @@
 import { QueryClient } from "@tanstack/react-query";
 import { IdCard, Edit2, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import { useCustomerProperties } from "../../api/api";
-import { useUpdateCustomerProperty } from "../../api/useEditCustomerProperties";
-import { useCreateCustomerProperty } from "../../api/useCreateCustomerProperties";
-import { useDeleteCustomerProperty } from "../../api/useDeleteCustomerProperties";
+import { useCustomerProperties } from "../../../api/useCustomerProperties";
+import { useUpdateCustomerProperty } from "../../../api/useEditCustomerProperties";
+import { useCreateCustomerProperty } from "../../../api/useCreateCustomerProperty";
+import { useDeleteCustomerProperty } from "../../../api/useDeleteCustomerProperties";
 
 const user = {
   ids: {
@@ -22,8 +22,7 @@ const user = {
 };
 
 function Profile() {
-  const [details, setDetails] = useState(user);
-  const [isEditingIds, setIsEditingIds] = useState(false);
+  const [details] = useState(user);
   const [isEditingProps, setIsEditingProps] = useState(false);
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
   const [newPropertyKey, setNewPropertyKey] = useState("");
@@ -31,8 +30,13 @@ function Profile() {
 
   const { isFetching, customerProperties } = useCustomerProperties();
   const { isUpdating, updateCustomerProperties } = useUpdateCustomerProperty();
-  const { isCreating, createCustomerProperties } = useCreateCustomerProperty();
-  const { isDeleting, deleteCustomerProperties } = useDeleteCustomerProperty();
+  const { createCustomerProperty, isCreatingPropertyReq } =
+    useCreateCustomerProperty();
+  const {
+    deleteCustomerProperty,
+    isPending: isDeletingCustomerProperty,
+    error: deletingError,
+  } = useDeleteCustomerProperty();
 
   function safeParse(value) {
     try {
@@ -43,7 +47,7 @@ function Profile() {
   }
 
   function handleCreateProperty(action) {
-    createCustomerProperties(
+    createCustomerProperty(
       {
         action,
         key: newPropertyKey,
@@ -96,12 +100,12 @@ function Profile() {
           <button
             className="text-zinc-950 cursor-pointer bg-accent self-center py-1 px-3 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
-            disabled={isCreating}
+            disabled={isCreatingPropertyReq}
             onClick={() => {
               handleCreateProperty("create");
             }}
           >
-            {!isCreating ? "Add New" : "Adding..."}
+            {!isCreatingPropertyReq ? "Add New" : "Adding..."}
           </button>
         </div>
       )}
@@ -117,7 +121,6 @@ function Profile() {
           <button
             type="button"
             className="self-end flex items-center gap-2 text-accent text-sm font-bold hover:underline cursor-pointer"
-            onClick={() => setIsEditingIds((prev) => !prev)}
           ></button>
         </header>
 
@@ -171,7 +174,7 @@ function Profile() {
           ) : (
             customerProperties?.map((property) => (
               <div
-                className="bg-zinc-900/50 border border-white/5 p-4 rounded-xl flex text-[10px] justify-between items-center group"
+                className={`bg-zinc-900/50 border p-4 rounded-xl flex text-[10px] justify-between items-center group ${deletingError ? "border-red-500" : "border-white/5"}`}
                 key={property.key}
               >
                 <div>
@@ -199,13 +202,13 @@ function Profile() {
                   )}
                 </div>
 
-                {!isDeleting ? (
+                {!isDeletingCustomerProperty ? (
                   <button
                     className="hidden group-hover:block cursor-pointer hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     type="submit"
-                    disabled={isDeleting}
+                    disabled={isDeletingCustomerProperty}
                     onClick={() => {
-                      deleteCustomerProperties(property.key);
+                      deleteCustomerProperty(property.key);
                     }}
                   >
                     <Trash2 size="20" />

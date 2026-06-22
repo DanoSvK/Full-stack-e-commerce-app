@@ -1,9 +1,9 @@
 import { Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
-function ProductCard({ product }) {
+function ProductCard({ product, onAddItemToWishlist }) {
   const { onAddCartProducts } = useCart();
   const { wishlistProducts, onAddToWishlist } = useWishlist();
   const active = wishlistProducts.includes(product.id);
@@ -11,7 +11,7 @@ function ProductCard({ product }) {
   return (
     <div className="relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group">
       <div className="absolute top-4 left-4 z-10 space-x-2">
-        {product.productCategories.map((category) => (
+        {product.subcategory.categories.map((category) => (
           <span
             className="bg-zinc-900/80 backdrop-blur-md text-zinc-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
             key={category.category.name}
@@ -23,7 +23,10 @@ function ProductCard({ product }) {
       <button
         aria-label="Add to wishlist"
         className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300  text-white  ${active ? "bg-accent" : "bg-zinc-900/40 hover:bg-zinc-900/80"}`}
-        onClick={() => onAddToWishlist(product.id)}
+        onClick={() => {
+          onAddToWishlist(product.id);
+          onAddItemToWishlist(product.id);
+        }}
       >
         <Heart
           size={16}
@@ -49,14 +52,12 @@ function ProductCard({ product }) {
           >
             {product.title}
           </Link>
-          {product.productSubcategories.map((subcategory) => (
-            <p
-              className="text-zinc-500 text-xs mt-1"
-              key={subcategory.subcategory.name}
-            >
-              {subcategory.subcategory.name}
-            </p>
-          ))}
+          <p
+            className="text-zinc-500 text-xs mt-1"
+            key={product.subcategory.name}
+          >
+            {product.subcategory.name}
+          </p>
         </div>
         <div className="flex items-center justify-between">
           <div>

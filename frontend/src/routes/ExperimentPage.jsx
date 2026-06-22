@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { TestTube2 } from "lucide-react";
 
-import KillSwitch from "../components/KillSwitch";
+import KillSwitch from "../ui/KillSwitch";
 
 function ExperimentPage() {
   const [isExperimentActive, setIsExperimentActive] = useState(true);

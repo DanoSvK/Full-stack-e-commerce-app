@@ -1,56 +1,65 @@
-import ProductCard from "../components/ProductCard";
-import ProductList from "../components/ProductList";
-import FiltersSidebar from "../components/FiltersSidebar";
-import { useProducts } from "../api/useProducts";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { usePrices } from "../features/products/usePrices";
+
 import { Filter, ChevronDown, LayoutGrid, List } from "lucide-react";
+
+import ProductCard from "../features/products/ProductCard";
+import ProductList from "../features/products/ProductList";
+import FiltersSidebar from "../features/products/FiltersSidebar";
 import Pagination from "../ui/Pagination";
 
+import ProductListSkeleton from "../components/skeletons/ProductListSkeleton";
+
+import { useProducts } from "../features/products/useProducts";
+
 function ProductPage() {
-  const [filters, setFilters] = useState({
-    search: "",
-    productId: "",
-    category: ["all"],
-    subcategory: "all",
-    priceRange: { min: 0, max: 1000 },
-    stockLevel: "all",
-  });
-  const { products = [], isFetching } = useProducts();
+  usePrices();
 
-  // DERIVE CATEGORIES FROM PRODUCTS FOR FILTER
-  const categories = [
-    "all",
-    ...new Set(
-      products?.flatMap((p) =>
-        p.productCategories.map((prodCategory) => prodCategory.category.slug),
-      ),
-    ),
-  ];
+  const {
+    data: productsData,
+    isPending: isFetchingProducts,
+    error: productsError,
+  } = useProducts();
 
-  function CalcStockLevel(stock) {
-    switch (filters.stockLevel) {
-      case stock < 10:
+  const [searchParams] = useSearchParams();
+
+  const paginationDetails = productsData?.pagination;
+  const products = productsData?.products ?? [];
+
+  function getStockLevel() {
+    if (searchParams.has("stock_gt")) {
+      return "in-stock";
     }
+
+    if (searchParams.has("stock_lte")) {
+      return "low-stock";
+    }
+
+    if (searchParams.has("stock_e")) {
+      return "out-of-stock";
+    }
+
+    return "all";
   }
 
-  // DERIVE SUBCATEGORIES FROM CATEGORIES FOR FILTER
-  const subcategories = filters.category.includes("all")
-    ? []
-    : [
-        "all",
-        ...new Set(
-          products
-            .filter((product) =>
-              product.productCategories.some((pc) =>
-                filters.category.includes(pc.category.slug),
-              ),
-            )
-            .flatMap((product) =>
-              product.productSubcategories.map((psc) => psc.subcategory.slug),
-            ),
-        ),
-      ];
+  // Initial filter values
+  const [filters, setFilters] = useState({
+    search: searchParams.get("title") || "",
+    productId: searchParams.get("id") || "",
+    category: searchParams.get("category") || "all",
+    subcategory: searchParams.get("subcategory") || "all",
+    priceRange:
+      searchParams.get("price_gte") || searchParams.get("price_lte")
+        ? {
+            min: searchParams.get("price_gte"),
+            max: searchParams.get("price_lte"),
+          }
+        : null,
+    stockLevel: getStockLevel(),
+  });
 
+  // Updating filters state
   const handleUpdateFilter = (key, value) => {
     setFilters((prev) => ({
       ...prev,
@@ -75,14 +84,17 @@ function ProductPage() {
   //     product.price <= filters.priceRange.max
   //   );
   // });
+
+  if (productsError) {
+    <div>Error</div>;
+  }
+
   return (
     <div className="lg:flex px-4 gap-8">
       <aside>
         <FiltersSidebar
           onUpdateFilter={handleUpdateFilter}
-          filters={filters}
-          categories={categories}
-          subcategories={subcategories}
+          filters={filters} // Pass effectivePriceRange into filter, othwersie it's gonna be null
         />
       </aside>
       {/* PRODUCTS */}
@@ -107,8 +119,16 @@ function ProductPage() {
             </button>
           </div>
         </div>
-        <ProductList products={products} />
-        <Pagination />
+        {isFetchingProducts ? (
+          <ProductListSkeleton />
+        ) : productsError ? (
+          <p>Could not load products</p>
+        ) : (
+          <>
+            <ProductList products={products} />
+            <Pagination paginationDetails={paginationDetails} />
+          </>
+        )}
       </section>
     </div>
   );

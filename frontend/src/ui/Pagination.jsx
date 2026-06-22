@@ -1,31 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { buildPagination } from "../utils/pagination";
 import { useSearchParams } from "react-router-dom";
 
-const TOTAL_PAGES = 5;
-
-function Pagination() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const pagination = buildPagination(currentPage, TOTAL_PAGES);
+function Pagination({ paginationDetails }) {
+  const totalPages = paginationDetails?.totalPages;
   const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const pagination = buildPagination(currentPage, totalPages);
 
   function handlePageClick(page) {
-    setCurrentPage(page);
     setSearchParams((prev) => {
-      const next = { ...prev };
+      const next = new URLSearchParams(prev);
 
-      next.page = page;
-
+      if (page === 1) {
+        next.delete("page");
+      } else {
+        next.set("page", page);
+      }
       return next;
     });
   }
 
-  console.log(pagination);
   return (
     <div className="flex gap-2">
-      {pagination.map((p) =>
+      {pagination.map((p, i) =>
         p === "..." ? (
-          <span>{p}</span>
+          <span key={`ellipsis-${i}`}>{p}</span>
         ) : (
           <button
             type="button"

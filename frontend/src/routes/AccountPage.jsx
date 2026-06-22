@@ -1,8 +1,8 @@
-import Profile from "../components/AccountMenuOptions/Profile";
-import Wishlist from "../components/AccountMenuOptions/Wishlist";
-import Orders from "../components/AccountMenuOptions/Orders";
-import Security from "../components/AccountMenuOptions/Security";
-import AccountSidebar from "../components/AccountSidebar";
+import Profile from "../features/account/AccountMenuOptions/Profile";
+import Wishlist from "../features/account/AccountMenuOptions/Wishlist";
+import Orders from "../features/account/AccountMenuOptions/Orders";
+import Security from "../features/account/AccountMenuOptions/Security";
+import AccountSidebar from "../features/account/AccountSidebar";
 
 import { useState } from "react";
 import { User, Heart, Shield, Package } from "lucide-react";
