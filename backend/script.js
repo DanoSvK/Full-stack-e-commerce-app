@@ -1,15 +1,21 @@
 import prisma from "./lib/prisma.js";
 
 async function main() {
-  // 1. Seed base tables ONCE
+  // 1. Seed categories
   await prisma.category.createMany({
     data: [
       { name: "Electronics", slug: "electronics" },
       { name: "Apparel", slug: "apparel" },
+      { name: "Refurbished", slug: "refurbished" },
+      { name: "Sportswear", slug: "sportswear" },
     ],
     skipDuplicates: true,
   });
 
+  const categories = await prisma.category.findMany();
+  const categoryMap = Object.fromEntries(categories.map((c) => [c.name, c.id]));
+
+  // 2. Seed subcategories (no categoryId anymore — linked via join table)
   await prisma.subcategory.createMany({
     data: [
       { name: "Smartphones", slug: "smartphones" },
@@ -20,17 +26,58 @@ async function main() {
     skipDuplicates: true,
   });
 
-  // 2. Preload categories + subcategories into memory (IMPORTANT)
-  const categories = await prisma.category.findMany();
   const subcategories = await prisma.subcategory.findMany();
-
-  const categoryMap = Object.fromEntries(categories.map((c) => [c.name, c.id]));
-
   const subcategoryMap = Object.fromEntries(
     subcategories.map((s) => [s.name, s.id]),
   );
 
-  // 3. Create products + relations
+  // 3. Link subcategories to categories (many-to-many)
+  await prisma.categorySubcategory.createMany({
+    data: [
+      // Smartphones -> Electronics + Refurbished
+      {
+        categoryId: categoryMap["Electronics"],
+        subcategoryId: subcategoryMap["Smartphones"],
+      },
+      {
+        categoryId: categoryMap["Refurbished"],
+        subcategoryId: subcategoryMap["Smartphones"],
+      },
+
+      // Laptops -> Electronics + Refurbished
+      {
+        categoryId: categoryMap["Electronics"],
+        subcategoryId: subcategoryMap["Laptops"],
+      },
+      {
+        categoryId: categoryMap["Refurbished"],
+        subcategoryId: subcategoryMap["Laptops"],
+      },
+
+      // T-Shirts -> Apparel + Sportswear
+      {
+        categoryId: categoryMap["Apparel"],
+        subcategoryId: subcategoryMap["T-Shirts"],
+      },
+      {
+        categoryId: categoryMap["Sportswear"],
+        subcategoryId: subcategoryMap["T-Shirts"],
+      },
+
+      // Hoodies -> Apparel + Sportswear
+      {
+        categoryId: categoryMap["Apparel"],
+        subcategoryId: subcategoryMap["Hoodies"],
+      },
+      {
+        categoryId: categoryMap["Sportswear"],
+        subcategoryId: subcategoryMap["Hoodies"],
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  // 4. Create products + relations
   for (let i = 0; i < 48; i++) {
     const category = i % 2 === 0 ? "Electronics" : "Apparel";
 
@@ -43,7 +90,7 @@ async function main() {
           ? "T-Shirts"
           : "Hoodies";
 
-    const product = await prisma.product.create({
+    await prisma.product.create({
       data: {
         title: `Demo Product ${i + 1}`,
         price: Math.floor(Math.random() * 500) + 10,
@@ -59,21 +106,7 @@ async function main() {
           colors: ["Black", "White", "Midnight Blue", "Space Grey"],
           sizes: ["S", "M", "L", "XL"],
         },
-      },
-    });
 
-    // 4. Product → Category
-    await prisma.productCategory.create({
-      data: {
-        productId: product.id,
-        categoryId: categoryMap[category],
-      },
-    });
-
-    // 5. Product → Subcategory
-    await prisma.productSubcategory.create({
-      data: {
-        productId: product.id,
         subcategoryId: subcategoryMap[subcategory],
       },
     });

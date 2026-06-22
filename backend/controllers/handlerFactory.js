@@ -14,10 +14,6 @@ export const getAll = (Model, queryOptions) =>
       .fieldLimit()
       .paginate();
 
-    if (req.params.prodId) {
-      features.prismaQuery.where.productId = Number(req.params.prodId);
-    }
-
     if (queryOptions?.include) {
       features.prismaQuery.include = queryOptions.include;
     }

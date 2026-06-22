@@ -3,65 +3,45 @@
 const buildPrismaWhere = (query) => {
   const where = {};
 
-  // Loop through all query parameters from req.query
   for (const [key, value] of Object.entries(query)) {
-    // Check if the key contains an operator pattern like "price_gte"
-    const match = key.match(/(.+)_(gte|lte|gt|lt|ne)/);
-
-    // First check if query is categroy or subcategory
+    // 1. Explicit categories logic checks
     if (key === "category") {
-      where.productCategories = {
-        some: {
-          category: {
-            slug: value,
-          },
-        },
-      };
-
+      where.productCategories = { some: { category: { slug: value } } };
       continue;
     }
-
     if (key === "subcategory") {
-      where.productSubcategories = {
-        some: {
-          subcategory: {
-            slug: value,
-          },
-        },
-      };
-
+      where.productSubcategories = { some: { subcategory: { slug: value } } };
       continue;
     }
 
-    // CASE 1: No operator → simple equality filter
-    // Example: ?category=phone → { category: "phone" }
+    // 2. Scan for suffixes
+    const match = key.match(/(.+)_(gte|lte|gt|lt|ne|e)/);
 
+    // CASE 1: Simple equality baseline
     if (!match) {
       if (key === "title") {
-        where[key] = {
-          contains: value,
-          mode: "insensitive",
-        };
+        where[key] = { contains: value, mode: "insensitive" };
       } else {
         where[key] = value;
       }
       continue;
     }
 
-    // CASE 2: Operator filter detected
-    // Example: price_gte → field: price, op: gte
+    // CASE 2: Match processed successfully
     const [_, field, op] = match;
 
-    // Ensure nested object exists for the field
-    // Example: where.price = {}
+    // Convert shorthand keys safely to official Prisma vocabulary mapping
+    let prismaOp = op;
+    if (op === "ne") prismaOp = "not";
+    if (op === "e") prismaOp = "equals";
+
     if (!where[field]) where[field] = {};
 
-    // Assign operator value
-    // Example: where.price.gte = 100
-    where[field][op] = Number(value);
+    // Only convert to a number if the string actually represents numeric data
+    const isNumeric = !isNaN(value) && !isNaN(parseFloat(value));
+    where[field][prismaOp] = isNumeric ? Number(value) : value;
   }
 
-  // Return final Prisma-compatible where clause
   return where;
 };
 
@@ -113,13 +93,11 @@ class APIFeatures {
   }
 
   paginate() {
-    if (this.queryString.page) {
-      const page = Number(this.queryString.page) || 1;
-      const pageSize = Number(this.queryString.limit) || 10;
+    const page = Number(this.queryString.page) || 1;
+    const pageSize = Number(this.queryString.limit) || 10;
 
-      this.prismaQuery.skip = (page - 1) * pageSize;
-      this.prismaQuery.take = pageSize;
-    }
+    this.prismaQuery.skip = (page - 1) * pageSize;
+    this.prismaQuery.take = pageSize;
 
     return this;
   }

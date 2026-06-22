@@ -21,6 +21,7 @@ export const createSendToken = (user, statusCode, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
+    sameSite: "lax",
     httpOnly: true,
   };
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
@@ -193,7 +194,7 @@ export const optionalAuth = catchAsync(async (req, res, next) => {
 export const restrictTo = (...roles) => {
   return (req, res, next) => {
     // roles is an array of roles that are allowed to access the route
-    if (!roles.includes(req.user.role.toLowerCase())) {
+    if (!req.user || !roles.includes(req.user.role)) {
       return next(
         new AppError("You do not have permission to perform this action", 403),
       );
@@ -258,8 +259,8 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        passwordResetToken: undefined,
-        passwordResetExpires: undefined,
+        passwordResetToken: null,
+        passwordResetExpires: null,
       },
     });
 
@@ -298,8 +299,8 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     where: { id: user.id },
     data: {
       password: await bcrypt.hash(req.body.password, 12),
-      passwordResetToken: undefined,
-      passwordResetExpires: undefined,
+      passwordResetToken: null,
+      passwordResetExpires: null,
       passwordChangedAt: new Date(Date.now() - 1000),
     },
   });

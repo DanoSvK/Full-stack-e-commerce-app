@@ -8,6 +8,9 @@ import {
   getProduct,
   updateProduct,
   deleteProduct,
+  getProductCategories,
+  getMinMaxPrice,
+  searchProductSuggestion,
 } from "../controllers/productController.js";
 import { protect } from "../controllers/authController.js";
 import reviewRouter from "./reviewRoutes.js";
@@ -27,6 +30,10 @@ router
     validate(createProductSchema),
     createProduct,
   );
+
+router.get("/categories", getProductCategories);
+router.get("/prices", getMinMaxPrice);
+router.get("/suggestions", searchProductSuggestion);
 
 router
   .route("/:id")
