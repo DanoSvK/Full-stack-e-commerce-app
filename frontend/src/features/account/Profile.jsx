@@ -1,41 +1,42 @@
 import { QueryClient } from "@tanstack/react-query";
 import { IdCard, Edit2, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import { useCustomerProperties } from "../../../api/useCustomerProperties";
-import { useUpdateCustomerProperty } from "../../../api/useEditCustomerProperties";
-import { useCreateCustomerProperty } from "../../../api/useCreateCustomerProperty";
-import { useDeleteCustomerProperty } from "../../../api/useDeleteCustomerProperties";
-
-const user = {
-  ids: {
-    registered: "daniel.kopac@gmail.com",
-    email_id: "daniel.kopac@gmail.com",
-  },
-  properties: {
-    fullName: "Daniel Kopáč",
-    email: "daniel.kopac@bloomreach.com",
-    phone: "+421948219418",
-    address: "Tomášikova 9",
-    postalCode: "05801",
-    city: "Poprad",
-  },
-};
+import { useCustomerProperties } from "./useCustomerProperties";
+import { useUpdateCustomerProperty } from "./useUpdateCustomerProperty";
+import { useCreateCustomerProperty } from "./useCreateCustomerProperty";
+import { useDeleteCustomerProperty } from "./useDeleteCustomerProperties";
+import { useAuth } from "../../context/AuthContext";
+import CustomerPropertySkeleton from "../../components/skeletons/CustomerPropertySkeleton";
+import ProductListSkeleton from "../../components/skeletons/CustomerPropertyListSkeleton";
 
 function Profile() {
-  const [details] = useState(user);
   const [isEditingProps, setIsEditingProps] = useState(false);
   const [isCreatingProperty, setIsCreatingProperty] = useState(false);
   const [newPropertyKey, setNewPropertyKey] = useState("");
   const [newPropertyValue, setNewPropertyValue] = useState("");
+  // Populated on update/delete, used to visualize update/delete error only on the specific property card
+  const [propertyKey, setPropertyKey] = useState("");
 
-  const { isFetching, customerProperties } = useCustomerProperties();
-  const { isUpdating, updateCustomerProperties } = useUpdateCustomerProperty();
-  const { createCustomerProperty, isCreatingPropertyReq } =
-    useCreateCustomerProperty();
+  const { user } = useAuth();
+  const {
+    data: customerProperties,
+    isPending: isFetchingCustomerProperties,
+    error: customerPropertiesError,
+  } = useCustomerProperties();
+  const {
+    updateCustomerProperty,
+    isUpdatingCustomerProperty,
+    updateCustomerPropertyError,
+  } = useUpdateCustomerProperty();
+  const {
+    createCustomerProperty,
+    isCreatingCustomerProperty,
+    createCustomerPropertyError,
+  } = useCreateCustomerProperty();
   const {
     deleteCustomerProperty,
-    isPending: isDeletingCustomerProperty,
-    error: deletingError,
+    isDeletingCustomerProperty,
+    deleteCustomerPropertyError,
   } = useDeleteCustomerProperty();
 
   function safeParse(value) {
@@ -66,7 +67,9 @@ function Profile() {
   return (
     <>
       {isCreatingProperty && (
-        <div className="absolute bg-black border p-4 rounded-xl flex flex-col text-[10px] justify-between group space-y-1 left-3/6 -translate-x-2/4 top-6/12 -translate-y-2/4  z-10">
+        <div
+          className={`absolute bg-black border p-4 rounded-xl flex flex-col text-[10px] justify-between group space-y-1 left-3/6 -translate-x-2/4 top-6/12 -translate-y-2/4  z-10 ${createCustomerPropertyError ? "border-red-500" : ""}`}
+        >
           <button
             className="absolute top-2 right-2 cursor-pointer hover:text-red-600"
             type="button"
@@ -100,12 +103,12 @@ function Profile() {
           <button
             className="text-zinc-950 cursor-pointer bg-accent self-center py-1 px-3 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
-            disabled={isCreatingPropertyReq}
+            disabled={isCreatingCustomerProperty}
             onClick={() => {
               handleCreateProperty("create");
             }}
           >
-            {!isCreatingPropertyReq ? "Add New" : "Adding..."}
+            {!isCreatingCustomerProperty ? "Add New" : "Adding..."}
           </button>
         </div>
       )}
@@ -126,17 +129,25 @@ function Profile() {
 
         {/* USER DETAILS */}
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {Object.entries(details.ids).map(([key, value]) => (
-            <div className="glass-card p-6 rounded-2xl space-y-4" key={key}>
-              <dt className="flex items-center text-[10px] gap-3">
-                <IdCard size={16} aria-hidden="true" />{" "}
-                <span className="text-[10px] uppercase font-bold tracking-widest">
-                  {key.toUpperCase()}
-                </span>
-              </dt>
-              <dd className="text-white font-bold">{value}</dd>
-            </div>
-          ))}
+          <div className="glass-card p-6 rounded-2xl space-y-4">
+            <dt className="flex items-center text-[10px] gap-3">
+              <IdCard size={16} aria-hidden="true" />{" "}
+              <span className="text-[10px] uppercase font-bold tracking-widest">
+                REGISTERED
+              </span>
+            </dt>
+            <dd className="text-white font-bold">{user.email}</dd>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl space-y-4">
+            <dt className="flex items-center text-[10px] gap-3">
+              <IdCard size={16} aria-hidden="true" />{" "}
+              <span className="text-[10px] uppercase font-bold tracking-widest">
+                EMAIL_ID
+              </span>
+            </dt>
+            <dd className="text-white font-bold">{user.email}</dd>
+          </div>
         </dl>
       </section>
 
@@ -169,12 +180,20 @@ function Profile() {
         </header>
 
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {isFetching ? (
-            <img src="/loading.png" className="w-6 h-6 animate-spin" />
+          {customerPropertiesError ? (
+            <p>Error</p>
+          ) : isFetchingCustomerProperties ? (
+            <ProductListSkeleton />
           ) : (
             customerProperties?.map((property) => (
               <div
-                className={`bg-zinc-900/50 border p-4 rounded-xl flex text-[10px] justify-between items-center group ${deletingError ? "border-red-500" : "border-white/5"}`}
+                className={`bg-zinc-900/50 p-4 rounded-xl flex text-[10px] justify-between items-center group border ${
+                  (deleteCustomerPropertyError ||
+                    updateCustomerPropertyError) &&
+                  property.key === propertyKey
+                    ? "border-red-500"
+                    : "border-white/5"
+                }`}
                 key={property.key}
               >
                 <div>
@@ -191,30 +210,33 @@ function Profile() {
                       type="text"
                       defaultValue={property.value}
                       className="input-field w-full text-sm"
+                      disabled={isUpdatingCustomerProperty}
                       onBlur={(e) => {
-                        updateCustomerProperties({
+                        updateCustomerProperty({
                           action: "update",
                           key: property.key,
                           value: e.target.value,
                         });
+                        setPropertyKey(property.key);
                       }}
                     />
                   )}
                 </div>
 
-                {!isDeletingCustomerProperty ? (
+                {isDeletingCustomerProperty && property.key === propertyKey ? (
+                  <img src="/loading.png" className="w-6 h-6 animate-spin" />
+                ) : (
                   <button
                     className="hidden group-hover:block cursor-pointer hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     type="submit"
                     disabled={isDeletingCustomerProperty}
                     onClick={() => {
                       deleteCustomerProperty(property.key);
+                      setPropertyKey(property.key);
                     }}
                   >
                     <Trash2 size="20" />
                   </button>
-                ) : (
-                  <img src="/loading.png" className="w-6 h-6 animate-spin" />
                 )}
               </div>
             ))

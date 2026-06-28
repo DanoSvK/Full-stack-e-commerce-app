@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "../globalVariables";
 
-export const addToWishlist = async (productId) => {
+export const addItemToWishlist = async (productId) => {
   const res = await fetch(`${API_BASE_URL}/wishlist`, {
     method: "POST",
     credentials: "include",
@@ -13,7 +13,9 @@ export const addToWishlist = async (productId) => {
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
 
-    errorData?.message || `Request failed with status ${res.status}`;
+    throw new Error(
+      errorData?.message || `Request failed with status ${res.status}`,
+    );
   }
 };
 
@@ -25,7 +27,9 @@ export const getWishlist = async () => {
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);
 
-    errorData?.message || `Request failed with status ${res.status}`;
+    throw new Error(
+      errorData?.message || `Request failed with status ${res.status}`,
+    );
   }
 
   const data = await res.json();

@@ -6,26 +6,30 @@ import { useProducts } from "../features/products/useProducts";
 
 function CartPage() {
   const { cartProducts } = useCart();
-  const { products = [], isFetching } = useProducts();
+  const {
+    data: products,
+    isPending: isFetchingProducts,
+    error: productsError,
+  } = useProducts();
   const navigate = useNavigate();
 
-  // A map to join cartProducts IDs to products (to avoid using find() every time)
-  const productMap = Object.fromEntries(products.map((p) => [p.id, p]));
-  const cartWithProducts = cartProducts.map((item) => {
-    const product = productMap[item.id];
+  // Guard before doing anything with products
+  if (isFetchingProducts) return <div>Loading...</div>;
+  if (productsError) return <div>Error loading products.</div>;
 
-    return {
-      ...product,
-      quantity: item.quantity,
-    };
-  });
+  console.log(products.products);
+  const productMap = Object.fromEntries(
+    products.products.map((p) => [p.id, p]),
+  );
+  const cartWithProducts = cartProducts.map((item) => ({
+    ...productMap[item.id],
+    quantity: item.quantity,
+  }));
 
   return (
     <main>
       {!cartWithProducts.length ? (
         <EmptyCartPage />
-      ) : isFetching ? (
-        <div>Loading...</div>
       ) : (
         <>
           <h1 className="text-4xl font-black tracking-tighter text-white uppercase mb-12">
@@ -46,17 +50,12 @@ function CartPage() {
                           {product.title}
                         </h3>
                         <div className="flex items-center text-zinc-500 text-xs mt-1">
-                          {product.productCategories.map((category) => (
+                          {product.subcategory.categories.map((category) => (
                             <p key={category.category.name}>
                               {category.category.name}
                             </p>
                           ))}
-                          /
-                          {product.productSubcategories.map((subcategory) => (
-                            <p key={subcategory.subcategory.name}>
-                              {subcategory.subcategory.name}
-                            </p>
-                          ))}
+                          /<p>{product.subcategory.name}</p>
                         </div>
                       </div>
                       <button
@@ -148,7 +147,7 @@ function CartPage() {
                   />
                   <button
                     type="button"
-                    className="bg-zinc-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-zinc-700 transition-colors"
+                    className="bg-zinc-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-zinc-700 transition-colors cursor-pointer"
                   >
                     Apply
                   </button>

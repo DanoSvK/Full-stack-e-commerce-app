@@ -1,13 +1,13 @@
-import { createUpdateCustomerProperty } from "../services/apiCustomerProperties";
+import { createUpdateCustomerProperty } from "../../services/apiCustomerProperties";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export function useUpdateCustomerProperty() {
   const queryClient = useQueryClient();
   const {
-    mutate: updateCustomerProperties,
-    isPending: isUpdating,
-    error,
+    mutate: updateCustomerProperty,
+    isPending: isUpdatingCustomerProperty,
+    error: updateCustomerPropertyError,
   } = useMutation({
     mutationFn: ({ action, key, value }) =>
       createUpdateCustomerProperty(action, key, value),
@@ -18,5 +18,9 @@ export function useUpdateCustomerProperty() {
     onError: (err) => toast.error(err.message),
   });
 
-  return { isUpdating, updateCustomerProperties, error };
+  return {
+    updateCustomerProperty,
+    isUpdatingCustomerProperty,
+    updateCustomerPropertyError,
+  };
 }

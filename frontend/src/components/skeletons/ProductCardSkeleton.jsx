@@ -1,6 +1,6 @@
 function ProductCardSkeleton() {
   return (
-    <div className="relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group">
+    <div className="relative glass-card rounded-2xl overflow-hidden">
       <div className="absolute top-4 left-4 bg-zinc-900/80 w-1/4 h-4 z-10 space-x-2 animate-skeleton"></div>
       <div className="overflow-hidden aspect-square bg-zinc-800 rounded-lg"></div>
       <div className="space-y-6 p-5">

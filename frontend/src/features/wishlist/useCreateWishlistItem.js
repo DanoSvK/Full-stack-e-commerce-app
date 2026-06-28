@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addToWishlist } from "../services/apiWishlist";
+import { addItemToWishlist } from "../../services/apiWishlist";
 import toast from "react-hot-toast";
 
-export const useWishlist = () => {
+export const useCreateWishlistItem = () => {
   const queryClient = useQueryClient();
   const {
-    mutate: addItemToWishlist,
+    mutate: addToWishlist,
     isPending: isAddingToWishlist,
-    error,
+    error: addToWishlistError,
   } = useMutation({
-    mutationFn: (productId) => addToWishlist(productId),
+    mutationFn: (productId) => addItemToWishlist(productId),
     onSuccess: () => {
       toast.success("Item successfully added to wishlist.");
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
@@ -17,5 +17,5 @@ export const useWishlist = () => {
     onError: (err) => toast.error(err.message),
   });
 
-  return { addItemToWishlist, isAddingToWishlist, error };
+  return { addToWishlist, isAddingToWishlist, addToWishlistError };
 };

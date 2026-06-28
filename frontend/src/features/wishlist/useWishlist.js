@@ -1,12 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getWishlist } from "../services/apiWishlist";
+import { getWishlist } from "../../services/apiWishlist";
 
 export const useWishlist = () => {
-  const {
-    data: wishlist,
-    isPending: isFetchingWishlist,
-    error,
-  } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ["wishlist"],
     queryFn: async () => {
       const res = await getWishlist();
@@ -14,5 +10,5 @@ export const useWishlist = () => {
     },
   });
 
-  return { wishlist, isFetchingWishlist, error };
+  return { data, isPending, error };
 };

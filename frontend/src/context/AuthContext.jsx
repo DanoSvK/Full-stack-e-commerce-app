@@ -10,7 +10,7 @@ const AuthContext = createContext();
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const resetPasswordToken = searchParams.get("token"); // get token from URL
@@ -52,6 +52,7 @@ function AuthProvider({ children }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, passwordConfirm }),
       });
+
       const data = await res.json();
 
       if (!res.ok) {

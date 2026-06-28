@@ -107,7 +107,7 @@ function ProductPage() {
               className="inline-block mr-2"
             />
             <p>
-              Showing <span>48</span> products
+              Showing <span>{products.length}</span> products
             </p>
           </div>
           <div className="flex">
@@ -120,7 +120,7 @@ function ProductPage() {
           </div>
         </div>
         {isFetchingProducts ? (
-          <ProductListSkeleton />
+          <ProductListSkeleton length={10} />
         ) : productsError ? (
           <p>Could not load products</p>
         ) : (

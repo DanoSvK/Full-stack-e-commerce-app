@@ -5,7 +5,7 @@ import SubcategoryButton from "./SubcategoryButton";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
-import { useSuggestedProducts } from "../../api/useSuggestedProducts";
+import { useSuggestedProducts } from "./useSuggestedProducts";
 import SuggestedProductCard from "./SuggestedProductCard";
 import SuggestedProductCardSkeleton from "../../components/skeletons/SuggestedProductCardSkeleton";
 import { useCategories } from "../../features/products/useCategories";
@@ -13,6 +13,17 @@ import CategoriesSkeleton from "../../components/skeletons/CategoriesSkeleton";
 import { usePrices } from "../products/usePrices";
 
 function FiltersSidebar({ onUpdateFilter, filters }) {
+  const [suggestedQuery, setSuggestedQuery] = useState("");
+  const debouncedQuery = useDebounce(suggestedQuery, 300);
+
+  const {
+    data: suggestedProducts,
+    isPending: isFetchingSuggestedProducts,
+    error: suggestedProductsError,
+  } = useSuggestedProducts(debouncedQuery);
+
+  const suggestions = suggestedProducts?.data?.products ?? [];
+
   const {
     data: pricesData,
     isPending: isFetchingPrices,
@@ -220,14 +231,6 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
     });
   }
 
-  const [suggestedQuery, setSuggestedQuery] = useState("");
-  const debouncedQuery = useDebounce(suggestedQuery, 300);
-
-  const { suggestedProducts, isFetchingSuggestedProducts } =
-    useSuggestedProducts(debouncedQuery);
-
-  const suggestions = suggestedProducts?.data?.products ?? [];
-
   return (
     <section>
       <h3 className="text-white font-black text-xl tracking-tighter uppercase mb-8">
@@ -278,6 +281,8 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
                   <p className="text-sm text-zinc-500">Start typing...</p>
                 ) : isFetchingSuggestedProducts ? (
                   <SuggestedProductCardSkeleton />
+                ) : suggestedProductsError ? (
+                  <p className="text-red-500">Error searching products</p>
                 ) : !suggestions.length ? (
                   <p className="text-sm text-zinc-500">No products found.</p>
                 ) : (

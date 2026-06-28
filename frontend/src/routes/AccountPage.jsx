@@ -1,7 +1,7 @@
-import Profile from "../features/account/AccountMenuOptions/Profile";
-import Wishlist from "../features/account/AccountMenuOptions/Wishlist";
-import Orders from "../features/account/AccountMenuOptions/Orders";
-import Security from "../features/account/AccountMenuOptions/Security";
+import Profile from "../features/account/Profile";
+import Wishlist from "../features/account/Wishlist";
+import Orders from "../features/account/Orders";
+import Security from "../features/account/Security";
 import AccountSidebar from "../features/account/AccountSidebar";
 
 import { useState } from "react";

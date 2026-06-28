@@ -1,17 +1,25 @@
 import { Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { useWishlist } from "../../context/WishlistContext";
+import { useCreateWishlistItem } from "../wishlist/useCreateWishlistItem";
+import { useWishlist } from "../wishlist/useWishlist";
 
-function ProductCard({ product, onAddItemToWishlist }) {
+function ProductCard({ product }) {
   const { onAddCartProducts } = useCart();
-  const { wishlistProducts, onAddToWishlist } = useWishlist();
-  const active = wishlistProducts.includes(product.id);
+  const {
+    data: wishlist,
+    isPending: isFetchingWishlist,
+    error: wishlistError,
+  } = useWishlist();
+  const { addToWishlist, isAddingToWishlist, addToWishlistError } =
+    useCreateWishlistItem();
+
+  const active = wishlist?.some((prod) => prod.productId === product?.id);
 
   return (
     <div className="relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group">
       <div className="absolute top-4 left-4 z-10 space-x-2">
-        {product.subcategory.categories.map((category) => (
+        {product?.subcategory.categories.map((category) => (
           <span
             className="bg-zinc-900/80 backdrop-blur-md text-zinc-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
             key={category.category.name}
@@ -22,16 +30,16 @@ function ProductCard({ product, onAddItemToWishlist }) {
       </div>
       <button
         aria-label="Add to wishlist"
-        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300  text-white  ${active ? "bg-accent" : "bg-zinc-900/40 hover:bg-zinc-900/80"}`}
+        disabled={isFetchingWishlist || !!wishlistError || isAddingToWishlist}
+        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError ? "border border-red-500" : ""}`}
         onClick={() => {
-          onAddToWishlist(product.id);
-          onAddItemToWishlist(product.id);
+          addToWishlist(product.id);
         }}
       >
         <Heart
           size={16}
-          color={`${active ? "#000" : "#fff"}`}
-          fill={`${active ? "#000" : "none"}`}
+          color={active ? "#000" : "#fff"}
+          fill={active ? "#000" : "none"}
         />
       </button>
       <div className="overflow-hidden cursor-pointer">
@@ -47,7 +55,6 @@ function ProductCard({ product, onAddItemToWishlist }) {
         <div>
           <Link
             to={`/product/${product.id}`}
-            href=""
             className="text-white font-bold text-lg hover:text-accent transition-colors line-clamp-1"
           >
             {product.title}

@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteCustomerProperty as deleteCustomerPropertyApi } from "../services/apiCustomerProperties";
+import { deleteCustomerProperty as deleteCustomerPropertyApi } from "../../services/apiCustomerProperties";
 import toast from "react-hot-toast";
 
 export function useDeleteCustomerProperty() {
   const queryClient = useQueryClient();
   const {
     mutate: deleteCustomerProperty,
-    isPending,
-    error,
+    isPending: isDeletingCustomerProperty,
+    error: deleteCustomerPropertyError,
   } = useMutation({
     mutationFn: (key) => deleteCustomerPropertyApi(key),
     onSuccess: () => {
@@ -17,5 +17,9 @@ export function useDeleteCustomerProperty() {
     onError: (err) => toast.error(err.message),
   });
 
-  return { deleteCustomerProperty, isPending, error };
+  return {
+    deleteCustomerProperty,
+    isDeletingCustomerProperty,
+    deleteCustomerPropertyError,
+  };
 }
