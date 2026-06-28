@@ -67,6 +67,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
 export const createUpdateCustomerProperties = catchAsync(
   async (req, res, next) => {
     const { key, value, action } = req.body;
+
     if (!req.body.action) {
       return next(
         new AppError(

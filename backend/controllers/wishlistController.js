@@ -2,8 +2,6 @@ import prisma from "../lib/prisma.js";
 import catchAsync from "../utils/catchAsync.js";
 
 export const addToWishlist = catchAsync(async (req, res) => {
-  console.log("test", req.body.productId);
-
   const wishlist = await prisma.wishlist.create({
     data: { userId: req.user.id, productId: req.body.productId },
   });

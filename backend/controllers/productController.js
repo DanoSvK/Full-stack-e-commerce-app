@@ -45,8 +45,10 @@ export const getAllProducts = catchAsync(async (req, res) => {
         subcategory: {
           include: { categories: { include: { category: true } } },
         },
+        wishlistedBy: true,
       },
     }),
+
     prisma.category.findMany({
       select: {
         id: true,
