@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useCreateWishlistItem } from "../wishlist/useCreateWishlistItem";
 import { useWishlist } from "../wishlist/useWishlist";
+import { useDeleteWishlistItem } from "../wishlist/useDeleteWishlistItem";
 
 function ProductCard({ product }) {
   const { onAddCartProducts } = useCart();
@@ -13,8 +14,22 @@ function ProductCard({ product }) {
   } = useWishlist();
   const { addToWishlist, isAddingToWishlist, addToWishlistError } =
     useCreateWishlistItem();
+  const {
+    deleteWishlistItem,
+    isDeletingWishlistItem,
+    deleteWishlistItemError,
+  } = useDeleteWishlistItem();
 
   const active = wishlist?.some((prod) => prod.productId === product?.id);
+
+  function addDeleteWishlistItem(productId) {
+    console.log(active);
+    if (!active) {
+      addToWishlist(productId);
+    } else {
+      deleteWishlistItem(productId);
+    }
+  }
 
   return (
     <div className="relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group">
@@ -30,11 +45,14 @@ function ProductCard({ product }) {
       </div>
       <button
         aria-label="Add to wishlist"
-        disabled={isFetchingWishlist || !!wishlistError || isAddingToWishlist}
-        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError ? "border border-red-500" : ""}`}
-        onClick={() => {
-          addToWishlist(product.id);
-        }}
+        disabled={
+          isFetchingWishlist ||
+          !!wishlistError ||
+          isAddingToWishlist ||
+          isDeletingWishlistItem
+        }
+        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
+        onClick={() => addDeleteWishlistItem(product.id)}
       >
         <Heart
           size={16}

@@ -97,10 +97,10 @@ export const updateOne = (Model) =>
     });
   });
 
-export const createOne = (Model) =>
+export const createOne = (Model, data = {}) =>
   catchAsync(async (req, res, next) => {
     const record = await prisma[Model].create({
-      data: req.body,
+      data: data || req.body,
     });
 
     res.status(201).json({

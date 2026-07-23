@@ -8,6 +8,7 @@ import { useDeleteCustomerProperty } from "./useDeleteCustomerProperties";
 import { useAuth } from "../../context/AuthContext";
 import CustomerPropertySkeleton from "../../components/skeletons/CustomerPropertySkeleton";
 import ProductListSkeleton from "../../components/skeletons/CustomerPropertyListSkeleton";
+import LoaderError from "../../ui/LoaderError";
 
 function Profile() {
   const [isEditingProps, setIsEditingProps] = useState(false);
@@ -158,16 +159,20 @@ function Profile() {
             Customer Properties
           </h2>
           <div className="space-y-4">
-            <button
-              type="button"
-              className="flex items-center gap-2 text-accent text-xs font-bold hover:underline cursor-pointer"
-              onClick={() => setIsEditingProps((prev) => !prev)}
-            >
-              <Edit2 size={16} />
-              <span>
-                {!isEditingProps ? "Edit Properties" : "Finish Editing"}
-              </span>
-            </button>
+            {!isFetchingCustomerProperties &&
+              !customerPropertiesError &&
+              customerProperties.length > 0 && (
+                <button
+                  type="button"
+                  className="flex items-center gap-2 text-accent text-xs font-bold hover:underline cursor-pointer"
+                  onClick={() => setIsEditingProps((prev) => !prev)}
+                >
+                  <Edit2 size={16} />
+                  <span>
+                    {!isEditingProps ? "Edit Properties" : "Finish Editing"}
+                  </span>
+                </button>
+              )}
             <button
               type="button"
               className="ml-auto flex items-center gap-2 text-accent text-xs font-bold hover:underline cursor-pointer"
@@ -181,7 +186,7 @@ function Profile() {
 
         <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {customerPropertiesError ? (
-            <p>Error</p>
+            <LoaderError />
           ) : isFetchingCustomerProperties ? (
             <ProductListSkeleton />
           ) : (

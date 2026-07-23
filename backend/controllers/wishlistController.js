@@ -2,8 +2,9 @@ import prisma from "../lib/prisma.js";
 import catchAsync from "../utils/catchAsync.js";
 
 export const addToWishlist = catchAsync(async (req, res) => {
+  const productId = parseInt(req.params.productId);
   const wishlist = await prisma.wishlist.create({
-    data: { userId: req.user.id, productId: req.body.productId },
+    data: { userId: req.user.id, productId },
   });
 
   res.status(201).json({
@@ -37,4 +38,18 @@ export const getWishlist = catchAsync(async (req, res) => {
     result: wishlist.length,
     data: { wishlist },
   });
+});
+
+export const deleteFromWishlist = catchAsync(async (req, res) => {
+  const productId = parseInt(req.params.productId);
+  await prisma.wishlist.delete({
+    where: {
+      userId_productId: {
+        userId: req.user.id,
+        productId,
+      },
+    },
+  });
+
+  res.status(204).json({ status: "success", data: null });
 });

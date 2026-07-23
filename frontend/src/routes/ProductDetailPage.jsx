@@ -5,35 +5,64 @@ import { useWishlist } from "../features/wishlist/useWishlist";
 import { useCreateWishlistItem } from "../features/wishlist/useCreateWishlistItem";
 import { useProduct } from "../features/products/useProduct";
 import ProductDetailPageSkeleton from "../components/skeletons/ProductDetailPageSkeleton";
+import { useDeleteWishlistItem } from "../features/wishlist/useDeleteWishlistItem";
+import LoaderError from "../ui/LoaderError";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function ProductDetailPage() {
   const [color, setColor] = useState(null);
   const [size, setSize] = useState(null);
   const [itemCount, setItemCount] = useState(1);
 
+  const navigate = useNavigate();
+  const { user, isAuthLoading } = useAuth();
+
   const {
     data: product,
     isPending: isFetchingProduct,
     error: productError,
   } = useProduct();
+
   const { onAddCartProducts } = useCart();
+
   const {
     data: wishlist,
     isPending: isFetchingWishlist,
     error: wishlistError,
-  } = useWishlist();
+  } = useWishlist(!isAuthLoading && !!user);
+
   const { addToWishlist, isAddingToWishlist, addToWishlistError } =
     useCreateWishlistItem();
 
-  if (isFetchingWishlist || isFetchingProduct) {
+  const {
+    deleteWishlistItem,
+    isDeletingWishlistItem,
+    deleteWishlistItemError,
+  } = useDeleteWishlistItem();
+
+  if (isFetchingProduct) {
     return <ProductDetailPageSkeleton />;
   }
 
   if (productError || wishlistError) {
-    return <div>Could not load data</div>;
+    return <LoaderError />;
   }
 
   const active = wishlist?.some((prod) => prod.productId === product.id);
+
+  function handleAddDeleteWishlistItem(productId) {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (!active) {
+      addToWishlist(productId);
+    } else {
+      deleteWishlistItem(productId);
+    }
+  }
 
   return (
     <main>
@@ -169,11 +198,14 @@ function ProductDetailPage() {
               <button
                 type="button"
                 aria-label="Add to wishlist"
-                className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active ? " border-accent text-accent" : "text-zinc-400 border-white/5 enabled:hover:text-white"} ${addToWishlistError ? "border-red-500" : ""}`}
+                className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active ? " border-accent text-accent" : "text-zinc-400 border-white/5 enabled:hover:text-white"} ${addToWishlistError || deleteWishlistItemError ? "border-red-500" : ""}`}
                 disabled={
-                  isFetchingWishlist || !!wishlistError || isAddingToWishlist
+                  isFetchingWishlist ||
+                  !!wishlistError ||
+                  isAddingToWishlist ||
+                  isDeletingWishlistItem
                 }
-                onClick={() => addToWishlist(product.id)}
+                onClick={() => handleAddDeleteWishlistItem(product.id)}
               >
                 <Heart size={24} fill={`${active ? "#ffde21" : "none"}`} />
               </button>

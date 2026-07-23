@@ -6,6 +6,7 @@ import AccountSidebar from "../features/account/AccountSidebar";
 
 import { useState } from "react";
 import { User, Heart, Shield, Package } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
 
 function AccountPage() {
@@ -19,7 +20,7 @@ function AccountPage() {
   ];
 
   const activeItem = items.find((item) => item.name === activeTab);
-  const Content = activeItem?.component || Profile;
+  const Content = activeItem.component || Profile;
 
   function handleActive(name) {
     setActiveTab(name);

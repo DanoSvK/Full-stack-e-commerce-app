@@ -8,6 +8,7 @@ import {
   getOne,
   getAll,
 } from "./handlerFactory.js";
+import { logout } from "./authController.js";
 
 const filterObj = (obj, ...allowedFields) => {
   Object.keys(obj).forEach((el) => {
@@ -32,7 +33,7 @@ export const getMe = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    data: { user: req.user ?? null },
+    data: { user },
   });
 });
 
@@ -147,13 +148,15 @@ export const getCustomerProperties = catchAsync(async (req, res, next) => {
 });
 
 export const deleteMe = catchAsync(async (req, res, next) => {
-  await prisma.user.update({
+  await prisma.user.delete({
     where: {
       id: req.user.id,
     },
-    data: {
-      active: false,
-    },
+  });
+
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "lax",
   });
 
   res.status(204).json({

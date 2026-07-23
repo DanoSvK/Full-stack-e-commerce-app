@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
 function Footer() {
@@ -8,8 +9,8 @@ function Footer() {
         <article className="space-y-6 md:space-y-0 md:flex md:flex-row text-zinc-600 text-xs gap-8">
           <p>© 2026 BESTshop Demo. All rights reserved.</p>
           <p className="space-x-8">
-            <span>Privacy Policy</span>
-            <span>Terms of Service</span>
+            <Link to={"/privacy-policy"}>Privacy Policy</Link>
+            <Link to={"/terms-of-service"}>Terms of Service</Link>
           </p>
         </article>
       </section>

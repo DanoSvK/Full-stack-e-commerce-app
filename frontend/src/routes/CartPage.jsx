@@ -3,9 +3,15 @@ import EmptyCartPage from "../components/EmptyCartPage";
 import { ArrowLeft, ArrowRight, Tag, Ticket, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useProducts } from "../features/products/useProducts";
+import CartPageSkeleton from "../components/skeletons/CartPageSkeleton";
 
 function CartPage() {
-  const { cartProducts } = useCart();
+  const {
+    cartProducts,
+    onAddOneProduct,
+    onRemoveOneProduct,
+    onRemoveProductFromCart,
+  } = useCart();
   const {
     data: products,
     isPending: isFetchingProducts,
@@ -14,10 +20,9 @@ function CartPage() {
   const navigate = useNavigate();
 
   // Guard before doing anything with products
-  if (isFetchingProducts) return <div>Loading...</div>;
-  if (productsError) return <div>Error loading products.</div>;
+  if (isFetchingProducts) return <CartPageSkeleton />;
+  if (productsError) return <LoaderError />;
 
-  console.log(products.products);
   const productMap = Object.fromEntries(
     products.products.map((p) => [p.id, p]),
   );
@@ -39,7 +44,10 @@ function CartPage() {
             <div className="lg:col-span-2 space-y-6">
               {/* CART ITEM */}
               {cartWithProducts.map((product) => (
-                <section className="glass-card p-6 rounded-2xl flex items-center gap-6 group">
+                <section
+                  className="glass-card p-6 rounded-2xl flex items-center gap-6 group"
+                  key={product.id}
+                >
                   <div className="w-24 h-32 rounded-xl overflow-hidden bg-zinc-900 shrink-0">
                     <img src={product.imageUrl} alt="" />
                   </div>
@@ -61,7 +69,8 @@ function CartPage() {
                       <button
                         type="button"
                         aria-label="Remove item from cart"
-                        className="p-2 text-zinc-600 hover:text-red-500 transition-colors"
+                        className="p-2 text-zinc-600 hover:text-red-500 transition-colors cursor-pointer"
+                        onClick={() => onRemoveProductFromCart(product.id)}
                       >
                         <Trash2 size={20} />
                       </button>
@@ -71,6 +80,7 @@ function CartPage() {
                         <button
                           type="button"
                           className="p-1.5 text-zinc-500 hover:text-white"
+                          onClick={() => onRemoveOneProduct(product.id)}
                         >
                           -
                         </button>
@@ -80,6 +90,7 @@ function CartPage() {
                         <button
                           type="button"
                           className="p-1.5 text-zinc-500 hover:text-white"
+                          onClick={() => onAddOneProduct(product.id)}
                         >
                           +
                         </button>
@@ -96,13 +107,13 @@ function CartPage() {
                   </div>
                 </section>
               ))}
-              <Link
-                to={navigate(-1)}
-                className="inline-flex items-center gap-2 text-zinc-500 text-sm font-bold hover:text-white transition-colors pt-4"
+              <button
+                onClick={() => navigate(-1)}
+                className="btn-secondary flex items-center justify-center gap-2"
               >
                 <ArrowLeft size={16} />
-                Continue Shopping
-              </Link>
+                Go back
+              </button>
             </div>
             <section className="space-y-8">
               <section className="space-y-6 p-8 glass-card rounded-3xl">
@@ -128,7 +139,10 @@ function CartPage() {
                   </div>
                 </div>
                 <div className="pt-6">
-                  <Link className="btn-primary w-full flex items-center justify-center gap-2 group">
+                  <Link
+                    to="/checkout"
+                    className="btn-primary w-full flex items-center justify-center gap-2 group"
+                  >
                     Checkout
                     <ArrowRight size={16} />
                   </Link>

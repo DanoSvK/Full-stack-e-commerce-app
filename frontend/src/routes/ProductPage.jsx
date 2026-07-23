@@ -12,6 +12,7 @@ import Pagination from "../ui/Pagination";
 import ProductListSkeleton from "../components/skeletons/ProductListSkeleton";
 
 import { useProducts } from "../features/products/useProducts";
+import LoaderError from "../ui/LoaderError";
 
 function ProductPage() {
   usePrices();
@@ -71,22 +72,8 @@ function ProductPage() {
     }));
   };
 
-  // if (filters.search)
-  // const filteredProducts = products.filter((product) => {
-  //   return (
-  //     product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
-  //     product.id.toLowerCase().includes(filters.productId.toLowerCase()) &&
-  //     (filters.category === "all" ||
-  //       product.category.toLowerCase() === filters.category) &&
-  //     (filters.subcategory === "all" ||
-  //       product.subcategory.toLowerCase() === filters.subcategory) &&
-  //     product.price >= filters.priceRange.min &&
-  //     product.price <= filters.priceRange.max
-  //   );
-  // });
-
   if (productsError) {
-    <div>Error</div>;
+    return <LoaderError />;
   }
 
   return (
@@ -122,7 +109,7 @@ function ProductPage() {
         {isFetchingProducts ? (
           <ProductListSkeleton length={10} />
         ) : productsError ? (
-          <p>Could not load products</p>
+          <LoaderError />
         ) : (
           <>
             <ProductList products={products} />

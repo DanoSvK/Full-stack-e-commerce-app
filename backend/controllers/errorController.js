@@ -21,6 +21,12 @@ const handlePrismaKnownRequestError = (err) => {
       const fields =
         err.meta?.driverAdapterError?.cause?.constraint?.fields?.join(", ") ??
         "field";
+
+      console.log(fields.split(", ").length);
+      if (fields.split(", ").length > 1) {
+        return new AppError("This record already exists.", 409);
+      }
+
       return new AppError(
         `${fields.charAt(0).toUpperCase() + fields.slice(1)} already exists`,
         409,
@@ -35,6 +41,12 @@ const handlePrismaKnownRequestError = (err) => {
     default:
       return new AppError(`Internal server error`, 500);
   }
+};
+
+const handlePrismaDriverAdapterError = (err) => {
+  const appErr = new AppError("Internal server error", 500);
+  appErr.isOperational = false;
+  return appErr;
 };
 
 // Unexpected DB errors with no specific code
@@ -96,6 +108,9 @@ const globalErrorHandler = (err, req, res, next) => {
 
     if (error.name === "PrismaClientUnknownRequestError")
       error = handlePrismaUnknownRequestError(error);
+
+    if (error.name === "DriverAdapterError")
+      error = handlePrismaDriverAdapterError(error);
 
     if (error.name === "JsonWebTokenError") error = handleJWTError();
 

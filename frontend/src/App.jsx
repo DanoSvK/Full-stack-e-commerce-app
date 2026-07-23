@@ -17,6 +17,11 @@ import SignupPage from "./routes/SignupPage";
 import ForgotPasswordPage from "./routes/ForgotPasswordPage";
 import ResetPassword from "./routes/ResetPasswordPage";
 import ProtectedLayout from "./components/ProtectedLayout";
+import ErrorPage from "./routes/ErrorPage";
+import NotFoundPage from "./routes/NotFoundPage";
+import TermsOfServicePage from "./routes/TermsOfServicePage";
+import PrivacyPolicyPage from "./routes/PrivacyPolicyPage";
+import CheckoutPage from "./routes/CheckoutPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,21 +35,30 @@ const router = createBrowserRouter([
   {
     element: <AppLayout />,
     children: [
-      { path: "/", element: <HomePage /> },
-      { path: "/home", element: <HomePage /> },
-      { path: "/products", element: <ProductPage /> },
-      { path: "/catalogs", element: <CatalogPage /> },
-      { path: "/experiments", element: <ExperimentPage /> },
-      { path: "/weblayers", element: <WeblayerPage /> },
-      { path: "/cart", element: <CartPage /> },
-      { path: "/products/:prodId", element: <ProductDetailPage /> },
-      { path: "/login", element: <LoginPage /> },
-      { path: "/signup", element: <SignupPage /> },
-      { path: "/forgot-password", element: <ForgotPasswordPage /> },
-      { path: "/reset-password", element: <ResetPassword /> },
       {
-        element: <ProtectedLayout />,
-        children: [{ path: "/account", element: <AccountPage /> }],
+        errorElement: <ErrorPage />,
+        children: [
+          { path: "/", element: <HomePage /> },
+          { path: "/home", element: <HomePage /> },
+          { path: "/products", element: <ProductPage /> },
+          { path: "/catalogs", element: <CatalogPage /> },
+          { path: "/experiments", element: <ExperimentPage /> },
+          { path: "/weblayers", element: <WeblayerPage /> },
+          { path: "/cart", element: <CartPage /> },
+          { path: "/checkout", element: <CheckoutPage /> },
+          { path: "/products/:prodId", element: <ProductDetailPage /> },
+          { path: "/login", element: <LoginPage /> },
+          { path: "/signup", element: <SignupPage /> },
+          { path: "/forgot-password", element: <ForgotPasswordPage /> },
+          { path: "/reset-password", element: <ResetPassword /> },
+          { path: "/terms-of-service", element: <TermsOfServicePage /> },
+          { path: "/privacy-policy", element: <PrivacyPolicyPage /> },
+          {
+            element: <ProtectedLayout />,
+            children: [{ path: "/account", element: <AccountPage /> }],
+          },
+          { path: "*", element: <NotFoundPage /> },
+        ],
       },
     ],
   },

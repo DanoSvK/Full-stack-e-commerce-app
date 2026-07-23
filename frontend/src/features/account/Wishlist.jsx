@@ -1,8 +1,9 @@
-import { Heart } from "lucide-react";
+import { Heart, Loader } from "lucide-react";
 import WishlistProductList from "./WishlistProductList";
 import { Link } from "react-router-dom";
 import { useWishlist } from "../../features/wishlist/useWishlist";
 import ProductListSkeleton from "../../components/skeletons/ProductListSkeleton";
+import LoaderError from "../../ui/LoaderError";
 
 function Wishlist() {
   const {
@@ -12,7 +13,7 @@ function Wishlist() {
   } = useWishlist();
 
   if (wishlistError) {
-    return <div>Could not load your wishlist</div>;
+    return <LoaderError />;
   }
 
   if (isFetchingWishlist) {
@@ -20,7 +21,7 @@ function Wishlist() {
   }
 
   const products = wishlist.map((wishlistProduct) => wishlistProduct.product);
-  console.log(products);
+
   return (
     <>
       {!wishlist.length ? (

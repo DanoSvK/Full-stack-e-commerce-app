@@ -13,13 +13,16 @@ import {
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+import MenuModal from "./MenuModal";
 
 function Header() {
   const { totalCartCount } = useCart();
   const { logout, user } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="backdrop-blur-md py-5 sticky top-0 z-15 bg-zinc-950/80 shadow-lg mb-24 w-full border-b border-white/10 m-auto">
+    <header className="backdrop-blur-md py-5 sticky top-0 z-15 bg-zinc-950/80 shadow-lg mb-24 w-full border-b border-white/10">
       <div className="flex justify-between items-center max-w-7xl m-auto px-4 sm:px-6 lg:px-8">
         <Logo />
         <Navbar />
@@ -64,12 +67,16 @@ function Header() {
               <LogIn />
             </Link>
           )}
-          <Link
-            className="md:hidden hover:text-accent"
-            aria-label="Open menu bar"
-          >
-            <Menu />
-          </Link>
+          <div className="relative md:hidden flex items-center">
+            <button
+              className="hover:text-accent cursor-pointer"
+              aria-label="Open menu bar"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+            >
+              <Menu />
+            </button>
+            {isMenuOpen && <MenuModal setMenu={setIsMenuOpen} />}
+          </div>
         </div>
       </div>
     </header>

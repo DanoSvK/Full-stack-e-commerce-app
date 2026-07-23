@@ -9,6 +9,48 @@ function CartProvider({ children }) {
     0,
   );
 
+  function handleAddOneProduct(productId) {
+    setCartProducts((prev) => {
+      const existingProduct = prev.find((product) => product.id === productId);
+
+      if (existingProduct) {
+        return prev.map((product) =>
+          product.id === productId
+            ? { ...product, quantity: product.quantity + 1 }
+            : product,
+        );
+      }
+
+      return [...prev, { id: productId, quantity: 1 }];
+    });
+  }
+
+  function handleRemoveOneProduct(productId) {
+    setCartProducts((prev) => {
+      const existingProduct = prev.find((product) => product.id === productId);
+
+      if (existingProduct) {
+        return prev.map((product) =>
+          product.id === productId
+            ? {
+                ...product,
+                quantity:
+                  product.quantity > 1 ? Math.max(0, product.quantity - 1) : 1,
+              }
+            : product,
+        );
+      }
+
+      return [...prev, { id: productId, quantity: 1 }];
+    });
+  }
+
+  function handleRemoveProductFromCart(productId) {
+    setCartProducts((prev) =>
+      prev.filter((product) => product.id !== productId),
+    );
+  }
+
   function handleAddCartProducts(newId, newQuantity) {
     setCartProducts((prev) => {
       const existingProduct = prev.find((product) => product.id === newId);
@@ -30,6 +72,9 @@ function CartProvider({ children }) {
         totalCartCount: totalCartCount,
         onAddCartProducts: handleAddCartProducts,
         cartProducts: cartProducts,
+        onAddOneProduct: handleAddOneProduct,
+        onRemoveOneProduct: handleRemoveOneProduct,
+        onRemoveProductFromCart: handleRemoveProductFromCart,
       }}
     >
       {children}

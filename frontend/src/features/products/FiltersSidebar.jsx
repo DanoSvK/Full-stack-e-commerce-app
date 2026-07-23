@@ -1,4 +1,4 @@
-import { Search, AlertCircle } from "lucide-react";
+import { Search, AlertCircle, Loader } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CategoryButton from "./CategoryButton";
 import SubcategoryButton from "./SubcategoryButton";
@@ -11,6 +11,7 @@ import SuggestedProductCardSkeleton from "../../components/skeletons/SuggestedPr
 import { useCategories } from "../../features/products/useCategories";
 import CategoriesSkeleton from "../../components/skeletons/CategoriesSkeleton";
 import { usePrices } from "../products/usePrices";
+import LoaderError from "../../ui/LoaderError";
 
 function FiltersSidebar({ onUpdateFilter, filters }) {
   const [suggestedQuery, setSuggestedQuery] = useState("");
@@ -282,7 +283,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
                 ) : isFetchingSuggestedProducts ? (
                   <SuggestedProductCardSkeleton />
                 ) : suggestedProductsError ? (
-                  <p className="text-red-500">Error searching products</p>
+                  <LoaderError />
                 ) : !suggestions.length ? (
                   <p className="text-sm text-zinc-500">No products found.</p>
                 ) : (
@@ -334,7 +335,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
           {isFetchingCategories ? (
             <CategoriesSkeleton />
           ) : categoriesError ? (
-            <p className="text-red-500">Could not load categories</p>
+            <LoaderError />
           ) : (
             <div className="flex flex-col items-start">
               {categories.map((category) => (
@@ -376,7 +377,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         {isFetchingPrices ? (
           <div className="mb-8 text-zinc-500 text-sm">Loading prices...</div>
         ) : pricesError ? (
-          <p className="text-red-500">Could not load prices</p>
+          <LoaderError />
         ) : (
           <div className="mb-8">
             <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">

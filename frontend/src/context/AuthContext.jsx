@@ -11,6 +11,7 @@ const AuthContext = createContext();
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const resetPasswordToken = searchParams.get("token"); // get token from URL
@@ -30,13 +31,12 @@ function AuthProvider({ children }) {
         }
 
         const data = await res.json();
-
         setUser(data.data.user);
       } catch (err) {
         console.error("err:", err);
         setUser(null);
       } finally {
-        setLoading(false);
+        setIsAuthLoading(false);
       }
     };
 
@@ -121,6 +121,21 @@ function AuthProvider({ children }) {
     navigate("/home"); // redirect after logout
   };
 
+  const deleteMe = async () => {
+    const res = await fetch(`${API_BASE_URL}/users/deleteMe`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to delete user");
+    }
+
+    setUser(null);
+    navigate("/home");
+  };
+
   const forgotPassword = async (email) => {
     setLoading(true);
     try {
@@ -201,6 +216,7 @@ function AuthProvider({ children }) {
       value={{
         user,
         loading,
+        isAuthLoading,
         login,
         loginWithGoogle,
         signup,
@@ -209,6 +225,7 @@ function AuthProvider({ children }) {
         resetPassword,
         updatePassword,
         error,
+        deleteMe,
       }}
     >
       {children}

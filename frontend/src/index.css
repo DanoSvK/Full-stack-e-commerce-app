@@ -20,6 +20,18 @@
   @apply bg-accent text-zinc-950 font-bold px-6 py-3 rounded-lg hover:bg-accent-hover transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
 }
 
+.btn-secondary {
+  @apply border border-zinc-700 text-zinc-300 font-medium px-6 py-3 rounded-lg hover:bg-zinc-800 transition-colors duration-200 cursor-pointer;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+}
+
+.btn-danger-secondary {
+  @apply bg-red-600/10 text-red-600 font-bold px-6 py-3 rounded-lg hover:bg-red-600/20 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+}
+
 @theme {
   --color-accent: #ffde21;
   --color-accent-hover: #e6c81e;
