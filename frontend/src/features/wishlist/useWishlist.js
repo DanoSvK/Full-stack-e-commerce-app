@@ -11,11 +11,5 @@ export const useWishlist = (enabled = true) => {
     enabled,
   });
 
-  console.log({
-    data,
-    isPending,
-    error,
-  });
-
   return { data, isPending, error };
 };

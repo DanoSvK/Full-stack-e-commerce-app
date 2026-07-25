@@ -35,6 +35,7 @@ import {
   createUserSchema,
   updateUserSchema,
   updateUserPasswordSchema,
+  resetPasswordSchema,
 } from "../validators/userValidators.js";
 
 router.get("/oauth/login", oauthLogin);
@@ -46,7 +47,7 @@ router.get("/logout", logout);
 router.post("/forgotPassword", forgotPassword);
 router.patch(
   "/resetPassword/:token",
-  validate(updateUserPasswordSchema),
+  validate(resetPasswordSchema),
   resetPassword,
 );
 

@@ -9,6 +9,7 @@ const sdk = bre();
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
+  const [resetLinkSent, setResetLinkSent] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
@@ -138,6 +139,7 @@ function AuthProvider({ children }) {
 
   const forgotPassword = async (email) => {
     setLoading(true);
+    setResetLinkSent(false);
     try {
       const res = await fetch(`${API_BASE_URL}/users/forgotPassword`, {
         method: "POST",
@@ -147,6 +149,8 @@ function AuthProvider({ children }) {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
+
+      setResetLinkSent(true);
     } catch (err) {
       setError({ message: err.message });
     } finally {
@@ -222,6 +226,7 @@ function AuthProvider({ children }) {
         signup,
         logout,
         forgotPassword,
+        resetLinkSent,
         resetPassword,
         updatePassword,
         error,

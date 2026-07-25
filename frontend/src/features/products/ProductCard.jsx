@@ -23,7 +23,6 @@ function ProductCard({ product }) {
   const active = wishlist?.some((prod) => prod.productId === product?.id);
 
   function addDeleteWishlistItem(productId) {
-    console.log(active);
     if (!active) {
       addToWishlist(productId);
     } else {
@@ -51,8 +50,9 @@ function ProductCard({ product }) {
           isAddingToWishlist ||
           isDeletingWishlistItem
         }
-        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
+        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
         onClick={() => addDeleteWishlistItem(product.id)}
+        // onMouseOver={() => {if(!!wishlistError) {}}}
       >
         <Heart
           size={16}
@@ -60,6 +60,7 @@ function ProductCard({ product }) {
           fill={active ? "#000" : "none"}
         />
       </button>
+
       <div className="overflow-hidden cursor-pointer">
         <Link to={`/products/${product.id}`}>
           <img

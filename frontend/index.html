@@ -166,13 +166,10 @@
               }));
           })(o, t, r));
       })(document, "brweb", "script", "webxpClient", window, {
-        target: "https://api.exponea.com",
-        stream_id: "197169a1-bb6e-4ab8-8eea-62e453ddc048",
-        webOptimization: {
-          webLayers: false,
-        },
-        new_experiments: { mode: "async" },
-        track: { metadata: { debug: true, test_data: true } },
+        target: "https://cloud-api.exponea.com",
+        stream_id: "2921a7c9-5a23-4732-ad0f-f7290a70dfb6",
+        new_experiments: { mode: "sync" },
+        cdp_segments: { rts: true },
         // replace with current customer ID or leave commented out for an anonymous customer
         // customer: window.currentUserId,
       });

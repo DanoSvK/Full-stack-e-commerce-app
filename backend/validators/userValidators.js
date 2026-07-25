@@ -47,4 +47,14 @@ export const updateUserPasswordSchema = z
     path: ["passwordConfirm"],
   });
 
+export const resetPasswordSchema = z
+  .object({
+    password: passwordSchema,
+    passwordConfirm: passwordSchema,
+  })
+  .refine((data) => data.password === data.passwordConfirm, {
+    message: "Passwords do not match",
+    path: ["passwordConfirm"],
+  });
+
 export const updateUserSchema = userBaseSchema.partial();

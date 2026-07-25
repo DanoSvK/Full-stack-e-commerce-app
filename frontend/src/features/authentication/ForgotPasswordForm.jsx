@@ -3,11 +3,23 @@ import { useAuth } from "../../context/AuthContext";
 
 function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
-  const { forgotPassword, error, loading } = useAuth();
+  const { forgotPassword, error, loading, resetLinkSent } = useAuth();
 
   function handleSubmit(e) {
     e.preventDefault();
     forgotPassword(email);
+  }
+
+  if (resetLinkSent) {
+    return (
+      <div className="max-w-lg m-auto">
+        <h3 className="text-center text-3xl text-white">Check your email</h3>
+        <p>
+          An email containing a link to reset your password has been sent to the
+          email address associated with your account
+        </p>
+      </div>
+    );
   }
 
   return (
