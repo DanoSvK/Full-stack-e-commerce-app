@@ -8,6 +8,6 @@ export function useProducts() {
     queryKey: ["product", searchParams.toString()],
     queryFn: () => getAllProducts(searchParams.toString()),
   });
-
+  console.log(searchParams.toString());
   return { data, isPending, error };
 }

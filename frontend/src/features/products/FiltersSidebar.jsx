@@ -91,6 +91,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
 
   const [_, setSearchParams] = useSearchParams("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchId, setSearchId] = useState("");
 
   const handleSearch = (searchQuery) => {
     setSearchParams((prev) => {
@@ -106,7 +107,29 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
       filters.category = "all";
       next.delete("subcategory");
       next.delete("page");
+      next.delete("id");
       setIsSuggestionsModal(false);
+
+      return next;
+    });
+  };
+
+  const handleSearchId = (searchId) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      if (searchId) {
+        next.set("id", searchId);
+      } else {
+        next.delete("id");
+      }
+
+      next.delete("category");
+      filters.category = "all";
+      next.delete("subcategory");
+      next.delete("page");
+      next.delete("title");
+      // setIsSuggestionsModal(false);
 
       return next;
     });
@@ -310,16 +333,30 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
             Product ID
           </label>
           <div className="relative">
-            <AlertCircle
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 z-10"
-            />
+            <button
+              type="submit"
+              className="cursor-pointer"
+              aria-label="search"
+              onClick={() => handleSearchId(searchId)}
+            >
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 z-10 cursor-pointer"
+                aria-hidden="true"
+              />
+            </button>
             <input
               type="text"
               id="product-id"
               placeholder="e.g. prod-1"
               className="input-field w-full pl-10! text-sm relative"
-              onInput={(e) => onUpdateFilter("productId", e.target.value)}
+              onInput={(e) => {
+                onUpdateFilter("productId", e.target.value);
+                setSearchId(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearchId(searchId);
+              }}
             />
           </div>
         </div>
