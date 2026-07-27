@@ -4,8 +4,10 @@ import { useCart } from "../../context/CartContext";
 import { useCreateWishlistItem } from "../wishlist/useCreateWishlistItem";
 import { useWishlist } from "../wishlist/useWishlist";
 import { useDeleteWishlistItem } from "../wishlist/useDeleteWishlistItem";
+import { useState } from "react";
 
 function ProductCard({ product }) {
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
   const { onAddCartProducts } = useCart();
   const {
     data: wishlist,
@@ -91,15 +93,22 @@ function ProductCard({ product }) {
             </p>
             <p className="text-white font-black text-xl">USD {product.price}</p>
           </div>
-          <button
-            aria-label="Add to cart"
-            className="cursor-pointer bg-accent text-zinc-950 p-3 rounded-xl hover:bg-accent-hover transition-all duration-300 disabled:opacity-30 disabled:grayscale"
-            onClick={() => {
-              onAddCartProducts(product.id, 1);
-            }}
-          >
-            <ShoppingCart size={20} />
-          </button>
+          {isAddedToCart ? (
+            <p className="self-end-safe text-green-500">Added to cart</p>
+          ) : (
+            <button
+              aria-label="Add to cart"
+              className="cursor-pointer bg-accent text-zinc-950 p-3 rounded-xl hover:bg-accent-hover transition-all duration-300 disabled:opacity-30 disabled:grayscale"
+              onClick={() => {
+                {
+                  onAddCartProducts(product.id, 1);
+                  setIsAddedToCart(true);
+                }
+              }}
+            >
+              <ShoppingCart size={20} />
+            </button>
+          )}
         </div>
       </div>
     </div>
