@@ -24,7 +24,6 @@ function ProductPage() {
   } = useProducts();
 
   const [searchParams] = useSearchParams();
-
   const paginationDetails = productsData?.pagination;
   const products = productsData?.products ?? [];
 

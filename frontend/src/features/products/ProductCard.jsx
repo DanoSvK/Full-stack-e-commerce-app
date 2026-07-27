@@ -33,7 +33,9 @@ function ProductCard({ product }) {
   }
 
   return (
-    <div className="relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group">
+    <div
+      className={`relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group ${product.stock === 0 && "pointer-events-none opacity-50 cursor-not-allowed"}`}
+    >
       <div className="absolute top-4 left-4 z-10 space-x-2">
         {product?.subcategory.categories.map((category) => (
           <span
@@ -95,6 +97,8 @@ function ProductCard({ product }) {
           </div>
           {isAddedToCart ? (
             <p className="self-end-safe text-green-500">Added to cart</p>
+          ) : product.stock === 0 ? (
+            <p className="self-end-safe text-red-500">Out of stock</p>
           ) : (
             <button
               aria-label="Add to cart"

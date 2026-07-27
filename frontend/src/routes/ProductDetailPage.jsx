@@ -121,7 +121,7 @@ function ProductDetailPage() {
             </p>
             <div className="flex items-center gap-2 text-orange-500 font-bold text-sm mb-4">
               <AlertCircle size={20} />
-              <p>Only 8 left in stock</p>
+              <p>{product.stock} left in stock</p>
             </div>
           </header>
           <form>
@@ -187,13 +187,16 @@ function ProductDetailPage() {
               <button
                 type="button"
                 className="btn-primary grow flex items-center justify-center gap-3 relative overflow-hidden"
+                disabled={product.stock === 0}
                 onClick={() => {
                   // onAddTotalCartCount(itemCount);
                   onAddCartProducts(product.id, itemCount);
                 }}
               >
                 <ShoppingCart size={20} />
-                <span>Add to cart</span>
+                <span>
+                  {product.stock === 0 ? "Out of stock" : "Add to cart"}
+                </span>
               </button>
               <button
                 type="button"

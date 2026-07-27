@@ -22,7 +22,7 @@ function Pagination({ paginationDetails }) {
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 mt-2">
       {pagination.map((p, i) =>
         p === "..." ? (
           <span key={`ellipsis-${i}`}>{p}</span>
@@ -30,7 +30,7 @@ function Pagination({ paginationDetails }) {
           <button
             type="button"
             key={`page-${p}`}
-            className={currentPage === p ? "bg-mist-800" : "cursor-pointer"}
+            className={currentPage === p ? "bg-mist-800 p-1" : "cursor-pointer"}
             onClick={() => handlePageClick(p)}
           >
             {p}
