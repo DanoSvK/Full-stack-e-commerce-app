@@ -97,14 +97,14 @@ function ProductPage() {
               Showing <span>{products.length}</span> products
             </p>
           </div>
-          <div className="flex">
+          {/* <div className="flex">
             <button className="p-2 text-accent bg-accent/10 rounded-lg">
               <LayoutGrid size={20} aria-hidden="true" />
             </button>
             <button className="p-2 text-zinc-500 hover:text-white">
               <List size={20} aria-hidden="true" />
             </button>
-          </div>
+          </div> */}
         </div>
         {isFetchingProducts ? (
           <ProductListSkeleton length={10} />
