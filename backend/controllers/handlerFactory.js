@@ -29,16 +29,6 @@ export const getAll = (Model, queryOptions) =>
     });
   });
 
-catchAsync(async (req, res, next) => {
-  const products = await prisma.product.findMany(features.prismaQuery);
-
-  res.status(200).json({
-    status: "success",
-    results: products.length,
-    data: { products },
-  });
-});
-
 export const getOne = (Model, queryOptions) =>
   catchAsync(async (req, res, next) => {
     const options = {
