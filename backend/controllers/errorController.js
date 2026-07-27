@@ -85,7 +85,7 @@ const sendErrorProd = (err, res) => {
 
     res.status(500).json({
       status: "error",
-      message: err.message || "Something went wrong!",
+      message: "Something went wrong!",
     });
   }
 };
