@@ -108,8 +108,7 @@ function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = () => {
-    window.location.href =
-      "http://localhost:3000/API_BASE_URL/v1/users/oauth/login";
+    window.location.href = `${API_BASE_URL}/users/oauth/login`;
   };
 
   const logout = async () => {

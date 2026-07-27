@@ -52,7 +52,6 @@ function ProductCard({ product }) {
         }
         className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
         onClick={() => addDeleteWishlistItem(product.id)}
-        // onMouseOver={() => {if(!!wishlistError) {}}}
       >
         <Heart
           size={16}

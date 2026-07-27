@@ -13,7 +13,7 @@ export const setProductUserIds = (req, res, next) => {
   // Allow nested routes
   // If not nested, check the body, if nested check params
   req.body.userId = req.user.id; // always from auth, never from body
-  if (!req.body.productId) req.body.productId = parseInt(req.params.prodId);
+  if (!req.body.productId) req.body.productId = req.params.prodId;
 
   next();
 };

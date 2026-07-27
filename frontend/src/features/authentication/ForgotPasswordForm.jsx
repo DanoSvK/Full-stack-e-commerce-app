@@ -12,11 +12,14 @@ function ForgotPasswordForm() {
 
   if (resetLinkSent) {
     return (
-      <div className="max-w-lg m-auto">
-        <h3 className="text-center text-3xl text-white">Check your email</h3>
+      <div className="max-w-lg m-auto text-center space-y-6 text-xl">
+        <h3 className="text-5xl text-white">Check your email</h3>
         <p>
           An email containing a link to reset your password has been sent to the
           email address associated with your account
+        </p>
+        <p className="text-white">
+          If you don't see the email, check your spam folder
         </p>
       </div>
     );

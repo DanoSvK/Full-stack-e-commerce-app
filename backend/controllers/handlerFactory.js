@@ -42,7 +42,7 @@ catchAsync(async (req, res, next) => {
 export const getOne = (Model, queryOptions) =>
   catchAsync(async (req, res, next) => {
     const options = {
-      where: { id: parseInt(req.params.id) },
+      where: { id: req.params.id },
     };
 
     if (queryOptions?.include) options.include = queryOptions.include;
@@ -60,7 +60,7 @@ export const getOne = (Model, queryOptions) =>
 export const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const record = await prisma[Model].delete({
-      where: { id: parseInt(req.params.id) },
+      where: { id: req.params.id },
     });
 
     if (!record) {
@@ -75,11 +75,10 @@ export const deleteOne = (Model) =>
 
 export const updateOne = (Model) =>
   catchAsync(async (req, res) => {
-    const { id } = req.params;
     const { title, description, price, quantity, imageUrl } = req.body;
 
     const record = await prisma[Model].update({
-      where: { id: parseInt(id) },
+      where: { id: req.params.id },
       data: {
         title,
         description,

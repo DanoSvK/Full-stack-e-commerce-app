@@ -72,7 +72,6 @@ export const oauthCallback = catchAsync(async (req, res) => {
       data: {
         email: claims.email,
         username: claims.name,
-        password: null,
         role: "USER",
       },
       select: { id: true, email: true, username: true, role: true },

@@ -78,10 +78,10 @@ export const login = catchAsync(async (req, res, next) => {
   const DUMMY_HASH = await bcrypt.hash("dummy-password", 12);
   const isValid = await bcrypt.compare(
     password,
-    user ? user.password : DUMMY_HASH,
+    user && user.password ? user.password : DUMMY_HASH,
   );
 
-  if (!user || !isValid) {
+  if (!user || !user.password || !isValid) {
     return next(new AppError("Incorrect email or password", 401));
   }
 
@@ -244,7 +244,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     Submit a request with your new password.
     <a href="${resetURL}">Reset password</a>
   </p>
-  <p>If you didn't forget your password, please ignore this email!</p>
+  <p>If you didn't request password reset, please ignore this email!</p>
 `;
 
   try {
@@ -315,11 +315,18 @@ export const updatePassword = catchAsync(async (req, res, next) => {
     where: { id: req.user.id },
     select: { id: true, password: true },
   });
-  console.log(req.body);
-  console.log(req.body.currentPassword);
-  console.log(user);
+
   if (!user) {
     return next(new AppError("User not found", 404));
+  }
+
+  if (!user.password) {
+    return next(
+      new AppError(
+        "This account uses Google sign-in and has no password set.",
+        400,
+      ),
+    );
   }
 
   // 2) Check if POSTed current password is correct

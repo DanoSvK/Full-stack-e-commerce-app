@@ -1,10 +1,11 @@
 import AppError from "../utils/appError.js";
+import logger from "../utils/logger.js";
 
 // Missing/invalid fields, wrong types in query
 const handlePrismaValidationError = (err) => {
-  const match = err.message.match(/Argument `(\w+)`.*$/m);
-  const detail = match ? match[0] : "Invalid input data";
-  return new AppError(`Validation failed: ${detail}`, 400);
+  // Full detail goes to server logs only — never to the client
+  logger.warn({ err: err.message }, "Prisma validation error");
+  return new AppError("Invalid input data. Please check your request.", 400);
 };
 
 // Known DB constraint errors (unique, foreign key, not found, etc.)
@@ -22,7 +23,10 @@ const handlePrismaKnownRequestError = (err) => {
         err.meta?.driverAdapterError?.cause?.constraint?.fields?.join(", ") ??
         "field";
 
-      console.log(fields.split(", ").length);
+      logger.debug(
+        { fieldCount: fields.split(", ").length },
+        "Unique constraint violation",
+      );
       if (fields.split(", ").length > 1) {
         return new AppError("This record already exists.", 409);
       }
@@ -81,7 +85,7 @@ const sendErrorProd = (err, res) => {
     });
   } else {
     // Programming or other unknown error: don't leak error details
-    console.error("ERROR 💥", err);
+    logger.error({ err }, "Unexpected error");
 
     res.status(500).json({
       status: "error",
