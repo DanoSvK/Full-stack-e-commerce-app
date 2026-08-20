@@ -75,39 +75,44 @@ function ProductDetailPage() {
             </div>
           </header>
           <form>
-            <fieldset>
-              <legend className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
-                Select Color
-              </legend>
-              <div className="flex flex-wrap gap-2 space-y-2">
-                {product.variants.colors.map((productColor) => (
-                  <button
-                    type="button"
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${color === productColor ? "bg-white text-zinc-950" : "hover:bg-zinc-800"}`}
-                    onClick={() => setColor(productColor)}
-                  >
-                    {productColor}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
+            {product.variants.colors && (
+              <fieldset>
+                <legend className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+                  Select Color
+                </legend>
+                <div className="flex flex-wrap gap-2 space-y-2">
+                  {product.variants.colors.map((productColor) => (
+                    <button
+                      type="button"
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${color === productColor ? "bg-white text-zinc-950" : "hover:bg-zinc-800"}`}
+                      onClick={() => setColor(productColor)}
+                    >
+                      {productColor}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
 
-            <fieldset>
-              <legend className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
-                Select Size
-              </legend>
-              <div className="flex flex-wrap gap-2 space-y-2">
-                {product.variants.sizes.map((productSize) => (
-                  <button
-                    type="button"
-                    className={`w-12 h-12 rounded-lg text-sm font-bold flex items-center justify-center transition-all  ${productSize === size ? "bg-accent text-zinc-950" : "hover:bg-zinc-800 bg-zinc-900 text-zinc-400"} `}
-                    onClick={() => setSize(productSize)}
-                  >
-                    {productSize}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
+            {product.variants.sizes && (
+              <fieldset>
+                <legend className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+                  Select Size
+                </legend>
+                <div className="flex flex-wrap gap-2 space-y-2">
+                  {product.variants.sizes.map((productSize) => (
+                    <button
+                      type="button"
+                      className={`w-12 h-12 rounded-lg text-sm font-bold flex items-center justify-center transition-all  ${productSize === size ? "bg-accent text-zinc-950" : "hover:bg-zinc-800 bg-zinc-900 text-zinc-400"} `}
+                      onClick={() => setSize(productSize)}
+                    >
+                      {productSize}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-4 pt-6 mb-10">
               <div className="flex items-center justify-center bg-zinc-900 rounded-xl border border-white/5 px-2">
                 <button
@@ -134,6 +139,7 @@ function ProductDetailPage() {
               </div>
               <button
                 type="button"
+                disabled={product.stock === 0}
                 className="btn-primary grow flex items-center justify-center gap-3 relative overflow-hidden"
                 onClick={() => {
                   // onAddTotalCartCount(itemCount);
@@ -141,7 +147,9 @@ function ProductDetailPage() {
                 }}
               >
                 <ShoppingCart size={20} />
-                <span>Add to cart</span>
+                <span>
+                  {product.stock === 0 ? "Out of stock" : "Add to cart"}
+                </span>
               </button>
               <button
                 type="button"

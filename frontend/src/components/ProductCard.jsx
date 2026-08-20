@@ -2,15 +2,19 @@ import { Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useState } from "react";
 
 function ProductCard({ product }) {
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
   const { onAddCartProducts } = useCart();
   const { wishlistProducts, onAddToWishlist } = useWishlist();
 
   const active = wishlistProducts.includes(product.id);
 
   return (
-    <div className="relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group">
+    <div
+      className={`relative glass-card rounded-2xl overflow-hidden hover:-translate-y-1.25 ease-in-out transition-transform duration-700 group ${product.stock === 0 && "pointer-events-none opacity-50 cursor-not-allowed"}`}
+    >
       <div className="absolute top-4 left-4 z-10">
         <span className="bg-zinc-900/80 backdrop-blur-md text-zinc-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
           {product.category}
@@ -54,15 +58,22 @@ function ProductCard({ product }) {
             </p>
             <p className="text-white font-black text-xl">USD {product.price}</p>
           </div>
-          <button
-            aria-label="Add to cart"
-            className="cursor-pointer bg-accent text-zinc-950 p-3 rounded-xl hover:bg-accent-hover transition-all duration-300 disabled:opacity-30 disabled:grayscale"
-            onClick={() => {
-              onAddCartProducts(product.id, 1);
-            }}
-          >
-            <ShoppingCart size={20} />
-          </button>
+          {isAddedToCart ? (
+            <p className="self-end-safe text-green-500">Added to cart</p>
+          ) : product.stock === 0 ? (
+            <p className="self-end-safe text-red-500">Out of stock</p>
+          ) : (
+            <button
+              aria-label="Add to cart"
+              className="cursor-pointer bg-accent text-zinc-950 p-3 rounded-xl hover:bg-accent-hover transition-all duration-300 disabled:opacity-30 disabled:grayscale"
+              onClick={() => {
+                onAddCartProducts(product.id, 1);
+                setIsAddedToCart(true);
+              }}
+            >
+              <ShoppingCart size={20} />
+            </button>
+          )}
         </div>
       </div>
     </div>

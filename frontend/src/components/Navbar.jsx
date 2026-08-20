@@ -7,7 +7,7 @@ export default function Navbar() {
   const navLinkClass = ({ isActive }) => (isActive ? "text-accent" : "");
 
   return (
-    <nav className="hidden md:block flex-1">
+    <nav className="hidden min-[880px]:block flex-1">
       <ul className="flex gap-6 text-sm items-center justify-center">
         <li className="hover:text-accent-hover">
           <NavLink to="/" className={navLinkClass}>
@@ -17,11 +17,6 @@ export default function Navbar() {
         <li className="hover:text-accent">
           <NavLink to="/products" className={navLinkClass}>
             Products
-          </NavLink>
-        </li>
-        <li className="hover:text-accent">
-          <NavLink to="/catalogs" className={navLinkClass}>
-            Catalogs
           </NavLink>
         </li>
         <li className="hover:text-accent">

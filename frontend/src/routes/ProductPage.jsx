@@ -7,6 +7,7 @@ import { products } from "../../products";
 import { Filter, ChevronDown, LayoutGrid, List } from "lucide-react";
 
 function ProductPage() {
+  console.log(products);
   const [filters, setFilters] = useState({
     search: "",
     productId: "",
@@ -55,6 +56,24 @@ function ProductPage() {
     }));
   };
 
+  // Handle stock level filtering
+  function calcStockLevel(stock) {
+    switch (filters.stockLevel) {
+      case "out-of-stock":
+        return stock === 0;
+
+      case "low-stock":
+        return stock < 10;
+
+      case "in-stock":
+        return stock >= 10;
+
+      case "all":
+      default:
+        return true;
+    }
+  }
+
   const filteredProducts = products.filter((product) => {
     return (
       product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
@@ -64,10 +83,11 @@ function ProductPage() {
       (filters.subcategory === "all" ||
         product.subcategory.toLowerCase() === filters.subcategory) &&
       product.price >= filters.priceRange.min &&
-      product.price <= filters.priceRange.max
+      product.price <= filters.priceRange.max &&
+      calcStockLevel(product.stock)
     );
   });
-
+  console.log(products);
   return (
     <div className="lg:flex px-4 gap-8">
       {/* FILTERS */}
