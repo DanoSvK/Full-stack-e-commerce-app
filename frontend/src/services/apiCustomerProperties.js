@@ -1,7 +1,4 @@
-import { bre } from "../utils/bloomreach";
 import { API_BASE_URL } from "../globalVariables";
-
-const sdk = bre();
 
 export const getCustomerProperties = async () => {
   const res = await fetch(`${API_BASE_URL}/users/getCustomerProperties`, {
@@ -42,7 +39,6 @@ export const createUpdateCustomerProperty = async (action, key, value) => {
     );
   }
 
-  sdk?.update({ [key]: value });
   return res.json();
 };
 

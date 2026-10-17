@@ -22,7 +22,7 @@ function SignInForm() {
       {error?.message && <p className="text-red-500 mb-4">{error.message}</p>}
       <section className="max-w-lg m-auto">
         <div>
-          <h1 className="text-3xl font-bold mb-4 text-white">Login</h1>
+          <h1 className="text-3xl font-bold mb-4 text-header">Login</h1>
           <form
             className="border border-gray-300 p-4 rounded-lg mb-4 glass-card"
             onSubmit={handleSubmit}

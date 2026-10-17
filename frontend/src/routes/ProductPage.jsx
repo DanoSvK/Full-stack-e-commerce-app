@@ -85,7 +85,7 @@ function ProductPage() {
       </aside>
       {/* PRODUCTS */}
       <section className="flex-1">
-        <div className="flex justify-between items-center bg-zinc-900/50 p-4 rounded-2xl border border-white/5 mb-8">
+        <div className="flex justify-between items-center bg-zinc-900/50 p-4 rounded-2xl border border-zinc-500/5 mb-8">
           <div className="flex items-center">
             <Filter
               size={16}
@@ -100,7 +100,7 @@ function ProductPage() {
             <button className="p-2 text-accent bg-accent/10 rounded-lg">
               <LayoutGrid size={20} aria-hidden="true" />
             </button>
-            <button className="p-2 text-zinc-500 hover:text-white">
+            <button className="p-2 text-main hover:text-header">
               <List size={20} aria-hidden="true" />
             </button>
           </div> */}

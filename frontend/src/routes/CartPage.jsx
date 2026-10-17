@@ -12,11 +12,13 @@ function CartPage() {
     onRemoveOneProduct,
     onRemoveProductFromCart,
   } = useCart();
+
   const {
     data: products,
     isPending: isFetchingProducts,
     error: productsError,
   } = useProducts();
+
   const navigate = useNavigate();
 
   // Guard before doing anything with products
@@ -26,10 +28,21 @@ function CartPage() {
   const productMap = Object.fromEntries(
     products.products.map((p) => [p.id, p]),
   );
+
   const cartWithProducts = cartProducts.map((item) => ({
     ...productMap[item.id],
     quantity: item.quantity,
   }));
+
+  const totalPrice = cartWithProducts.reduce(
+    (total, product) => total + product.price * product.quantity,
+    0,
+  );
+
+  const VAT = 0.23;
+
+  const taxPrice = totalPrice * VAT;
+  const totalBeforeTax = totalPrice - taxPrice;
 
   return (
     <main>
@@ -37,7 +50,7 @@ function CartPage() {
         <EmptyCartPage />
       ) : (
         <>
-          <h1 className="text-4xl font-black tracking-tighter text-white uppercase mb-12">
+          <h1 className="text-4xl font-black tracking-tighter text-header uppercase mb-12">
             Shopping cart
           </h1>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
@@ -54,10 +67,10 @@ function CartPage() {
                   <div className="flex flex-col grow space-y-2">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-white font-bold hover:text-accent transition-colors">
+                        <h3 className="text-header font-bold hover:text-accent transition-colors">
                           {product.title}
                         </h3>
-                        <div className="flex items-center text-zinc-500 text-xs mt-1">
+                        <div className="flex items-center text-main text-xs mt-1">
                           {product.subcategory.categories.map((category) => (
                             <p key={category.category.name}>
                               {category.category.name}
@@ -79,28 +92,28 @@ function CartPage() {
                       <div className="flex items-center bg-zinc-950 rounded-lg border border-white/5 p-1">
                         <button
                           type="button"
-                          className="p-1.5 text-zinc-500 hover:text-white"
+                          className="p-1.5 text-main hover:text-header"
                           onClick={() => onRemoveOneProduct(product.id)}
                         >
                           -
                         </button>
-                        <span className="w-8 text-center text-sm font-bold text-white">
+                        <span className="w-8 text-center text-sm font-bold text-header">
                           {product.quantity}
                         </span>
                         <button
                           type="button"
-                          className="p-1.5 text-zinc-500 hover:text-white"
+                          className="p-1.5 text-main hover:text-header"
                           onClick={() => onAddOneProduct(product.id)}
                         >
                           +
                         </button>
                       </div>
                       <div className="text-right">
-                        <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+                        <p className="text-main text-[10px] uppercase font-bold tracking-widest">
                           Total
                         </p>
-                        <p className="text-white font-black text-lg">
-                          {product.currency} {product.price * product.quantity}
+                        <p className="text-header font-black text-lg">
+                          {(product.price * product.quantity).toFixed(2)} €
                         </p>
                       </div>
                     </div>
@@ -117,25 +130,31 @@ function CartPage() {
             </div>
             <section className="space-y-8">
               <section className="space-y-6 p-8 glass-card rounded-3xl">
-                <h3 className="text-white font-bold text-xl uppercase tracking-tight">
+                <h3 className="text-header font-bold text-xl uppercase tracking-tight">
                   Order summary
                 </h3>
                 <div className="text-sm space-y-4 pt-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-zinc-500">Subtotal</p>
-                    <p className="text-white font-bold">$430.00</p>
+                    <p className="text-main">Subtotal</p>
+                    <p className="text-header font-bold">
+                      {totalBeforeTax.toFixed(2)} €
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-zinc-500">Estimated Taxes (23%)</p>
-                    <p className="text-white font-bold">$50.00</p>
+                    <p className="text-main">Estimated Taxes (23%)</p>
+                    <p className="text-header font-bold">
+                      {taxPrice.toFixed(2)} €
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-zinc-500">Shipping</p>
+                    <p className="text-main">Shipping</p>
                     <p className="text-emerald-500 font-bold">FREE</p>
                   </div>
                   <div className="border-t border-white/5 pt-4 flex justify-between items-baseline">
-                    <p className="text-white font-bold  ">Grand Total</p>
-                    <p className="text-3xl font-black text-accent">$464.00</p>
+                    <p className="text-header font-bold  ">Grand Total</p>
+                    <p className="text-3xl font-black text-accent">
+                      {totalPrice.toFixed(2)} €
+                    </p>
                   </div>
                 </div>
                 <div className="pt-6">
@@ -149,7 +168,7 @@ function CartPage() {
                 </div>
               </section>
               <section className="glass-card p-6 rounded-2xl space-y-4">
-                <div className="flex items-center gap-2 text-white font-bold text-sm uppercase tracking-tight">
+                <div className="flex items-center gap-2 text-header font-bold text-sm uppercase tracking-tight">
                   <Tag size={16} className="text-accent" />
                   <span>Promo code</span>
                 </div>
@@ -161,14 +180,14 @@ function CartPage() {
                   />
                   <button
                     type="button"
-                    className="bg-zinc-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-zinc-700 transition-colors cursor-pointer"
+                    className="bg-zinc-800 text-header px-4 py-2 rounded-lg text-xs font-bold hover:bg-zinc-700 transition-colors cursor-pointer"
                   >
                     Apply
                   </button>
                 </div>
                 <div className="flex items-center gap-2 p-3 bg-accent/5 border border-accent/20 rounded-xl">
                   <Ticket size={16} className="text-accent" />
-                  <p className="text-zinc-400 text-[10px] leading-tight">
+                  <p className="text-main text-[10px] leading-tight">
                     <span className="text-accent font-bold">DEMO10</span>{" "}
                     available for 10% off your first order.
                   </p>

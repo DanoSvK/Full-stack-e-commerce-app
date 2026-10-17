@@ -14,10 +14,10 @@ function AccountSidebar({ onHandleActive, activeTab, items }) {
           <span className="text-zinc-950 font-black text-xl">D</span>
         </div>
         <div>
-          <p className="uppercase text-white font-bold text-sm truncate">
+          <p className="uppercase text-header font-bold text-sm truncate">
             Daniel Kopáč
           </p>
-          <p className="uppercase text-zinc-500 text-[10px] font-bold tracking-widest">
+          <p className="uppercase text-main text-[10px] font-bold tracking-widest">
             Platinum member
           </p>
         </div>
@@ -28,7 +28,7 @@ function AccountSidebar({ onHandleActive, activeTab, items }) {
         {items.map(({ name, label, icon: Icon }) => (
           <button
             key={name}
-            className={`${btnClassName} ${activeTab === name ? "text-zinc-950 bg-accent pointer-events-none" : "hover:text-white hover:bg-zinc-900"} `}
+            className={`${btnClassName} ${activeTab === name ? "text-zinc-950 bg-accent pointer-events-none" : "hover:text-header hover:bg-zinc-900"} `}
             onClick={() => {
               onHandleActive(name);
             }}

@@ -28,7 +28,8 @@ function ProductDetailPage() {
 
   const {
     data: wishlist,
-    isPending: isFetchingWishlist,
+    isPending: isPendingWishlist,
+    isFetching: isFetchingWishlist,
     error: wishlistError,
   } = useWishlist(!isAuthLoading && !!user);
 
@@ -45,9 +46,23 @@ function ProductDetailPage() {
     return <ProductDetailPageSkeleton />;
   }
 
-  if (productError || wishlistError) {
+  if (productError) {
     return <LoaderError />;
   }
+
+  const stockLevelMsg =
+    product.stock > 5
+      ? "More than 5 in stock"
+      : product.stock === 5
+        ? "5 in stock"
+        : "Less than 5 in stock";
+
+  const stockLevelColor =
+    product.stock > 5
+      ? "text-green-500"
+      : product.stock === 5
+        ? "text-accent"
+        : "text-orange-500";
 
   const active = wishlist?.some((prod) => prod.productId === product.id);
 
@@ -104,29 +119,26 @@ function ProductDetailPage() {
               </div>
               <p className="flex items-center gap-1 text-accent">
                 <Star size={13} />
-                <span className="text-sm font-bold text-white">4.8</span>
-                <span className="text-zinc-500 text-xs">(128 reviews)</span>
+                <span className="text-sm font-bold text-header">4.8</span>
+                <span className="text-main text-xs">(128 reviews)</span>
               </p>
             </div>
-            <h1 className="text-4xl mb-4 space-y-10 md:text-5xl font-black tracking-tighter text-white leading-tight">
+            <h1 className="text-4xl mb-4 space-y-10 md:text-5xl font-black tracking-tighter text-header leading-tight">
               {product.title}
             </h1>
-            <p className="text-4xl font-black text-white mb-8">
-              {product.currency}
-              {product.price}
-              <span className="line-through text-zinc-500 text-lg">
-                {" "}
-                516.00
-              </span>
+            <p className="text-4xl font-black text-header mb-8">
+              {product.price.toFixed(2)} €
+              <span className="line-through text-main text-lg"> 516.00 €</span>
             </p>
-            <div className="flex items-center gap-2 text-orange-500 font-bold text-sm mb-4">
-              <AlertCircle size={20} />
-              <p>{product.stock} left in stock</p>
+            <div
+              className={`flex items-center gap-2 font-bold text-sm mb-4 ${stockLevelColor}`}
+            >
+              <p>{stockLevelMsg}</p>
             </div>
           </header>
           <form>
             <fieldset>
-              <legend className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+              <legend className="text-main text-[10px] uppercase font-bold tracking-widest">
                 Select Color
               </legend>
               <div className="flex flex-wrap gap-2 space-y-2">
@@ -144,7 +156,7 @@ function ProductDetailPage() {
             </fieldset>
 
             <fieldset>
-              <legend className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+              <legend className="text-main text-[10px] uppercase font-bold tracking-widest">
                 Select Size
               </legend>
               <div className="flex flex-wrap gap-2 space-y-2">
@@ -152,7 +164,7 @@ function ProductDetailPage() {
                   <button
                     type="button"
                     key={productSize}
-                    className={`w-12 h-12 rounded-lg text-sm font-bold flex items-center justify-center transition-all  ${productSize === size ? "bg-accent text-zinc-950" : "hover:bg-zinc-800 bg-zinc-900 text-zinc-400"} `}
+                    className={`w-12 h-12 rounded-lg text-sm font-bold flex items-center justify-center transition-all  ${productSize === size ? "bg-accent text-zinc-950" : "hover:bg-zinc-800 bg-zinc-900 text-main"} `}
                     onClick={() => setSize(productSize)}
                   >
                     {productSize}
@@ -164,7 +176,7 @@ function ProductDetailPage() {
               <div className="flex items-center justify-center bg-zinc-900 rounded-xl border border-white/5 px-2">
                 <button
                   type="button"
-                  className="p-3 text-zinc-400 hover:text-white cursor-pointer"
+                  className="p-3 text-main hover:text-header cursor-pointer"
                   aria-label="Decrease item count"
                   onClick={() =>
                     setItemCount((prev) => (prev > 1 ? prev - 1 : prev))
@@ -172,12 +184,12 @@ function ProductDetailPage() {
                 >
                   -
                 </button>
-                <span className="w-12 text-center font-bold text-white">
+                <span className="w-12 text-center font-bold text-header">
                   {itemCount}
                 </span>
                 <button
                   type="button"
-                  className="p-3 text-zinc-400 hover:text-white cursor-pointer"
+                  className="p-3 text-main hover:text-header cursor-pointer"
                   aria-label="Increase item count"
                   onClick={() => setItemCount((prev) => prev + 1)}
                 >
@@ -201,10 +213,10 @@ function ProductDetailPage() {
               <button
                 type="button"
                 aria-label="Add to wishlist"
-                className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active ? " border-accent text-accent" : "text-zinc-400 border-white/5 enabled:hover:text-white"} ${addToWishlistError || deleteWishlistItemError ? "border-red-500" : ""}`}
+                className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active ? " border-accent text-accent" : "text-main border-white/5 enabled:hover:text-header"} ${addToWishlistError || deleteWishlistItemError ? "border-red-500" : ""}`}
                 disabled={
-                  isFetchingWishlist ||
-                  !!wishlistError ||
+                  isAuthLoading ||
+                  (!!user && isPendingWishlist) ||
                   isAddingToWishlist ||
                   isDeletingWishlistItem
                 }
@@ -214,7 +226,7 @@ function ProductDetailPage() {
               </button>
               <button
                 type="button"
-                className="cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 border-white/5 text-zinc-400 hover:text-white"
+                className="cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 border-white/5 text-main hover:text-header"
               >
                 <Share aria-label="Share the product" size={24} />
               </button>
@@ -222,18 +234,16 @@ function ProductDetailPage() {
           </form>
           <section className="pt-10 border-t border-white/5">
             <div className="mb-4">
-              <h3 className="text-white font-bold text-lg uppercase tracking-tight">
+              <h3 className="text-header font-bold text-lg uppercase tracking-tight">
                 Product Description
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                {product.description}
-              </p>
+              <p className="text-main leading-relaxed">{product.description}</p>
             </div>
             <div>
-              <h3 className="text-white font-bold text-lg uppercase tracking-tight">
+              <h3 className="text-header font-bold text-lg uppercase tracking-tight">
                 Features & Details
               </h3>
-              <p className="text-zinc-500 text-sm leading-relaxed">
+              <p className="text-main text-sm leading-relaxed">
                 {product.extendedDescription}
               </p>
             </div>

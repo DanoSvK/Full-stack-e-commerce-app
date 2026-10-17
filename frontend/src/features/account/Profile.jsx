@@ -115,9 +115,9 @@ function Profile() {
       )}
       <section className="mb-16">
         <header className="flex justify-between mb-8">
-          <h2 className="text-3xl font-black tracking-tighter text-white uppercase">
+          <h2 className="text-3xl font-black tracking-tighter text-header uppercase">
             Customer Profile
-            <span className="block text-white mt-4 font-bold text-xl uppercase tracking-tight">
+            <span className="block text-header mt-4 font-bold text-xl uppercase tracking-tight">
               IDs
             </span>
           </h2>
@@ -137,7 +137,7 @@ function Profile() {
                 REGISTERED
               </span>
             </dt>
-            <dd className="text-white font-bold">{user.email}</dd>
+            <dd className="text-header font-bold">{user.email}</dd>
           </div>
 
           <div className="glass-card p-6 rounded-2xl space-y-4">
@@ -147,7 +147,7 @@ function Profile() {
                 EMAIL_ID
               </span>
             </dt>
-            <dd className="text-white font-bold">{user.email}</dd>
+            <dd className="text-header font-bold">{user.email}</dd>
           </div>
         </dl>
       </section>
@@ -155,7 +155,7 @@ function Profile() {
       {/* CUSTOMER PROPERTIES */}
       <section>
         <header className="flex justify-between mb-6">
-          <h2 className="text-white font-bold text-xl uppercase tracking-tight">
+          <h2 className="text-header font-bold text-xl uppercase tracking-tight">
             Customer Properties
           </h2>
           <div className="space-y-4">
@@ -207,7 +207,7 @@ function Profile() {
                   </dt>
 
                   {!isEditingProps ? (
-                    <dd className="text-white text-sm font-bold">
+                    <dd className="text-header text-sm font-bold">
                       {property.value}
                     </dd>
                   ) : (

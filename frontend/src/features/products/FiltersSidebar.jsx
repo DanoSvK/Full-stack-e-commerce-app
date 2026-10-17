@@ -257,7 +257,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
 
   return (
     <section>
-      <h3 className="text-white font-black text-xl tracking-tighter uppercase mb-8">
+      <h3 className="text-header font-black text-xl tracking-tighter uppercase mb-8">
         FILTERS
       </h3>
       <div>
@@ -265,7 +265,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         <div className="mb-8">
           <label
             htmlFor="search"
-            className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+            className="text-header text-[10px] uppercase font-bold tracking-widest"
           >
             Search
           </label>
@@ -278,7 +278,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
             >
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 z-10"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10"
                 aria-hidden="true"
               />
             </button>
@@ -300,15 +300,15 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
               onMouseDown={() => navigate()}
             />
             {isSuggestionsModal && (
-              <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-white/5 rounded-lg w-full z-20 p-3 space-y-1">
+              <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-header-texttext-header/5 rounded-lg w-full z-20 p-3 space-y-1">
                 {!searchQuery ? (
-                  <p className="text-sm text-zinc-500">Start typing...</p>
+                  <p className="text-sm text-header">Start typing...</p>
                 ) : isFetchingSuggestedProducts ? (
                   <SuggestedProductCardSkeleton />
                 ) : suggestedProductsError ? (
                   <LoaderError />
                 ) : !suggestions.length ? (
-                  <p className="text-sm text-zinc-500">No products found.</p>
+                  <p className="text-sm text-header">No products found.</p>
                 ) : (
                   <ul className="space-y-3">
                     {suggestions.map((product) => (
@@ -328,7 +328,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         <div className="mb-8">
           <label
             htmlFor="product-id"
-            className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+            className="text-header text-[10px] uppercase font-bold tracking-widest"
           >
             Product ID
           </label>
@@ -341,7 +341,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
             >
               <Search
                 size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 z-10 cursor-pointer"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10 cursor-pointer"
                 aria-hidden="true"
               />
             </button>
@@ -365,7 +365,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         <div className="mb-8">
           <label
             htmlFor="category"
-            className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+            className="text-header text-[10px] uppercase font-bold tracking-widest"
           >
             Category
           </label>
@@ -391,7 +391,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         {/* SUBCATEGORY */}
         {filters.category !== "all" && (
           <div className="mb-8">
-            <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+            <label className="text-header text-[10px] uppercase font-bold tracking-widest">
               Subcategory
             </label>
             <div className="flex flex-col">
@@ -412,12 +412,12 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
 
         {/* PRICE RANGE */}
         {isFetchingPrices ? (
-          <div className="mb-8 text-zinc-500 text-sm">Loading prices...</div>
+          <div className="mb-8 text-header text-sm">Loading prices...</div>
         ) : pricesError ? (
           <LoaderError />
         ) : (
           <div className="mb-8">
-            <label className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+            <label className="text-header text-[10px] uppercase font-bold tracking-widest mb-2">
               Price Range
             </label>
             <div className="flex items-center gap-2">
@@ -425,7 +425,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
                 type="number"
                 value={localMin}
                 onChange={(e) => setLocalMin(e.target.value)}
-                className="input-field flex-1 min-w-0 w-0 text-sm text-white"
+                className="input-field flex-1 min-w-0 w-0 text-sm text-main"
                 onBlur={(e) => handlePrice("min", e.target.value)}
               />
               <span>-</span>
@@ -433,7 +433,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
                 type="number"
                 value={localMax}
                 onChange={(e) => setLocalMax(e.target.value)}
-                className="input-field flex-1 min-w-0 w-0 text-sm text-white"
+                className="input-field flex-1 min-w-0 w-0 text-sm text-main"
                 onBlur={(e) => handlePrice("max", e.target.value)}
               />
             </div>
@@ -444,14 +444,14 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         <div className="flex flex-col mb-8">
           <label
             htmlFor="stock"
-            className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+            className="text-header text-[10px] uppercase font-bold tracking-widest"
           >
             Stock level
           </label>
           <select
             id="stock"
             value={filters.stockLevel}
-            className="input-field text-sm text-white"
+            className="input-field text-sm text-main"
             onChange={(e) => {
               handleStock(e.target.value);
             }}

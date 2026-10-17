@@ -38,8 +38,10 @@ function Security() {
       )}
       {isDeletingAccount && (
         <div className="glass-card p-8 rounded-3xl space-y-4 max-w-2xl mb-4 absolute top-3/6 left-3/6 transform -translate-x-1/2 -translate-y-1/2 z-10">
-          <h4 className="border-b border-zinc-700 pb-2">Delete Account</h4>
-          <p className="text-zinc-500 p-4 text-sm">
+          <h4 className="border-b border-zinc-700 pb-2 mb-1 text-[#ccc]">
+            Delete Account
+          </h4>
+          <p className="text-main text-sm">
             Are you sure you want to delete your account? This action cannot be
             undone. After deleting your account, all your data will be
             permanently removed from our servers.
@@ -58,7 +60,7 @@ function Security() {
         </div>
       )}
 
-      <h2 className="text-3xl font-black tracking-tighter text-white uppercase mb-8">
+      <h2 className="text-3xl font-black tracking-tighter text-header uppercase mb-8">
         Security Settings
       </h2>
 
@@ -68,8 +70,8 @@ function Security() {
             <Key aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-white font-bold text-lg">Change Password</h2>
-            <p className="text-zinc-500 text-sm">
+            <h2 className="text-header font-bold text-lg">Change Password</h2>
+            <p className="text-main text-sm">
               Update your password to keep your account secure.
             </p>
           </div>
@@ -80,7 +82,7 @@ function Security() {
           <fieldset>
             <div className="mb-2">
               <label
-                className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+                className="text-main text-[10px] uppercase font-bold tracking-widest"
                 htmlFor="password"
               >
                 Current password
@@ -98,7 +100,7 @@ function Security() {
 
             <div className="mb-2">
               <label
-                className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+                className="text-main text-[10px] uppercase font-bold tracking-widest"
                 htmlFor="new-password"
               >
                 New password
@@ -119,7 +121,7 @@ function Security() {
 
             <div className="mb-2">
               <label
-                className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest"
+                className="text-main text-[10px] uppercase font-bold tracking-widest"
                 htmlFor="confirm-password"
               >
                 Confirm new password
@@ -144,15 +146,15 @@ function Security() {
           </button>
         </form>
       </article>
-      <h1 className="text-2xl font-bold text-white mb-4">Danger Zone</h1>
+      <h1 className="text-2xl font-bold text-header mb-4">Danger Zone</h1>
       <article className="glass-card p-8 rounded-3xl space-y-8 max-w-2xl">
         <header className="flex items-center mb-8 gap-6">
           <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center text-accent">
             <TriangleAlert aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-white font-bold text-lg">Delete Account</h2>
-            <p className="text-zinc-500 text-sm">
+            <h2 className="text-header font-bold text-lg">Delete Account</h2>
+            <p className="text-main text-sm">
               Permanently delete your account and all associated data.
             </p>
           </div>

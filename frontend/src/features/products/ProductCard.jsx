@@ -5,13 +5,19 @@ import { useCreateWishlistItem } from "../wishlist/useCreateWishlistItem";
 import { useWishlist } from "../wishlist/useWishlist";
 import { useDeleteWishlistItem } from "../wishlist/useDeleteWishlistItem";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function ProductCard({ product }) {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const { onAddCartProducts } = useCart();
+  const { user, isAuthLoading } = useAuth();
+
+  const navigate = useNavigate();
+
   const {
     data: wishlist,
-    isPending: isFetchingWishlist,
+    isPending: isPendingWishlist,
     error: wishlistError,
   } = useWishlist();
   const { addToWishlist, isAddingToWishlist, addToWishlistError } =
@@ -24,7 +30,12 @@ function ProductCard({ product }) {
 
   const active = wishlist?.some((prod) => prod.productId === product?.id);
 
-  function addDeleteWishlistItem(productId) {
+  function handleAddDeleteWishlistItem(productId) {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     if (!active) {
       addToWishlist(productId);
     } else {
@@ -39,7 +50,7 @@ function ProductCard({ product }) {
       <div className="absolute top-4 left-4 z-10 space-x-2">
         {product?.subcategory.categories.map((category) => (
           <span
-            className="bg-zinc-900/80 backdrop-blur-md text-zinc-400 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+            className="bg-zinc-900/80 backdrop-blur-md text-main text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
             key={category.category.name}
           >
             {category.category.name}
@@ -49,13 +60,13 @@ function ProductCard({ product }) {
       <button
         aria-label="Add to wishlist"
         disabled={
-          isFetchingWishlist ||
-          !!wishlistError ||
+          isAuthLoading ||
+          (!!user && isPendingWishlist) ||
           isAddingToWishlist ||
           isDeletingWishlistItem
         }
-        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
-        onClick={() => addDeleteWishlistItem(product.id)}
+        className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-header cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
+        onClick={() => handleAddDeleteWishlistItem(product.id)}
       >
         <Heart
           size={16}
@@ -65,7 +76,7 @@ function ProductCard({ product }) {
       </button>
 
       <div className="overflow-hidden cursor-pointer">
-        <Link to={`/products/${product.id}`}>
+        <Link to={`/product/${product.id}`}>
           <img
             src={product.imageUrl}
             alt={product.title}
@@ -77,23 +88,22 @@ function ProductCard({ product }) {
         <div>
           <Link
             to={`/product/${product.id}`}
-            className="text-white font-bold text-lg hover:text-accent transition-colors line-clamp-1"
+            className="text-header font-bold text-lg hover:text-accent transition-colors line-clamp-1"
           >
             {product.title}
           </Link>
-          <p
-            className="text-zinc-500 text-xs mt-1"
-            key={product.subcategory.name}
-          >
+          <p className="text-main text-xs mt-1" key={product.subcategory.name}>
             {product.subcategory.name}
           </p>
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+            <p className="text-main text-[10px] uppercase font-bold tracking-widest">
               Price
             </p>
-            <p className="text-white font-black text-xl">USD {product.price}</p>
+            <p className="text-header font-black text-xl">
+              {product.price.toFixed(2)} €
+            </p>
           </div>
           {isAddedToCart ? (
             <p className="self-end-safe text-green-500">Added to cart</p>

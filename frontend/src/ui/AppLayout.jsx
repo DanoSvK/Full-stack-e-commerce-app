@@ -11,7 +11,7 @@ function AppLayout() {
     <>
       <ScrollToTop />
       <AuthProvider>
-        <div className="selection:bg-accent selection:text-black bg-zinc-950 min-h-screen text-zinc-400 font-sans flex flex-col">
+        <div className="selection:bg-accent selection:text-black bg-zinc-950 min-h-screen text-main font-sans flex flex-col">
           <CartProvider>
             <Header />
             <main className="flex-1 max-w-7xl m-auto w-full px-4 sm:px-6 lg:px-8">

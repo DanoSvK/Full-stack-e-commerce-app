@@ -9,7 +9,7 @@ function Hero() {
       <h1 className="animate-push-up text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-accent">
         LIMITLESS
       </h1>
-      <p className="[animation-delay:200ms] [animation-fill-mode:backwards] animate-push-up max-w-2xl text-center text-zinc-400 text-lg md:text-xl mx-auto leading-relaxed">
+      <p className="[animation-delay:200ms] [animation-fill-mode:backwards] animate-push-up max-w-2xl text-center text-title text-lg md:text-xl mx-auto leading-relaxed">
         A modular dark-mode e-commerce platform designed for testing advanced
         personalization, weblayers, and catalog management.
       </p>

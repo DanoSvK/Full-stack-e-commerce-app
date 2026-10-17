@@ -1,10 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import { bre } from "../utils/bloomreach";
 import { API_BASE_URL } from "../globalVariables";
-
-const sdk = bre();
 
 const AuthContext = createContext();
 
@@ -65,12 +62,6 @@ function AuthProvider({ children }) {
         throw { message: data.message };
       }
       setUser(data.data.user);
-      sdk?.identify({ registered: data.data.user.email });
-      sdk?.track("registration", {
-        registration_method: "email",
-        account_type: data.data.user.role,
-        email: data.data.user.email,
-      });
       navigate("/home");
     } catch (err) {
       setError({
@@ -98,7 +89,6 @@ function AuthProvider({ children }) {
       if (!res.ok) throw new Error(data.message);
 
       setUser(data.data.user);
-      sdk?.identify({ registered: data.data.user.email });
       navigate("/home");
     } catch (err) {
       setError({ message: err.message });

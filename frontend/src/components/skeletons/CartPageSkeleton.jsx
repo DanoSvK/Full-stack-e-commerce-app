@@ -1,7 +1,7 @@
 function CartPageSkeleton() {
   return (
     <div className="space-y-2">
-      <h1 className="text-4xl font-black tracking-tighter text-white uppercase mb-12">
+      <h1 className="text-4xl font-black tracking-tighter --color-w uppercase mb-12">
         Shopping cart
       </h1>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">

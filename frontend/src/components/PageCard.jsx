@@ -12,10 +12,10 @@ function PageCard({ content }) {
         >
           <Icon className={`w-7 h-7 ${textColor}`} aria-hidden="true" />
         </div>
-        <h3 className="text-white leading-relaxed text-2xl font-bold mb-3">
+        <h3 className="text-header leading-relaxed text-2xl font-bold mb-3">
           {title}
         </h3>
-        <p className="text-zinc-500 text-sm mb-6">{description}</p>
+        <p className="text-main text-sm mb-6">{description}</p>
         <div className="mt-auto flex items-center text-accent text-sm font-bold group-hover:gap-2 ">
           <span>Get Started</span>
           <ArrowRight className="flex items-center text-accent text-sm font-bold" />

@@ -8,20 +8,20 @@ function KillSwitch({ content, onKillSwitch, isActive }) {
       <article className="max-w-xl">
         <header className="flex flex-row items-center gap-6 space-y-2">
           <Icon size={40} className="text-accent" aria-hidden="true" />
-          <h1 className="text-4xl text-white font-black tracking-tighter uppercase">
+          <h1 className="text-4xl text-header font-black tracking-tighter uppercase">
             {title}
           </h1>
         </header>
-        <p className="text-zinc-500 text-sm max-w-xl">{text}</p>
+        <p className="text-main text-sm max-w-xl">{text}</p>
       </article>
       <section
         className={`flex text-right gap-6 p-6 rounded-4xl border ${isActive ? "bg-zinc-900 border-white/5" : "bg-red-500/10 border-red-500/30"}`}
       >
         <div className="space-y-1">
-          <p className="text-white font-bold text-sm uppercase tracking-tight">
+          <p className="text-header font-bold text-sm uppercase tracking-tight">
             {secondaryTitle}
           </p>
-          <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-widest">
+          <p className="text-main text-[10px] uppercase font-bold tracking-widest">
             {secondaryText}
           </p>
         </div>

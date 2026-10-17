@@ -24,7 +24,7 @@ function SignupForm() {
     <>
       {error?.message && <p className="text-red-500 mb-4">{error.message}</p>}
       <div className="max-w-lg m-auto">
-        <h1 className="text-3xl font-bold mb-4">Signup Page</h1>
+        <h1 className="text-3xl font-bold mb-4 text-header">Signup</h1>
         <form
           className="border border-gray-300 p-4 rounded-lg mb-4 glass-card"
           onSubmit={handleSubmit}

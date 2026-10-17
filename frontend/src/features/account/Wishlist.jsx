@@ -17,7 +17,7 @@ function Wishlist() {
   }
 
   if (isFetchingWishlist) {
-    return <ProductListSkeleton length={4} />;
+    return <ProductListSkeleton length={3} />;
   }
 
   const products = wishlist.map((wishlistProduct) => wishlistProduct.product);
@@ -26,7 +26,7 @@ function Wishlist() {
     <>
       {!wishlist.length ? (
         <>
-          <h1 className="text-3xl font-black tracking-tighter text-white uppercase mb-8">
+          <h1 className="text-3xl font-black tracking-tighter text-header uppercase mb-8">
             My Wishlist
           </h1>
           <div className="py-20 text-center space-y-4 bg-zinc-900/30 rounded-[40px] border border-dashed border-zinc-800">
@@ -35,7 +35,7 @@ function Wishlist() {
               className="text-zinc-800 m-auto mb-4"
               aria-hidden="true"
             />
-            <p className="text-zinc-500">Your wishlist is empty.</p>
+            <p className="text-main">Your wishlist is empty.</p>
             <Link to="/products" className="btn-primary w-50 m-auto">
               Browse products
             </Link>

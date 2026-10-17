@@ -2,7 +2,7 @@ function PrivacyPolicyPage() {
   return (
     <main className="max-w-4xl mx-auto px-6 py-12 text-zinc-200 -mt-24">
       <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
-      <p className="text-zinc-400 mb-8">Last updated: June 28, 2026</p>
+      <p className="text-main mb-8">Last updated: June 28, 2026</p>
 
       <p className="mb-8">
         This Privacy Policy explains how <strong>BESTshop</strong> ("the

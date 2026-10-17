@@ -18,7 +18,7 @@ function MenuModal({ setMenu }) {
     `flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-150 ${
       isActive
         ? "bg-yellow-400/10 text-yellow-400"
-        : "text-white/50 hover:text-accent"
+        : "text-header/50 hover:text-accent"
     }`;
 
   return (
