@@ -2,7 +2,7 @@ import express from "express";
 import { Router } from "express";
 const router = Router();
 
-import { oauthLogin, oauthCallback } from "../controllers/oauthController.js";
+import { oauthLogin, oauthCallback } from "../controllers/oAuthController.js";
 
 import {
   signup,
@@ -68,7 +68,7 @@ router.patch("/updateMe", validate(updateUserSchema), updateMe);
 router.delete("/deleteMe", deleteMe);
 
 // Restrict all routes after this middleware to admin only
-router.use(restrictTo("admin"));
+router.use(restrictTo("ADMIN"));
 
 router.route("/").get(getAllUsers).post(validate(createUserSchema), createUser);
 router

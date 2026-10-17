@@ -8,6 +8,8 @@ import crypto from "crypto";
 import AppError from "../utils/appError.js";
 import sendEmail from "../utils/email.js";
 
+const DUMMY_HASH_PROMISE = bcrypt.hash("dummy-password", 12);
+
 export const signToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -33,13 +35,12 @@ export const createSendToken = (user, statusCode, res) => {
 
   res.status(statusCode).json({
     status: "success",
-    token,
     data: { user },
   });
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  const { username, email, password, confirmPassword } = req.body;
+  const { username, email, password, role = "USER" } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -48,7 +49,7 @@ export const signup = catchAsync(async (req, res, next) => {
       username,
       email,
       password: hashedPassword,
-      role: "USER",
+      role,
     },
     select: {
       id: true,
@@ -75,11 +76,10 @@ export const login = catchAsync(async (req, res, next) => {
   });
 
   // Always run bcrypt to prevent timing attacks
-  const DUMMY_HASH = await bcrypt.hash("dummy-password", 12);
-  const isValid = await bcrypt.compare(
-    password,
-    user && user.password ? user.password : DUMMY_HASH,
-  );
+  const dummyHash = await DUMMY_HASH_PROMISE;
+
+  const hashToCompare = user?.password ?? dummyHash;
+  const isValid = await bcrypt.compare(password, hashToCompare);
 
   if (!user || !user.password || !isValid) {
     return next(new AppError("Incorrect email or password", 401));
@@ -237,7 +237,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 
   // 3) Send it to user's email
   // const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword?token=${resetToken}`;
-  const resetURL = `http://localhost:5173/reset-password?token=${resetToken}`;
+  const resetURL = `${process.env.URL}/reset-password?token=${resetToken}`;
   const message = `
   <p>Forgot your password?</p>
   <p>
@@ -265,8 +265,10 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     });
 
     return next(
-      new AppError("There was an error sending the email. Try again later!"),
-      500,
+      new AppError(
+        "There was an error sending the email. Try again later!",
+        500,
+      ),
     );
   }
 });
@@ -282,6 +284,12 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     where: {
       passwordResetToken: hashedToken,
       passwordResetExpires: { gt: new Date() },
+    },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      role: true,
     },
   });
 
@@ -302,6 +310,12 @@ export const resetPassword = catchAsync(async (req, res, next) => {
       passwordResetToken: null,
       passwordResetExpires: null,
       passwordChangedAt: new Date(Date.now() - 1000),
+    },
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      role: true,
     },
   });
 

@@ -8,7 +8,6 @@ import {
   getOne,
   getAll,
 } from "./handlerFactory.js";
-import { logout } from "./authController.js";
 
 const filterObj = (obj, ...allowedFields) => {
   Object.keys(obj).forEach((el) => {
@@ -28,6 +27,7 @@ export const getMe = catchAsync(async (req, res, next) => {
     select: {
       id: true,
       email: true,
+      username: true,
     },
   });
 
@@ -55,6 +55,12 @@ export const updateMe = catchAsync(async (req, res, next) => {
   const updatedUser = await prisma.user.update({
     where: { id: req.user.id },
     data: filteredBody,
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      role: true,
+    },
   });
 
   res.status(200).json({
@@ -166,11 +172,6 @@ export const deleteMe = catchAsync(async (req, res, next) => {
 });
 
 const getAllOptions = {
-  where: {
-    active: {
-      not: false,
-    },
-  },
   select: {
     id: true,
     username: true,
@@ -181,6 +182,8 @@ const getAllOptions = {
 
 export const createUser = createOne("user");
 export const deleteUser = deleteOne("user");
-export const updateUser = updateOne("user");
+
+const allowedFields = ["username"];
+export const updateUser = updateOne("user", allowedFields);
 export const getUser = getOne("user");
 export const getAllUsers = getAll("user", getAllOptions);

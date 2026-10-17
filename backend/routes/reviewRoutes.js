@@ -27,7 +27,7 @@ router.use(protect);
 router.post(
   "/",
   protect,
-  restrictTo("user"),
+  restrictTo("USER"),
   setProductUserIds,
   checkExistingReview,
   validate(createReviewSchema),
@@ -39,10 +39,10 @@ router
   .get(getReview)
   .patch(
     protect,
-    restrictTo("user, moderator"),
+    restrictTo("USER, MODERATOR"),
     validate(updateReviewSchema),
     updateReview,
   )
-  .delete(protect, restrictTo("user", "moderator"), deleteReview);
+  .delete(protect, restrictTo("USER", "MODERATOR"), deleteReview);
 
 export default router;

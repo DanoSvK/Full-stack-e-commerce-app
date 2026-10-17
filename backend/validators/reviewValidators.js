@@ -15,11 +15,11 @@ const reviewBaseSchema = z.object({
     )
     .optional(),
 
-  user_id: z.number({
+  userId: z.string({
     required_error: "Review must belong to a user",
   }),
 
-  product_id: z.number({
+  productId: z.string({
     required_error: "Review must belong to a product",
   }),
 });

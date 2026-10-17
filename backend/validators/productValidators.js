@@ -14,12 +14,14 @@ const productBaseSchema = z.object({
 
   price: z.number().positive("Price must be a positive number"),
 
-  quantity: z
+  stock: z
     .number()
     .int("Quantity must be an integer")
     .nonnegative("Quantity cannot be negative"),
 
-  image_url: z.string().url("Image URL must be a valid URL"),
+  imageUrl: z.string().url("Image URL must be a valid URL"),
+  stock: z.number("Define stock level"),
+  subcategoryId: z.string("Product must have subcategory ID"),
 });
 
 export const createProductSchema = productBaseSchema;

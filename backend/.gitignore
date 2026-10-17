@@ -1,7 +1,14 @@
 node_modules
-# Keep environment variables out of version control
+# Environment variables
 .env
+.env.*
+!.env.example
 
 /generated/prisma
 
 /generated/prisma
+
+# Migration backups
+migrations-backup/
+prisma/migrations-old/
+prisma/migrations_backup_before_rebuild/

@@ -53,6 +53,8 @@ model User {
   reviews    Review[]
   wishlist   Wishlist[]
 
+  googleId String? @unique
+
   createdProducts Product[] @relation("ProductCreator")
   updatedProducts Product[] @relation("ProductUpdater")
 
@@ -126,9 +128,7 @@ model Product {
   extendedDescription String @map("extended_description")
 
   price    Int
-  currency String
   stock    Int
-  quantity Int
 
   imageUrl String @map("image_url")
 

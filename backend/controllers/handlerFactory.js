@@ -4,8 +4,6 @@ import APIFeatures from "../utils/apiFeatures.js";
 import prisma from "../lib/prisma.js";
 import * as z from "zod";
 
-const schema = z.object({});
-
 export const getAll = (Model, queryOptions) =>
   catchAsync(async (req, res) => {
     const features = new APIFeatures(req.query)
@@ -63,33 +61,29 @@ export const deleteOne = (Model) =>
     });
   });
 
-export const updateOne = (Model) =>
+export const updateOne = (Model, allowedFields) =>
   catchAsync(async (req, res) => {
-    const { title, description, price, quantity, imageUrl } = req.body;
+    const data = Object.fromEntries(
+      allowedFields
+        .filter((field) => req.body[field] !== undefined)
+        .map((field) => [field, req.body[field]]),
+    );
 
     const record = await prisma[Model].update({
       where: { id: req.params.id },
-      data: {
-        title,
-        description,
-        price,
-        quantity,
-        imageUrl,
-      },
+      data,
     });
 
     res.status(200).json({
       status: "success",
-      data: {
-        record,
-      },
+      data: { record },
     });
   });
 
-export const createOne = (Model, data = {}) =>
+export const createOne = (Model, customData = null) =>
   catchAsync(async (req, res, next) => {
     const record = await prisma[Model].create({
-      data: data || req.body,
+      data: customData !== null ? customData : req.body,
     });
 
     res.status(201).json({

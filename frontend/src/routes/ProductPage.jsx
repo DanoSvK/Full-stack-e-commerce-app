@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { usePrices } from "../features/products/usePrices";
 
-import { Filter, ChevronDown, LayoutGrid, List } from "lucide-react";
+import { Filter, LayoutGrid, List } from "lucide-react";
 
-import ProductCard from "../features/products/ProductCard";
 import ProductList from "../features/products/ProductList";
 import FiltersSidebar from "../features/products/FiltersSidebar";
 import Pagination from "../ui/Pagination";
@@ -71,9 +70,21 @@ function ProductPage() {
     }));
   };
 
+  if (isFetchingProducts || !paginationDetails) {
+    return <ProductListSkeleton length={10} />;
+  }
+
   if (productsError) {
     return <LoaderError />;
   }
+
+  const rangeStart =
+    (paginationDetails.page - 1) * paginationDetails.pageSize + 1;
+
+  const rangeEnd = Math.min(
+    paginationDetails.page * paginationDetails.pageSize,
+    paginationDetails.total,
+  );
 
   return (
     <div className="lg:flex px-4 gap-8">
@@ -92,29 +103,39 @@ function ProductPage() {
               aria-hidden="true"
               className="inline-block mr-2"
             />
-            <p>
-              Showing <span>{products.length}</span> products
+            <p className="text-zinc-400">
+              {paginationDetails.total === 0 ? (
+                <>
+                  Showing <span className="font-bold text-white">0</span>{" "}
+                  products
+                </>
+              ) : (
+                <>
+                  Showing{" "}
+                  <span className="font-bold text-white">
+                    {rangeStart}–{rangeEnd}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-bold text-accent">
+                    {paginationDetails.total}
+                  </span>{" "}
+                  products
+                </>
+              )}
             </p>
           </div>
-          {/* <div className="flex">
+          <div className="flex">
             <button className="p-2 text-accent bg-accent/10 rounded-lg">
               <LayoutGrid size={20} aria-hidden="true" />
             </button>
             <button className="p-2 text-main hover:text-header">
               <List size={20} aria-hidden="true" />
             </button>
-          </div> */}
+          </div>
         </div>
-        {isFetchingProducts ? (
-          <ProductListSkeleton length={10} />
-        ) : productsError ? (
-          <LoaderError />
-        ) : (
-          <>
-            <ProductList products={products} />
-            <Pagination paginationDetails={paginationDetails} />
-          </>
-        )}
+
+        <ProductList products={products} />
+        <Pagination paginationDetails={paginationDetails} />
       </section>
     </div>
   );

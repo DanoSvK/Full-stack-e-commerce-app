@@ -26,7 +26,7 @@ router
   .get(getAllProducts)
   .post(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     validate(createProductSchema),
     createProduct,
   );
@@ -40,11 +40,11 @@ router
   .get(getProduct)
   .patch(
     protect,
-    restrictTo("admin"),
+    restrictTo("ADMIN"),
     validate(updateProductSchema),
     updateProduct,
   )
-  .delete(protect, restrictTo("admin"), deleteProduct);
+  .delete(protect, restrictTo("ADMIN"), deleteProduct);
 
 // /api/v1/products/:prodId/reviews
 router.use("/:prodId/reviews", reviewRouter);

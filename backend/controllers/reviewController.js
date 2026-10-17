@@ -45,4 +45,6 @@ export const createReview = createOne("review");
 export const deleteReview = deleteOne("review");
 export const getReview = getOne("review");
 export const getAllReviews = getAll("review", getAllOptions);
-export const updateReview = updateOne("review");
+
+const allowedFields = ["comment", "rating", "status", "productId"];
+export const updateReview = updateOne("review", allowedFields);

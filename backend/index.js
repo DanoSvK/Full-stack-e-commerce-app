@@ -51,7 +51,7 @@ app.use(
 );
 
 // Enable CORS
-const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"];
+const allowedOrigins = [process.env.CLIENT_URL, process.env.URL];
 
 app.use(
   cors({
@@ -69,7 +69,7 @@ app.use(
 // Limit requests from same API
 const limiter = expressRateLimit({
   max: 100,
-  windowMs: 10 * 60 * 1000, // 1 hour
+  windowMs: 10 * 60 * 1000, // 10 minutes
   message: "Too many requests from this IP, please try again later!",
 });
 app.use("/api", limiter);

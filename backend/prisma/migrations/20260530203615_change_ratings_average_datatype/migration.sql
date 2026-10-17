@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "products" ALTER COLUMN "ratingsAverage" SET DEFAULT 0,
-ALTER COLUMN "ratingsAverage" SET DATA TYPE DOUBLE PRECISION;

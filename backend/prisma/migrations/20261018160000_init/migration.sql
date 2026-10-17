@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateEnum
 CREATE TYPE "role" AS ENUM ('USER', 'ADMIN', 'MODERATOR');
 
@@ -12,7 +15,7 @@ CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "password" TEXT,
     "role" "role" NOT NULL DEFAULT 'USER',
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "reset_token" TEXT,
@@ -20,6 +23,7 @@ CREATE TABLE "users" (
     "password_changed_at" TIMESTAMPTZ(6),
     "password_reset_token" TEXT,
     "password_reset_expires" TIMESTAMPTZ(6),
+    "googleId" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -82,9 +86,7 @@ CREATE TABLE "products" (
     "description" TEXT NOT NULL,
     "extended_description" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
-    "currency" TEXT NOT NULL,
     "stock" INTEGER NOT NULL,
-    "quantity" INTEGER NOT NULL,
     "image_url" TEXT NOT NULL,
     "variants" JSONB NOT NULL,
     "ratingsAverage" DOUBLE PRECISION DEFAULT 0,
@@ -174,6 +176,9 @@ CREATE UNIQUE INDEX "users_reset_token_key" ON "users"("reset_token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_password_reset_token_key" ON "users"("password_reset_token");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_googleId_key" ON "users"("googleId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserProperty_user_id_key_key" ON "UserProperty"("user_id", "key");

@@ -4,7 +4,9 @@ import APIFeatures from "../utils/apiFeatures.js";
 import catchAsync from "../utils/catchAsync.js";
 
 export const createProduct = createOne("product");
-export const updateProduct = updateOne("product");
+
+const allowedFields = ["title", "description", "price", "stock", "imageUrl"];
+export const updateProduct = updateOne("product", allowedFields);
 export const deleteProduct = deleteOne("product");
 export const getProduct = getOne("product", {
   include: {
@@ -45,7 +47,7 @@ export const getAllProducts = catchAsync(async (req, res) => {
         subcategory: {
           include: { categories: { include: { category: true } } },
         },
-        wishlistedBy: true,
+        // wishlistedBy: true,
       },
     }),
 
