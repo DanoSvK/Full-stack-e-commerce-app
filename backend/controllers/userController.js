@@ -1,5 +1,7 @@
 import prisma from "../lib/prisma.js";
 import AppError from "../utils/appError.js";
+import bcrypt from "bcryptjs";
+
 import catchAsync from "../utils/catchAsync.js";
 import {
   createOne,
@@ -180,7 +182,17 @@ const getAllOptions = {
   },
 };
 
-export const createUser = createOne("user");
+export const createUser = catchAsync(async (req, res) => {
+  const { username, email, password, role } = req.body;
+
+  const user = await prisma.user.create({
+    data: { username, email, password: await bcrypt.hash(password, 12), role },
+    select: { id: true, username: true, email: true, role: true },
+  });
+
+  res.status(201).json({ status: "success", data: { user } });
+});
+
 export const deleteUser = deleteOne("user");
 
 const allowedFields = ["username"];

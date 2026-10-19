@@ -40,7 +40,7 @@ export const createSendToken = (user, statusCode, res) => {
 };
 
 export const signup = catchAsync(async (req, res, next) => {
-  const { username, email, password, role = "USER" } = req.body;
+  const { username, email, password } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -49,7 +49,7 @@ export const signup = catchAsync(async (req, res, next) => {
       username,
       email,
       password: hashedPassword,
-      role,
+      role: "USER",
     },
     select: {
       id: true,
@@ -237,7 +237,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 
   // 3) Send it to user's email
   // const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword?token=${resetToken}`;
-  const resetURL = `${process.env.URL}/reset-password?token=${resetToken}`;
+  const resetURL = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
   const message = `
   <p>Forgot your password?</p>
   <p>

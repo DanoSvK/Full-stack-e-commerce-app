@@ -212,5 +212,5 @@ export const oauthCallback = catchAsync(async (req, res) => {
   });
 
   // 5. Redirect to the React frontend.
-  res.redirect(process.env.URL);
+  res.redirect(process.env.FRONTEND_URL);
 });
