@@ -1,48 +1,34 @@
+// backend/routes/reviewRoutes.js
+import { Router } from "express";
 import {
   createReview,
   getAllReviews,
   getReview,
   deleteReview,
   updateReview,
-  setProductUserIds,
-  checkExistingReview,
 } from "../controllers/reviewController.js";
-import { protect, restrictTo } from "../controllers/authController.js";
-
+import { protect } from "../controllers/authController.js";
 import validate from "../utils/validator.js";
 import {
   createReviewSchema,
   updateReviewSchema,
 } from "../validators/reviewValidators.js";
 
-import express from "express";
-import { Router } from "express";
-const router = Router({ mergeParams: true }); // to access params from parent router
+const router = Router({ mergeParams: true }); // access :prodId from parent router
 
+// Public
 router.get("/", getAllReviews);
+router.get("/:id", getReview);
 
-//protect all routes after this middleware
+// Everything below requires a logged-in user.
+// Ownership/role checks (author vs admin/moderator) happen in the controller.
 router.use(protect);
 
-router.post(
-  "/",
-  protect,
-  restrictTo("USER"),
-  setProductUserIds,
-  checkExistingReview,
-  validate(createReviewSchema),
-  createReview,
-);
+router.post("/", validate(createReviewSchema), createReview);
 
 router
   .route("/:id")
-  .get(getReview)
-  .patch(
-    protect,
-    restrictTo("USER, MODERATOR"),
-    validate(updateReviewSchema),
-    updateReview,
-  )
-  .delete(protect, restrictTo("USER", "MODERATOR"), deleteReview);
+  .patch(validate(updateReviewSchema), updateReview)
+  .delete(deleteReview);
 
 export default router;

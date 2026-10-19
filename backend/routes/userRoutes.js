@@ -36,12 +36,13 @@ import {
   updateUserSchema,
   updateUserPasswordSchema,
   resetPasswordSchema,
+  signupSchema,
 } from "../validators/userValidators.js";
 
 router.get("/oauth/login", oauthLogin);
 router.get("/oauth/callback", oauthCallback);
 
-router.post("/signup", validate(createUserSchema), signup);
+router.post("/signup", validate(signupSchema), signup);
 router.post("/login", login);
 router.get("/logout", logout);
 router.post("/forgotPassword", forgotPassword);

@@ -1,13 +1,13 @@
 import prisma from "../lib/prisma.js";
 
-export const updateProductRatings = async (productId) => {
-  const stats = await prisma.review.aggregate({
+export const updateProductRatings = async (productId, db = prisma) => {
+  const stats = await db.review.aggregate({
     where: { productId },
     _avg: { rating: true },
     _count: { rating: true },
   });
 
-  await prisma.product.update({
+  await db.product.update({
     where: { id: productId },
     data: {
       ratingsAverage: stats._avg.rating

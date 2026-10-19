@@ -51,7 +51,7 @@ app.use(
 );
 
 // Enable CORS
-const allowedOrigins = [process.env.CLIENT_URL, process.env.URL];
+const allowedOrigins = [process.env.CLIENT_URL, process.env.FRONTEND_URL];
 
 app.use(
   cors({
