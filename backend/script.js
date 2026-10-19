@@ -94,7 +94,6 @@ async function main() {
       data: {
         title: `Demo Product ${i + 1}`,
         price: Math.floor(Math.random() * 500) + 10,
-        currency: "EUR",
         imageUrl: `https://picsum.photos/seed/prod-${i + 1}/600/800`,
         stock: Math.floor(Math.random() * 50),
         description:

@@ -1,6 +1,3 @@
-// backend/utils/apiFeatures.js
-//
-// Turns URL query params into a Prisma `findMany` query.
 // Everything that comes from the URL is checked against an allowlist,
 // so clients can't filter/sort/select arbitrary columns or request huge pages.
 

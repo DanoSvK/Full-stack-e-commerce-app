@@ -41,10 +41,53 @@ const getAllOptions = {
   },
 };
 
-export const createReview = createOne("review");
-export const deleteReview = deleteOne("review");
+export const createReview = catchAsync(async (req, res) => {
+  const { rating, comment } = req.body;
+  const productId = req.params.prodId;
+
+  const review = await prisma.$transaction(async (tx) => {
+    const created = await tx.review.create({
+      data: { rating, comment, userId: req.user.id, productId },
+    });
+    await updateProductRatings(productId, tx);
+    return created;
+  });
+
+  res.status(201).json({ status: "success", data: { review } });
+});
+
+export const updateReview = catchAsync(async (req, res, next) => {
+  const review = await findReview(req);
+
+  // Only the author can edit their review
+  if (review.userId !== req.user.id) {
+    return next(new AppError("You can only edit your own reviews", 403));
+  }
+
+  const { rating, comment } = req.body;
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const result = await tx.review.update({
+      where: { id: review.id },
+      data: { rating, comment },
+    });
+    await updateProductRatings(review.productId, tx);
+    return result;
+  });
+
+  res.status(200).json({ status: "success", data: { review: updated } });
+});
+
+export const deleteReview = catchAsync(async (req, res, next) => {
+  const review = await findReview(req);
+
+  await prisma.$transaction(async (tx) => {
+    await tx.review.delete({ where: { id: review.id } });
+    await updateProductRatings(review.productId, tx);
+  });
+
+  res.status(204).send();
+});
+
 export const getReview = getOne("review");
 export const getAllReviews = getAll("review", getAllOptions);
-
-const allowedFields = ["comment", "rating", "status", "productId"];
-export const updateReview = updateOne("review", allowedFields);
