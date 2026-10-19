@@ -1,28 +1,31 @@
+// backend/validators/reviewValidators.js
 import * as z from "zod";
 
-const reviewBaseSchema = z.object({
-  rating: z
-    .number()
-    .min(1, "Rating must be at least 1")
-    .max(5, "Rating cannot be higher than 5")
-    .transform((val) => Math.round(val * 10) / 10),
+const ratingSchema = z
+  .number()
+  .int("Rating must be a whole number")
+  .min(1, "Rating must be at least 1")
+  .max(5, "Rating cannot be higher than 5");
 
-  comment: z
-    .string()
-    .regex(
-      /^[a-zA-Z0-9\s]+$/,
-      "Comment can only contain letters, numbers, and spaces",
-    )
-    .optional(),
+const commentSchema = z
+  .string()
+  .trim()
+  .max(1000, "Comment cannot be longer than 1000 characters");
 
-  userId: z.string({
-    required_error: "Review must belong to a user",
-  }),
-
-  productId: z.string({
-    required_error: "Review must belong to a product",
-  }),
+// userId is never accepted from the client, it always comes from the auth token.
+// productId is optional here because /products/:prodId/reviews supplies it via the URL.
+export const createReviewSchema = z.object({
+  rating: ratingSchema,
+  comment: commentSchema.optional(),
+  productId: z.uuid().optional(),
 });
 
-export const createReviewSchema = reviewBaseSchema;
-export const updateReviewSchema = reviewBaseSchema.partial();
+export const updateReviewSchema = z
+  .object({
+    rating: ratingSchema,
+    comment: commentSchema,
+  })
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide a rating or a comment to update",
+  });

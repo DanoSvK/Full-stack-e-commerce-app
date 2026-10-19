@@ -21,18 +21,23 @@ const userBaseSchema = z.object({
     .trim(),
 });
 
+const matchPasswords = (d) => d.password === d.passwordConfirm;
+const matchError = {
+  message: "Passwords do not match",
+  path: ["passwordConfirm"],
+};
+
+export const signupSchema = userBaseSchema
+  .extend({ password: passwordSchema, passwordConfirm: z.string() })
+  .refine(matchPasswords, matchError);
+
 export const createUserSchema = userBaseSchema
   .extend({
     password: passwordSchema,
-
     passwordConfirm: z.string(),
-
     role: z.nativeEnum(Role).default(Role.USER),
   })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "Passwords do not match",
-    path: ["passwordConfirm"],
-  });
+  .refine(matchPasswords, matchError);
 
 export const updateUserPasswordSchema = z
   .object({

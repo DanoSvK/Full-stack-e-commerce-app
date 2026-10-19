@@ -1,29 +1,47 @@
+// backend/validators/productValidators.js
 import * as z from "zod";
 
 const productBaseSchema = z.object({
   title: z
     .string()
-    .min(3, "A tour must have more or equal than 10 characters")
-    .max(40, "A tour must have less or equal than 40 characters")
-    .regex(/^[A-Za-z\s]+$/, "Tour name must only contain letters and spaces"),
+    .trim()
+    .min(3, "Title must have at least 3 characters")
+    .max(60, "Title must have at most 60 characters"),
 
   description: z
     .string()
-    .min(20, "A tour must have more or equal than 20 characters")
-    .max(200, "A tour must have less or equal than 200 characters"),
+    .trim()
+    .min(20, "Description must have at least 20 characters")
+    .max(200, "Description must have at most 200 characters"),
 
-  price: z.number().positive("Price must be a positive number"),
+  extendedDescription: z
+    .string()
+    .trim()
+    .min(20, "Extended description must have at least 20 characters"),
+
+  // Stored as an Int column, so whole numbers only (decide: euros or cents, and stick to it)
+  price: z
+    .number()
+    .int("Price must be a whole number")
+    .positive("Price must be a positive number"),
 
   stock: z
     .number()
-    .int("Quantity must be an integer")
-    .nonnegative("Quantity cannot be negative"),
+    .int("Stock must be a whole number")
+    .nonnegative("Stock cannot be negative"),
 
-  imageUrl: z.string().url("Image URL must be a valid URL"),
-  stock: z.number("Define stock level"),
-  subcategoryId: z.string("Product must have subcategory ID"),
+  imageUrl: z.url("Image URL must be a valid URL"),
+
+  // e.g. { colors: ["Black"], sizes: ["S", "M"] }
+  variants: z.record(z.string(), z.array(z.string())),
+
+  subcategoryId: z.uuid("Product must have a valid subcategory ID"),
 });
 
 export const createProductSchema = productBaseSchema;
 
-export const updateProductSchema = productBaseSchema.partial();
+export const updateProductSchema = productBaseSchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Provide at least one field to update",
+  });
