@@ -57,7 +57,11 @@ export const createReview = catchAsync(async (req, res) => {
 });
 
 export const updateReview = catchAsync(async (req, res, next) => {
-  const review = await findReview(req);
+  const review = await prisma.review.findUnique({
+    where: { id: req.params.id },
+  });
+
+  if (!review) throw new AppError("No review found with that ID", 404);
 
   // Only the author can edit their review
   if (review.userId !== req.user.id) {
@@ -79,7 +83,11 @@ export const updateReview = catchAsync(async (req, res, next) => {
 });
 
 export const deleteReview = catchAsync(async (req, res, next) => {
-  const review = await findReview(req);
+  const review = await prisma.review.findUnique({
+    where: { id: req.params.id },
+  });
+
+  if (!review) throw new AppError("No review found with that ID", 404);
 
   await prisma.$transaction(async (tx) => {
     await tx.review.delete({ where: { id: review.id } });
