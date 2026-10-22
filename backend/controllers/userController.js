@@ -3,13 +3,7 @@ import AppError from "../utils/appError.js";
 import bcrypt from "bcryptjs";
 
 import catchAsync from "../utils/catchAsync.js";
-import {
-  createOne,
-  deleteOne,
-  updateOne,
-  getOne,
-  getAll,
-} from "./handlerFactory.js";
+import { deleteOne, updateOne, getOne, getAll } from "./handlerFactory.js";
 
 const filterObj = (obj, ...allowedFields) => {
   Object.keys(obj).forEach((el) => {

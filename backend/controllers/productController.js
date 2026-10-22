@@ -63,8 +63,11 @@ export const getAllProducts = catchAsync(async (req, res) => {
         },
       },
     }),
+
     prisma.product.count({ where }),
   ]);
+
+  console.log("PRODUCTS:", products);
 
   res.json({
     result: products.length,
@@ -114,13 +117,13 @@ export const getMinMaxPrice = catchAsync(async (req, res) => {
 
 export const searchProductSuggestion = catchAsync(async (req, res) => {
   const { title } = req.query;
+
   const products = await prisma.product.findMany({
-    where: { title },
+    where: { title: { contains: title, mode: "insensitive" } },
     select: {
       id: true,
       title: true,
       price: true,
-      currency: true,
       imageUrl: true,
     },
     take: 5,

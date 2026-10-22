@@ -10,6 +10,12 @@ import sendEmail from "../utils/email.js";
 
 const DUMMY_HASH_PROMISE = bcrypt.hash("dummy-password", 12);
 
+const cookieOptions = {
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  httpOnly: true,
+};
+
 export const signToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -19,16 +25,12 @@ export const signToken = (userId) => {
 export const createSendToken = (user, statusCode, res) => {
   const token = signToken(user.id);
 
-  const cookieOptions = {
+  res.cookie("jwt", token, {
+    ...cookieOptions,
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    httpOnly: true,
-  };
-
-  res.cookie("jwt", token, cookieOptions);
+  });
 
   // Remove password from output
   delete user.password;
@@ -94,21 +96,20 @@ export const login = catchAsync(async (req, res, next) => {
 });
 
 export const logout = (req, res) => {
-  res.cookie("jwt", "loggedout", {
-    expires: new Date(Date.now() + 1000),
-    httpOnly: true,
-  });
+  res.clearCookie("jwt", cookieOptions);
   res.status(200).json({ status: "success" });
 };
 
 export const protect = catchAsync(async (req, res, next) => {
-  // 1) Getting token and check of it's there
+  // 1) Getting token and check if it's there
   let token;
+  // For API testing using e.g. postman (with hardcoded headers)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     token = req.headers.authorization.split(" ")[1];
+    // For production
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -120,8 +121,15 @@ export const protect = catchAsync(async (req, res, next) => {
   }
 
   // 2) Verification token - decoded contains the payload we signed using jwt.sign() method (user id, iat, exp)
+  // It´s a reverse step to signing the JWT token
   let decoded;
   try {
+    // Promisify replaces (to use async await instead):
+    /* jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+         if (err) return console.error(err); 
+         console.log(decoded);
+       }); 
+    */
     decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   } catch (err) {
     return next(new AppError("Invalid token. Please log in again.", 401));
@@ -209,7 +217,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: "success",
       message:
-        "If you have entered the correct email address, we have sent you an email with instructions to reset your password.",
+        "Email with instructions to reset your password has been sent to submitted email address.",
     });
   };
 
