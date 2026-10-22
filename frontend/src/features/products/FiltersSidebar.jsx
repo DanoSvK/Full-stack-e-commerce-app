@@ -300,15 +300,15 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
               onMouseDown={() => navigate()}
             />
             {isSuggestionsModal && (
-              <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-header-texttext-header/5 rounded-lg w-full z-20 p-3 space-y-1">
+              <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-header-text text-header/5 rounded-lg w-full z-20 p-3 space-y-1">
                 {!searchQuery ? (
-                  <p className="text-sm text-header">Start typing...</p>
+                  <p className="text-sm text-main">Start typing...</p>
                 ) : isFetchingSuggestedProducts ? (
                   <SuggestedProductCardSkeleton />
                 ) : suggestedProductsError ? (
                   <LoaderError />
                 ) : !suggestions.length ? (
-                  <p className="text-sm text-header">No products found.</p>
+                  <p className="text-sm text-main">No products found.</p>
                 ) : (
                   <ul className="space-y-3">
                     {suggestions.map((product) => (

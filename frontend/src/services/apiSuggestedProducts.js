@@ -4,7 +4,7 @@ export const getSuggestedProducts = async (param) => {
   if (!param) return;
 
   const res = await fetch(
-    `${API_BASE_URL}/products/suggestions?suggestions=${param}`,
+    `${API_BASE_URL}/products/suggestions?title=${param}`,
   );
 
   if (!res.ok) {

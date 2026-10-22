@@ -5,13 +5,13 @@ function SuggestedProductCard({ product }) {
 
   return (
     <li
-      className="flex items-center gap-3 cursor-pointer hover:underline"
+      className="flex items-center gap-3 cursor-pointer hover:opacity-65 hover:scale-98"
       onMouseDown={() => {
-        navigate(`/products/${product.id}`);
+        navigate(`/product/${product.id}`);
       }}
     >
       <img src={product.imageUrl} className="w-10 h-10 object-cover"></img>
-      <p>{product.title}</p>
+      <p className="text-main">{product.title}</p>
     </li>
   );
 }
