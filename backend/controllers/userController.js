@@ -24,6 +24,7 @@ export const getMe = catchAsync(async (req, res, next) => {
       id: true,
       email: true,
       username: true,
+      role: true,
     },
   });
 
