@@ -332,7 +332,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         </div>
 
         {/* PRODUCT ID */}
-        {user.role === "ADMIN" && (
+        {user?.role === "ADMIN" && (
           <div className="mb-8">
             <label
               htmlFor="product-id"
