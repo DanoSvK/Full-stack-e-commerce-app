@@ -18,7 +18,8 @@ function ProductPage() {
 
   const {
     data: productsData,
-    isPending: isFetchingProducts,
+    isPending: isLoadingProducts,
+    isPlaceholderData,
     error: productsError,
   } = useProducts();
 
@@ -51,8 +52,8 @@ function ProductPage() {
     priceRange:
       searchParams.get("price_gte") || searchParams.get("price_lte")
         ? {
-            min: searchParams.get("price_gte"),
-            max: searchParams.get("price_lte"),
+            min: searchParams.get("price_gte") ?? "",
+            max: searchParams.get("price_lte") ?? "",
           }
         : null,
     stockLevel: getStockLevel(),
@@ -70,7 +71,7 @@ function ProductPage() {
     }));
   };
 
-  if (isFetchingProducts || !paginationDetails) {
+  if (isLoadingProducts || !paginationDetails) {
     return <ProductListSkeleton length={10} />;
   }
 
@@ -133,8 +134,11 @@ function ProductPage() {
             </button>
           </div>
         </div>
-
-        <ProductList products={products} />
+        <div
+          className={`transition-opacity ${isPlaceholderData ? "opacity-50" : ""}`}
+        >
+          <ProductList products={products} />
+        </div>
         <Pagination paginationDetails={paginationDetails} />
       </section>
     </div>

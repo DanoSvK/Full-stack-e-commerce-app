@@ -12,10 +12,13 @@ import { useCategories } from "../../features/products/useCategories";
 import CategoriesSkeleton from "../../components/skeletons/CategoriesSkeleton";
 import { usePrices } from "../products/usePrices";
 import LoaderError from "../../ui/LoaderError";
+import { useAuth } from "../../context/AuthContext";
 
 function FiltersSidebar({ onUpdateFilter, filters }) {
   const [suggestedQuery, setSuggestedQuery] = useState("");
   const debouncedQuery = useDebounce(suggestedQuery, 300);
+
+  const { user } = useAuth();
 
   const {
     data: suggestedProducts,
@@ -34,7 +37,7 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
   const fetchedPriceRange = pricesData?.prices ?? { min: 0, max: 1000 };
 
   useEffect(() => {
-    if (pricesData?.prices) {
+    if (pricesData?.prices && !filters.priceRange) {
       onUpdateFilter("priceRange", pricesData.prices);
     }
   }, [pricesData]);
@@ -71,8 +74,12 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
   const [isSuggestionsModal, setIsSuggestionsModal] = useState(false);
 
   // Local input value states (to work with onBlur and use value property to update inputs dynamically)
-  const [localMin, setLocalMin] = useState(fetchedPriceRange.min);
-  const [localMax, setLocalMax] = useState(fetchedPriceRange.max);
+  const [localMin, setLocalMin] = useState(
+    filters.priceRange?.min ?? fetchedPriceRange.min,
+  );
+  const [localMax, setLocalMax] = useState(
+    filters.priceRange?.max ?? fetchedPriceRange.max,
+  );
 
   // Memory of previous value - Local tracking states to safely sync dynamic values from the API during render
   const [prevMin, setPrevMin] = useState(filters.priceRange?.min);
@@ -325,41 +332,43 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
         </div>
 
         {/* PRODUCT ID */}
-        <div className="mb-8">
-          <label
-            htmlFor="product-id"
-            className="text-header text-[10px] uppercase font-bold tracking-widest"
-          >
-            Product ID
-          </label>
-          <div className="relative">
-            <button
-              type="submit"
-              className="cursor-pointer"
-              aria-label="search"
-              onClick={() => handleSearchId(searchId)}
+        {user.role === "ADMIN" && (
+          <div className="mb-8">
+            <label
+              htmlFor="product-id"
+              className="text-header text-[10px] uppercase font-bold tracking-widest"
             >
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10 cursor-pointer"
-                aria-hidden="true"
+              Product ID
+            </label>
+            <div className="relative">
+              <button
+                type="submit"
+                className="cursor-pointer"
+                aria-label="search"
+                onClick={() => handleSearchId(searchId)}
+              >
+                <Search
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10 cursor-pointer"
+                  aria-hidden="true"
+                />
+              </button>
+              <input
+                type="text"
+                id="product-id"
+                placeholder="e.g. prod-1"
+                className="input-field w-full pl-10! text-sm relative"
+                onInput={(e) => {
+                  onUpdateFilter("productId", e.target.value);
+                  setSearchId(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearchId(searchId);
+                }}
               />
-            </button>
-            <input
-              type="text"
-              id="product-id"
-              placeholder="e.g. prod-1"
-              className="input-field w-full pl-10! text-sm relative"
-              onInput={(e) => {
-                onUpdateFilter("productId", e.target.value);
-                setSearchId(e.target.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearchId(searchId);
-              }}
-            />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* CATEGORY */}
         <div className="mb-8">
