@@ -1,63 +1,57 @@
 import Hero from "../ui/Hero";
 import PageCard from "../components/PageCard";
-import { Layers, TestTube2, ShoppingBag, Database, User } from "lucide-react";
+import { Smartphone, Shirt, Zap, ShieldCheck } from "lucide-react";
 
 function HomePage() {
   return (
     <>
       <Hero />
       <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         id="home-cards"
       >
         <PageCard
           content={{
-            icon: TestTube2,
-            title: "Experiments",
-            description: "Test A/B variations and multivariate tests.",
+            icon: Smartphone,
+            title: "Electronics",
+            description:
+              "Flagship titanium smartphones and M-series OLED ultrabooks engineered for pro workflows.",
             textColor: "text-blue-400",
             bgColor: "bg-blue-400/10",
-            to: "/experiments",
+            to: "/products?category=electronics",
           }}
         />
         <PageCard
           content={{
-            icon: Layers,
-            title: "Weblayers",
-            description: "Manage overlays, banners, and dynamic content.",
+            icon: Shirt,
+            title: "Apparel",
+            description:
+              " 440gsm brushed-fleece hoodies and structured heavyweight cotton crewnecks.",
             textColor: "text-purple-400",
             bgColor: "bg-purple-400/10",
-            to: "/weblayers",
+            to: "/products?category=apparel",
           }}
         />
         <PageCard
           content={{
-            icon: ShoppingBag,
-            title: "Products",
-            description: "Explore the full demo catalog of items.",
+            icon: Zap,
+            title: "Sportwear",
+            description:
+              "Sweat-wicking Dri-FIT running tops and laser-perforated training shorts.",
             textColor: "text-accent",
             bgColor: "bg-accent/10",
-            to: "/products",
+            to: "/products?category=sportwear",
           }}
         />
         <PageCard
           content={{
-            icon: Database,
-            title: "Catalogs",
-            description: "Back-office catalog management and sync.",
+            icon: ShieldCheck,
+            title: "Refurbished",
+            description:
+              "40-point inspected iPhones, Galaxies, and MacBooks backed by a 12-month warranty.",
             textColor: "text-emerald-400",
             bgColor: "bg-emerald-400/10",
-            to: "/catalogs",
-          }}
-        />
-        <PageCard
-          content={{
-            icon: User,
-            title: "Account",
-            description: "Manage customer profiles and properties.",
-            textColor: "text-orange-400",
-            bgColor: "bg-orange-400/10",
-            to: "/account",
+            to: "/products?category=refurbished",
           }}
         />
       </div>

@@ -1,4 +1,5 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ShoppingBag, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function Hero() {
   function scrollToCards() {
@@ -12,15 +13,26 @@ function Hero() {
       <div className="absolute -top-16 left-[10%] w-64 h-64 md:w-96 md:h-96 bg-accent/20 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute -top-16 right-0 -translate-x-1/2 w-64 h-64 md:w-96 md:h-96 bg-blue-700/15 rounded-full blur-[120px] animate-pulse delay-700" />
       <header className="animate-scale-up inline-block px-4 py-1.5 rounded-full bg-zinc-900/50 border border-white/10 text-xs font-bold tracking-widest text-accent uppercase">
-        The Ultimate Demo E-Shop
+        Flagship Tech · Heavyweight Streetwear · Certified Refurbished
       </header>
       <h1 className="animate-push-up text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-accent">
         LIMITLESS
       </h1>
       <p className="[animation-delay:200ms] [animation-fill-mode:backwards] animate-push-up max-w-2xl text-center text-title text-lg md:text-xl mx-auto leading-relaxed">
-        A modular dark-mode e-commerce platform designed for testing advanced
-        personalization, weblayers, and catalog management.
+        Engineered for everyday performance. Shop the latest titanium
+        smartphones, M-series ultrabooks, and heavyweight 440gsm apparel—backed
+        by a 2-year warranty and free express shipping.
       </p>
+      <div className="flex gap-4">
+        <Link className="btn-primary flex gap-2" to="/products">
+          <ShoppingBag size={24} />
+          <span>Shop All Products</span>
+        </Link>
+        <button className="btn-secondary flex gap-2">
+          <Sparkles size={24} />
+          <span>Explore Deals & Drops</span>
+        </button>
+      </div>
       <button
         type="button"
         onClick={scrollToCards}

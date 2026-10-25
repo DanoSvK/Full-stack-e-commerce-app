@@ -57,18 +57,21 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
   ];
 
   // DERIVE SUBCATEGORIES FROM CATEGORIES FOR FILTER
-  const subcategories = filters.category.includes("all")
-    ? []
-    : [
-        "all",
-        ...new Set(
-          fetchedCategories.flatMap((category) =>
-            category.subcategories.map(
-              (subcategory) => subcategory.subcategory.slug,
-            ),
+  const subcategories =
+    filters.category === "all"
+      ? []
+      : [
+          "all",
+          ...new Set(
+            fetchedCategories
+              .filter((category) => category.slug === filters.category)
+              .flatMap((category) =>
+                category.subcategories.map(
+                  (subcategory) => subcategory.subcategory.slug,
+                ),
+              ),
           ),
-        ),
-      ];
+        ];
 
   const navigate = useNavigate();
   const [isSuggestionsModal, setIsSuggestionsModal] = useState(false);
