@@ -30,7 +30,7 @@ export default function Navbar() {
           </NavLink>
         </li>
         <li className="hover:text-accent">
-          <NavLink to="/weblayers" className={navLinkClass}>
+          <NavLink to="/account" className={navLinkClass}>
             My Account
           </NavLink>
         </li>

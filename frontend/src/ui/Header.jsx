@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   X,
+  Heart,
   LogIn,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
@@ -28,6 +29,17 @@ function Header() {
         <Navbar />
         <div className="flex gap-7 items-center ml-auto">
           <Link
+            className="relative p-2 hover:text-accent transition-colors"
+            to="/account?tab=wishlist"
+          >
+            <Heart />
+            {totalCartCount > 0 && (
+              <span className="absolute top-0 right-0 bg-accent text-zinc-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {totalCartCount}
+              </span>
+            )}
+          </Link>
+          <Link
             to="/cart"
             className="relative p-2 hover:text-accent transition-colors"
             aria-label="Open shopping cart"
@@ -42,7 +54,7 @@ function Header() {
           {user && (
             <Link
               to="/account"
-              className="hidden sm:block hover:text-accent "
+              className="hidden sm:block hover:text-accent"
               aria-label="Open user account"
             >
               <User />

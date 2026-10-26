@@ -4,13 +4,22 @@ import Orders from "../features/account/Orders";
 import Security from "../features/account/Security";
 import AccountSidebar from "../features/account/AccountSidebar";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User, Heart, Shield, Package } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 
 function AccountPage() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const query = searchParams.get("tab");
+
+  useEffect(
+    () => setSearchParams({ tab: query || "profile" }),
+    [setSearchParams],
+  );
 
   const items = [
     { name: "profile", label: "Profile", icon: User, component: Profile },
@@ -19,11 +28,12 @@ function AccountPage() {
     { name: "security", label: "Security", icon: Shield, component: Security },
   ];
 
-  const activeItem = items.find((item) => item.name === activeTab);
-  const Content = activeItem.component || Profile;
+  const activeItem = items.find((item) => item.name === query);
+  const Content = activeItem?.component || Profile;
 
   function handleActive(name) {
     setActiveTab(name);
+    setSearchParams({ tab: name });
   }
 
   return (
@@ -33,6 +43,7 @@ function AccountPage() {
         onHandleActive={handleActive}
         activeTab={activeTab}
         items={items}
+        query={query}
       />
 
       <section className="flex-1">

@@ -1,7 +1,7 @@
 import { User, Heart, Shield, Package, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
-function AccountSidebar({ onHandleActive, activeTab, items }) {
+function AccountSidebar({ onHandleActive, items, query }) {
   const { logout } = useAuth();
 
   const btnClassName =
@@ -28,7 +28,7 @@ function AccountSidebar({ onHandleActive, activeTab, items }) {
         {items.map(({ name, label, icon: Icon }) => (
           <button
             key={name}
-            className={`${btnClassName} ${activeTab === name ? "text-zinc-950 bg-accent pointer-events-none" : "hover:text-header hover:bg-zinc-900"} `}
+            className={`${btnClassName} ${query === name ? "text-zinc-950 bg-accent pointer-events-none" : "hover:text-header hover:bg-zinc-900"} `}
             onClick={() => {
               onHandleActive(name);
             }}
