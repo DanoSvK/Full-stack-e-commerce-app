@@ -625,6 +625,277 @@ const PRODUCTS = [
 ];
 
 // ---------------------------------------------------------------------------
+// Demo reviews
+// ---------------------------------------------------------------------------
+
+// Synthetic accounts used only for local/demo data.
+// Passwords are intentionally omitted because the schema allows password=null.
+const DEMO_REVIEWERS = Array.from({ length: 12 }, (_, i) => ({
+  email: `reviewer${i + 1}@example.com`,
+  username: `reviewer${i + 1}`,
+}));
+
+// Review templates are assigned deterministically to products and reviewers.
+const REVIEW_TEMPLATES = {
+  Smartphones: [
+    {
+      rating: 5,
+      comment:
+        "The display is sharp, performance is smooth, and the camera takes great photos. Very happy with it.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Fast, responsive, and easy to use every day. Battery life has been good for my needs.",
+    },
+    {
+      rating: 4,
+      comment:
+        "A very capable phone with a nice screen and reliable performance. Good overall value.",
+    },
+    {
+      rating: 4,
+      comment:
+        "The phone feels well made and runs smoothly. Setup was straightforward.",
+    },
+    {
+      rating: 3,
+      comment:
+        "A decent phone overall. It does what I need, although I expected a little more from the battery.",
+    },
+    {
+      rating: 2,
+      comment:
+        "It works, but a few things are less impressive than I expected for this price.",
+    },
+  ],
+  Laptops: [
+    {
+      rating: 5,
+      comment:
+        "Great laptop for everyday work. It feels fast, the screen looks good, and it is easy to carry around.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Runs smoothly with my usual apps, and the keyboard is comfortable for long sessions.",
+    },
+    {
+      rating: 4,
+      comment:
+        "A solid laptop with good performance and a nice display. Happy with the purchase so far.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Works well for work and browsing. Setup was simple and the overall build feels good.",
+    },
+    {
+      rating: 3,
+      comment:
+        "Good enough for everyday tasks, but the display and battery life are fairly average.",
+    },
+    {
+      rating: 2,
+      comment:
+        "It handles basic tasks, but I expected better performance and overall quality at this price.",
+    },
+  ],
+  "Refurbished Smartphones": [
+    {
+      rating: 5,
+      comment:
+        "The phone arrived clean, reset, and in better cosmetic condition than I expected. Everything I tested works well.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Very good refurbished purchase. The phone works smoothly and the signs of use are minimal.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Good condition for a refurbished device. There are a few small marks, but the phone works as expected.",
+    },
+    {
+      rating: 4,
+      comment:
+        "A practical way to get a good phone for less. Setup was easy and everything seems to work correctly.",
+    },
+    {
+      rating: 3,
+      comment:
+        "The phone works fine, although the cosmetic condition is more noticeable than I had hoped.",
+    },
+    {
+      rating: 2,
+      comment:
+        "It works, but the visible wear is more than I expected from the listing.",
+    },
+  ],
+  "Refurbished Laptops": [
+    {
+      rating: 5,
+      comment:
+        "A great refurbished laptop for everyday work. It runs well and arrived in very good condition.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Everything I need for office tasks, and the keyboard is especially comfortable. Good value.",
+    },
+    {
+      rating: 4,
+      comment:
+        "The laptop works well and looks good for a refurbished device. A few light marks, but nothing major.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Good performance for everyday use. Setup was easy and the device seems to have been checked properly.",
+    },
+    {
+      rating: 3,
+      comment:
+        "It does the job, but the battery does not last as long as I would have liked.",
+    },
+    {
+      rating: 2,
+      comment:
+        "Usable for basic tasks, though the cosmetic wear was more noticeable than expected.",
+    },
+  ],
+  "T-Shirts": [
+    {
+      rating: 5,
+      comment:
+        "Comfortable fabric and a great fit. It has held its shape well after washing.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Exactly what I wanted for everyday wear. The material feels good and the fit is spot on.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Nice quality and comfortable to wear. The fit is just slightly different from what I expected.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Good everyday T-shirt with a clean look. Seems well made for the price.",
+    },
+    {
+      rating: 3,
+      comment:
+        "A decent basic T-shirt, although the fabric is a little thinner than I prefer.",
+    },
+    {
+      rating: 2,
+      comment:
+        "The fit did not work well for me, and the material was not what I expected.",
+    },
+  ],
+  Hoodies: [
+    {
+      rating: 5,
+      comment:
+        "Really comfortable hoodie with a soft inside and a good fit. Great for cooler days.",
+    },
+    {
+      rating: 5,
+      comment:
+        "The fabric feels substantial and the hoodie is warm without being uncomfortable.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Comfortable and looks good. The fit is slightly roomy, but that works for me.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Good quality for everyday use. The cuffs and overall shape feel well made.",
+    },
+    {
+      rating: 3,
+      comment:
+        "Comfortable enough, but I expected a thicker material for this style.",
+    },
+    {
+      rating: 2,
+      comment:
+        "The fit was not quite right for me, and the fabric felt lighter than expected.",
+    },
+  ],
+  "Running Tops": [
+    {
+      rating: 5,
+      comment:
+        "Lightweight and comfortable during runs. It dries quickly and does not feel restrictive.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Good fit for training, with breathable fabric that stays comfortable when I work up a sweat.",
+    },
+    {
+      rating: 4,
+      comment:
+        "A comfortable running top that does its job well. The fit is good and the fabric feels light.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Works well for gym sessions and runs. Comfortable fabric and a simple design.",
+    },
+    {
+      rating: 3,
+      comment:
+        "Fine for casual workouts, although I expected the fabric to feel a little softer.",
+    },
+    {
+      rating: 2,
+      comment:
+        "The fit did not suit me very well, and it was less comfortable during longer runs.",
+    },
+  ],
+  "Training Shorts": [
+    {
+      rating: 5,
+      comment:
+        "Lightweight and comfortable for running. They allow good movement and the waistband stays in place.",
+    },
+    {
+      rating: 5,
+      comment:
+        "Great for workouts, with breathable fabric and a comfortable fit.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Good running shorts that feel light and practical. The pockets are useful too.",
+    },
+    {
+      rating: 4,
+      comment:
+        "Comfortable for training and easy to move in. Happy with the quality so far.",
+    },
+    {
+      rating: 3,
+      comment:
+        "They work fine for shorter runs, but the fit is not quite perfect for me.",
+    },
+    {
+      rating: 2,
+      comment:
+        "The fit felt awkward during exercise, so they were not the best choice for me.",
+    },
+  ],
+};
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -742,8 +1013,91 @@ async function main() {
     });
   }
 
+  // 4. Create/reuse demo reviewers
+  const reviewerIds = [];
+
+  for (const reviewer of DEMO_REVIEWERS) {
+    const user = await prisma.user.upsert({
+      where: { email: reviewer.email },
+      update: {},
+      create: reviewer,
+    });
+
+    reviewerIds.push(user.id);
+  }
+
+  // 5. Generate three approved reviews per product.
+  // The composite unique key makes this safe to run repeatedly.
+  const seededProducts = await prisma.product.findMany({
+    select: {
+      id: true,
+      title: true,
+      subcategory: {
+        select: { name: true },
+      },
+    },
+    orderBy: { title: "asc" },
+  });
+
+  let generatedReviewCount = 0;
+
+  for (let i = 0; i < seededProducts.length; i++) {
+    const product = seededProducts[i];
+    const templates =
+      REVIEW_TEMPLATES[product.subcategory.name] ??
+      REVIEW_TEMPLATES.Smartphones;
+
+    for (let j = 0; j < 3; j++) {
+      const userId = reviewerIds[(i * 3 + j) % reviewerIds.length];
+      const template = templates[(i + j * 2) % templates.length];
+
+      await prisma.review.upsert({
+        where: {
+          userId_productId: {
+            userId,
+            productId: product.id,
+          },
+        },
+        update: {
+          rating: template.rating,
+          comment: template.comment,
+          status: "APPROVED",
+        },
+        create: {
+          userId,
+          productId: product.id,
+          rating: template.rating,
+          comment: template.comment,
+          status: "APPROVED",
+        },
+      });
+
+      generatedReviewCount++;
+    }
+  }
+
+  // 6. Recalculate each product's average rating and approved review count.
+  for (const product of seededProducts) {
+    const aggregate = await prisma.review.aggregate({
+      where: {
+        productId: product.id,
+        status: "APPROVED",
+      },
+      _avg: { rating: true },
+      _count: { _all: true },
+    });
+
+    await prisma.product.update({
+      where: { id: product.id },
+      data: {
+        ratingsAverage: aggregate._avg.rating ?? 0,
+        ratingsQuantity: aggregate._count._all,
+      },
+    });
+  }
+
   console.log(
-    `Seeded ${CATEGORIES.length} categories, ${SUBCATEGORIES.length} subcategories and ${PRODUCTS.length} products`,
+    `Seeded ${CATEGORIES.length} categories, ${SUBCATEGORIES.length} subcategories, ${PRODUCTS.length} products and ${generatedReviewCount} reviews`,
   );
   console.log(
     MANIFEST

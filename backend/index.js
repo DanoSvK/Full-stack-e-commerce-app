@@ -68,7 +68,7 @@ app.use(
 
 // Limit requests from same API
 const limiter = expressRateLimit({
-  max: 100,
+  max: 1000,
   windowMs: 10 * 60 * 1000, // 10 minutes
   message: "Too many requests from this IP, please try again later!",
 });

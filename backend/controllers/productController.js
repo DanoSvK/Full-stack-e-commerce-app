@@ -67,8 +67,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
     prisma.product.count({ where }),
   ]);
 
-  console.log("PRODUCTS:", products);
-
   res.json({
     result: products.length,
     products,
