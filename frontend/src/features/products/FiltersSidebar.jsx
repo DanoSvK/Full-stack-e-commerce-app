@@ -1,4 +1,4 @@
-import { Search, AlertCircle, Loader } from "lucide-react";
+import { Search, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CategoryButton from "./CategoryButton";
 import SubcategoryButton from "./SubcategoryButton";
@@ -14,7 +14,7 @@ import { usePrices } from "../products/usePrices";
 import LoaderError from "../../ui/LoaderError";
 import { useAuth } from "../../context/AuthContext";
 
-function FiltersSidebar({ onUpdateFilter, filters }) {
+function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
   const [suggestedQuery, setSuggestedQuery] = useState("");
   const debouncedQuery = useDebounce(suggestedQuery, 300);
 
@@ -266,216 +266,232 @@ function FiltersSidebar({ onUpdateFilter, filters }) {
   }
 
   return (
-    <section>
-      <h3 className="text-header font-black text-xl tracking-tighter uppercase mb-8">
-        FILTERS
-      </h3>
-      <div>
-        {/* SEARCH */}
-        <div className="mb-8">
-          <label
-            htmlFor="search"
-            className="text-header text-[10px] uppercase font-bold tracking-widest"
-          >
-            Search
-          </label>
-          <div className="relative">
+    <aside>
+      <section className="w-full lg:w-64 shrink-0 mb-8 lg:mb-0">
+        <div className="glass-card p-5 rounded-3xl">
+          <div className="flex justify-between items-start">
+            <h3 className="text-header font-black text-xl tracking-tighter uppercase mb-8">
+              FILTERS
+            </h3>
             <button
-              type="submit"
-              className="cursor-pointer"
-              aria-label="search"
-              onClick={() => handleSearch(searchQuery)}
+              className="text-accent flex items-center gap-1 text-xs group cursor-pointer"
+              onClick={onResetFilters}
             >
-              <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10"
-                aria-hidden="true"
-              />
+              <RotateCcw size={12} />
+              <span className="group-hover:underline">Reset</span>{" "}
             </button>
-            <input
-              type="text"
-              autoComplete="off"
-              id="search"
-              placeholder="Product name..."
-              className="input-field w-full pl-10! text-sm relative"
-              onInput={(e) => {
-                setSearchQuery(e.target.value);
-                setSuggestedQuery(e.target.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch(searchQuery);
-              }}
-              onFocus={() => setIsSuggestionsModal(true)}
-              onBlur={() => setIsSuggestionsModal(false)}
-              onMouseDown={() => navigate()}
-            />
-            {isSuggestionsModal && (
-              <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-header-text text-header/5 rounded-lg w-full z-20 p-3 space-y-1">
-                {!searchQuery ? (
-                  <p className="text-sm text-main">Start typing...</p>
-                ) : isFetchingSuggestedProducts ? (
-                  <SuggestedProductCardSkeleton />
-                ) : suggestedProductsError ? (
-                  <LoaderError />
-                ) : !suggestions.length ? (
-                  <p className="text-sm text-main">No products found.</p>
-                ) : (
-                  <ul className="space-y-3">
-                    {suggestions.map((product) => (
-                      <SuggestedProductCard
-                        product={product}
-                        key={product.id}
-                      />
-                    ))}
-                  </ul>
+          </div>
+          <div>
+            {/* SEARCH */}
+            <div className="mb-8">
+              <label
+                htmlFor="search"
+                className="text-header text-[10px] uppercase font-bold tracking-widest"
+              >
+                Search Products
+              </label>
+              <div className="relative">
+                <button
+                  type="submit"
+                  className="cursor-pointer"
+                  aria-label="search"
+                  onClick={() => handleSearch(searchQuery)}
+                >
+                  <Search
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10"
+                    aria-hidden="true"
+                  />
+                </button>
+                <input
+                  type="text"
+                  autoComplete="off"
+                  id="search"
+                  placeholder="Product name..."
+                  className="input-field w-full pl-10! text-sm relative"
+                  onInput={(e) => {
+                    setSearchQuery(e.target.value);
+                    setSuggestedQuery(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSearch(searchQuery);
+                  }}
+                  onFocus={() => setIsSuggestionsModal(true)}
+                  onBlur={() => setIsSuggestionsModal(false)}
+                  onMouseDown={() => navigate()}
+                />
+                {isSuggestionsModal && (
+                  <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-header-text text-header/5 rounded-lg w-full z-20 p-3 space-y-1">
+                    {!searchQuery ? (
+                      <p className="text-sm text-main">Start typing...</p>
+                    ) : isFetchingSuggestedProducts ? (
+                      <SuggestedProductCardSkeleton />
+                    ) : suggestedProductsError ? (
+                      <LoaderError />
+                    ) : !suggestions.length ? (
+                      <p className="text-sm text-main">No products found.</p>
+                    ) : (
+                      <ul className="space-y-3">
+                        {suggestions.map((product) => (
+                          <SuggestedProductCard
+                            product={product}
+                            key={product.id}
+                          />
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 )}
               </div>
+            </div>
+
+            {/* PRODUCT ID */}
+            {user?.role === "ADMIN" && (
+              <div className="mb-8">
+                <label
+                  htmlFor="product-id"
+                  className="text-header text-[10px] uppercase font-bold tracking-widest"
+                >
+                  Product ID
+                </label>
+                <div className="relative">
+                  <button
+                    type="submit"
+                    className="cursor-pointer"
+                    aria-label="search"
+                    onClick={() => handleSearchId(searchId)}
+                  >
+                    <Search
+                      size={16}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10 cursor-pointer"
+                      aria-hidden="true"
+                    />
+                  </button>
+                  <input
+                    type="text"
+                    id="product-id"
+                    placeholder="e.g. prod-1"
+                    className="input-field w-full pl-10! text-sm relative"
+                    onInput={(e) => {
+                      onUpdateFilter("productId", e.target.value);
+                      setSearchId(e.target.value);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSearchId(searchId);
+                    }}
+                  />
+                </div>
+              </div>
             )}
-          </div>
-        </div>
 
-        {/* PRODUCT ID */}
-        {user?.role === "ADMIN" && (
-          <div className="mb-8">
-            <label
-              htmlFor="product-id"
-              className="text-header text-[10px] uppercase font-bold tracking-widest"
-            >
-              Product ID
-            </label>
-            <div className="relative">
-              <button
-                type="submit"
-                className="cursor-pointer"
-                aria-label="search"
-                onClick={() => handleSearchId(searchId)}
+            {/* CATEGORY */}
+            <div className="mb-8">
+              <label
+                htmlFor="category"
+                className="text-header text-[10px] uppercase font-bold tracking-widest"
               >
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-main z-10 cursor-pointer"
-                  aria-hidden="true"
-                />
-              </button>
-              <input
-                type="text"
-                id="product-id"
-                placeholder="e.g. prod-1"
-                className="input-field w-full pl-10! text-sm relative"
-                onInput={(e) => {
-                  onUpdateFilter("productId", e.target.value);
-                  setSearchId(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSearchId(searchId);
-                }}
-              />
+                Categories
+              </label>
+              {isFetchingCategories ? (
+                <CategoriesSkeleton />
+              ) : categoriesError ? (
+                <LoaderError />
+              ) : (
+                <div className="flex flex-col items-start">
+                  {categories.map((category) => (
+                    <CategoryButton
+                      key={category}
+                      label={
+                        category.charAt(0).toUpperCase() + category.slice(1)
+                      }
+                      active={filters.category === category}
+                      onUpdateFilter={onUpdateFilter}
+                      onCategory={handleCategory}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        )}
 
-        {/* CATEGORY */}
-        <div className="mb-8">
-          <label
-            htmlFor="category"
-            className="text-header text-[10px] uppercase font-bold tracking-widest"
-          >
-            Category
-          </label>
-          {isFetchingCategories ? (
-            <CategoriesSkeleton />
-          ) : categoriesError ? (
-            <LoaderError />
-          ) : (
-            <div className="flex flex-col items-start">
-              {categories.map((category) => (
-                <CategoryButton
-                  key={category}
-                  label={category.charAt(0).toUpperCase() + category.slice(1)}
-                  active={filters.category === category}
-                  onUpdateFilter={onUpdateFilter}
-                  onCategory={handleCategory}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            {/* SUBCATEGORY */}
+            {filters.category !== "all" && (
+              <div className="mb-8">
+                <label className="text-header text-[10px] uppercase font-bold tracking-widest">
+                  Subcategories
+                </label>
+                <div className="flex flex-col">
+                  {subcategories.map((subcategory) => (
+                    <SubcategoryButton
+                      key={subcategory}
+                      label={
+                        subcategory.charAt(0).toUpperCase() +
+                        subcategory.slice(1)
+                      }
+                      active={filters.subcategory === subcategory}
+                      onUpdateFilter={onUpdateFilter}
+                      onSubcategory={handleSubcategory}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {/* SUBCATEGORY */}
-        {filters.category !== "all" && (
-          <div className="mb-8">
-            <label className="text-header text-[10px] uppercase font-bold tracking-widest">
-              Subcategory
-            </label>
+            {/* PRICE RANGE */}
+            {isFetchingPrices ? (
+              <div className="mb-8 text-header text-sm">Loading prices...</div>
+            ) : pricesError ? (
+              <LoaderError />
+            ) : (
+              <div className="mb-8">
+                <label className="text-header text-[10px] uppercase font-bold tracking-widest mb-2">
+                  Price Range (€)
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={localMin}
+                    onChange={(e) => setLocalMin(e.target.value)}
+                    className="input-field flex-1 min-w-0 w-0 text-sm text-main"
+                    onBlur={(e) => handlePrice("min", e.target.value)}
+                  />
+                  <span>-</span>
+                  <input
+                    type="number"
+                    value={localMax}
+                    onChange={(e) => setLocalMax(e.target.value)}
+                    className="input-field flex-1 min-w-0 w-0 text-sm text-main"
+                    onBlur={(e) => handlePrice("max", e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* STOCK LEVEL */}
             <div className="flex flex-col">
-              {subcategories.map((subcategory) => (
-                <SubcategoryButton
-                  key={subcategory}
-                  label={
-                    subcategory.charAt(0).toUpperCase() + subcategory.slice(1)
-                  }
-                  active={filters.subcategory === subcategory}
-                  onUpdateFilter={onUpdateFilter}
-                  onSubcategory={handleSubcategory}
-                />
-              ))}
+              <label
+                htmlFor="stock"
+                className="text-header text-[10px] uppercase font-bold tracking-widest"
+              >
+                AVAILABILITY
+              </label>
+              <select
+                id="stock"
+                value={filters.stockLevel}
+                className="input-field text-sm text-main"
+                onChange={(e) => {
+                  handleStock(e.target.value);
+                }}
+              >
+                <option value="all">All items</option>
+                <option value="in-stock">In Stock</option>
+                <option value="low-stock">Low Stock</option>
+                <option value="out-of-stock">Out of Stock</option>
+              </select>
             </div>
           </div>
-        )}
-
-        {/* PRICE RANGE */}
-        {isFetchingPrices ? (
-          <div className="mb-8 text-header text-sm">Loading prices...</div>
-        ) : pricesError ? (
-          <LoaderError />
-        ) : (
-          <div className="mb-8">
-            <label className="text-header text-[10px] uppercase font-bold tracking-widest mb-2">
-              Price Range
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                value={localMin}
-                onChange={(e) => setLocalMin(e.target.value)}
-                className="input-field flex-1 min-w-0 w-0 text-sm text-main"
-                onBlur={(e) => handlePrice("min", e.target.value)}
-              />
-              <span>-</span>
-              <input
-                type="number"
-                value={localMax}
-                onChange={(e) => setLocalMax(e.target.value)}
-                className="input-field flex-1 min-w-0 w-0 text-sm text-main"
-                onBlur={(e) => handlePrice("max", e.target.value)}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* STOCK LEVEL */}
-        <div className="flex flex-col mb-8">
-          <label
-            htmlFor="stock"
-            className="text-header text-[10px] uppercase font-bold tracking-widest"
-          >
-            Stock level
-          </label>
-          <select
-            id="stock"
-            value={filters.stockLevel}
-            className="input-field text-sm text-main"
-            onChange={(e) => {
-              handleStock(e.target.value);
-            }}
-          >
-            <option value="all">All items</option>
-            <option value="in-stock">In Stock</option>
-            <option value="low-stock">Low Stock</option>
-            <option value="out-of-stock">Out of Stock</option>
-          </select>
         </div>
-      </div>
-    </section>
+      </section>
+    </aside>
   );
 }
 

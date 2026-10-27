@@ -16,6 +16,7 @@ function HomePage() {
             title: "Electronics",
             description:
               "Flagship titanium smartphones and M-series OLED ultrabooks engineered for pro workflows.",
+            linkText: "Shop Electronics",
             textColor: "text-blue-400",
             bgColor: "bg-blue-400/10",
             to: "/products?category=electronics",
@@ -27,6 +28,7 @@ function HomePage() {
             title: "Apparel",
             description:
               " 440gsm brushed-fleece hoodies and structured heavyweight cotton crewnecks.",
+            linkText: "Shop Apparel",
             textColor: "text-purple-400",
             bgColor: "bg-purple-400/10",
             to: "/products?category=apparel",
@@ -38,6 +40,7 @@ function HomePage() {
             title: "Sportwear",
             description:
               "Sweat-wicking Dri-FIT running tops and laser-perforated training shorts.",
+            linkText: "Shop Sportwear",
             textColor: "text-accent",
             bgColor: "bg-accent/10",
             to: "/products?category=sportwear",
@@ -49,6 +52,7 @@ function HomePage() {
             title: "Refurbished",
             description:
               "40-point inspected iPhones, Galaxies, and MacBooks backed by a 12-month warranty.",
+            linkText: "Shop Refurbished",
             textColor: "text-emerald-400",
             bgColor: "bg-emerald-400/10",
             to: "/products?category=refurbished",

@@ -3,7 +3,15 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 function PageCard({ content }) {
-  const { icon: Icon, title, description, textColor, bgColor, to } = content;
+  const {
+    icon: Icon,
+    title,
+    description,
+    linkText,
+    textColor,
+    bgColor,
+    to,
+  } = content;
   return (
     <Link to={to}>
       <div className="p-8 glass-card wrap rounded-3xl flex flex-col h-full group border border-zinc-800">
@@ -20,7 +28,7 @@ function PageCard({ content }) {
         </h3>
         <p className="text-main text-sm mb-6 leading-relaxed">{description}</p>
         <div className="mt-auto flex items-center text-accent text-sm font-bold group-hover:gap-2 ">
-          <span>Get Started</span>
+          <span>{linkText}</span>
           <ArrowRight className="flex items-center text-accent text-sm font-bold" />
         </div>
       </div>
