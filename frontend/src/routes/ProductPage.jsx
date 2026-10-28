@@ -110,7 +110,14 @@ function ProductPage() {
 
   function handleSort(selectedSort) {
     setSortType(selectedSort);
-    setSearchParams({ sort: selectedSort });
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      next.set("sort", selectedSort);
+
+      return next;
+    });
   }
 
   function handleReverseSort() {
@@ -118,8 +125,16 @@ function ProductPage() {
       ? sortType.slice(1)
       : "-" + sortType;
 
+    console.log(sortType, newSortType);
     setSortType(newSortType);
-    setSearchParams({ sort: newSortType });
+
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      next.set("sort", newSortType);
+
+      return next;
+    });
   }
 
   return (
@@ -170,7 +185,7 @@ function ProductPage() {
               </button>
               <select
                 className="input-field py-1.5 px-3 text-xs text-header cursor-pointer"
-                value={sortType}
+                value={sortType.startsWith("-") ? sortType.slice(1) : sortType}
                 onChange={(e) => {
                   // setSelectedSort(e.target.value);
                   handleSort(e.target.value);
@@ -178,7 +193,7 @@ function ProductPage() {
               >
                 <option value="title">By Name</option>
                 <option value="price">By Price</option>
-                <option value="rating">By Rating</option>
+                <option value="ratingsAverage">By Rating</option>
               </select>
             </div>
             <div
