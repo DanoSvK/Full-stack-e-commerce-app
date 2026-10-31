@@ -75,7 +75,7 @@ function ProductCard({ product, layout = "grid" }) {
               </span>
             </div>
 
-            {product.ratingsAverage && (
+            {product.ratingsAverage ? (
               <span className="flex items-center gap-1 font-bold tabular-nums">
                 <Star size={12} fill="#ffde21" color="#ffde21" />
                 <span className="text-accent">
@@ -83,6 +83,8 @@ function ProductCard({ product, layout = "grid" }) {
                 </span>
                 <span>({product.ratingsQuantity})</span>
               </span>
+            ) : (
+              <span className="text-[11px] text-main/60">No reviews</span>
             )}
           </div>
           <div>
@@ -221,11 +223,13 @@ function ProductCard({ product, layout = "grid" }) {
         <div className="space-y-6 p-5">
           <div className="flex items-center justify-between gap-2 text-xs text-main mb-1.5">
             <span>{product.subcategory?.name}</span>
-            {product.ratingsAverage && (
+            {product.ratingsAverage ? (
               <span className="flex items-center gap-1 text-accent font-bold tabular-nums">
                 <Star size={12} fill="#ffde21" />
                 <span>{product.ratingsAverage.toFixed(1)}</span>
               </span>
+            ) : (
+              <span className="text-[11px] text-main/60">No reviews</span>
             )}
           </div>
 

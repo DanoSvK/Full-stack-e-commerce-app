@@ -125,7 +125,6 @@ function ProductPage() {
       ? sortType.slice(1)
       : "-" + sortType;
 
-    console.log(sortType, newSortType);
     setSortType(newSortType);
 
     setSearchParams((prev) => {
@@ -227,7 +226,7 @@ function ProductPage() {
         >
           <ProductList products={products} layout={layoutStyle} />
         </div>
-        <Pagination paginationDetails={paginationDetails} />
+        <Pagination paginationDetails={paginationDetails} limit={11} />
       </section>
     </div>
   );

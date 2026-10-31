@@ -1,8 +1,9 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { buildPagination } from "../utils/pagination";
+import { useEffect } from "react";
 
-function Pagination({ paginationDetails }) {
+function Pagination({ paginationDetails, limit }) {
   const totalPages = paginationDetails?.totalPages ?? 0;
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -23,8 +24,10 @@ function Pagination({ paginationDetails }) {
 
       if (page === 1) {
         next.delete("page");
+        next.delete("limit");
       } else {
         next.set("page", String(page));
+        next.set("limit", String(limit));
       }
 
       return next;

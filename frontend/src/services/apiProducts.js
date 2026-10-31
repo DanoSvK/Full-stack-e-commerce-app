@@ -1,9 +1,7 @@
 import { API_BASE_URL } from "../globalVariables";
 
 export const getAllProducts = async (searchParams) => {
-  const res = await fetch(
-    `${API_BASE_URL}/products?${searchParams.toString()}`,
-  );
+  const res = await fetch(`${API_BASE_URL}/products?${searchParams}`);
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => null);

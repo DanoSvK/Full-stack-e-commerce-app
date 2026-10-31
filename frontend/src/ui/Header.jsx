@@ -35,7 +35,7 @@ function Header() {
             <Heart />
             {totalCartCount > 0 && (
               <span className="absolute top-0 right-0 bg-accent text-zinc-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {totalCartCount}
+                {/* Add wishlist count */}
               </span>
             )}
           </Link>

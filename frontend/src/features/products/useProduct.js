@@ -6,7 +6,7 @@ export function useProduct() {
   const { prodId } = useParams();
 
   const { data, isPending, error } = useQuery({
-    queryKey: ["product"],
+    queryKey: ["product", prodId],
     queryFn: () => getOneProduct(prodId),
   });
 
