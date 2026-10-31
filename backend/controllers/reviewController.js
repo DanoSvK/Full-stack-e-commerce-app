@@ -29,6 +29,8 @@ export const getAllReviews = catchAsync(async (req, res) => {
   const features = new APIFeatures(req.query, {
     filters: { rating: "number" },
     sortable: ["createdAt", "rating"],
+    defaultLimit: 3,
+    maxLimit: 5,
   })
     .filter()
     .sort()
@@ -57,7 +59,8 @@ export const getAllReviews = catchAsync(async (req, res) => {
 });
 
 export const createReview = catchAsync(async (req, res, next) => {
-  const { rating, comment } = req.body;
+  console.log(req.body);
+  const { title, comment, rating } = req.body;
   const productId = req.params.prodId ?? req.body.productId;
 
   if (!productId) {
@@ -68,7 +71,7 @@ export const createReview = catchAsync(async (req, res, next) => {
   try {
     review = await prisma.$transaction(async (tx) => {
       const created = await tx.review.create({
-        data: { rating, comment, productId, userId: req.user.id },
+        data: { title, comment, rating, productId, userId: req.user.id },
       });
       await updateProductRatings(productId, tx);
       return created;

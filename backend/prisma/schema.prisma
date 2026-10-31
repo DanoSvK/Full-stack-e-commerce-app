@@ -170,6 +170,7 @@ model Wishlist {
 
 model Review {
   id      String  @id @default(uuid()) @db.Uuid
+  title   String
   comment String?
   rating  Int
   status  String  @default("PENDING")

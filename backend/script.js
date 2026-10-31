@@ -3,6 +3,8 @@
 // Seeds the database with a realistic catalog.
 // Safe to run repeatedly: categories, subcategories and products are upserted
 // (matched by slug / title), and the old "Demo Product N" items are removed.
+// Demo reviews are wiped and regenerated on every run (deterministically, so
+// you get the same reviews each time).
 //
 // Prices are whole euros, matching how the frontend displays them
 // (product.price.toFixed(2) €). If you switch to cents later, multiply by 100 here.
@@ -58,10 +60,16 @@ const SUBCATEGORIES = [
 //
 // NOTE: the product page renders `variants.colors` as "Select Color" and
 // `variants.sizes` as "Select Size", so both keys are required. For phones and
-// laptops, "sizes" holds the storage options.
+// laptops, "sizes" holds the storage options (specs such as RAM are kept in the
+// description, because every option shares one price).
+//
+// Colours and storage tiers follow what each model is actually sold in.
+// Clothing size runs differ per brand: streetwear/lifestyle cuts (Levi's,
+// Carhartt WIP, Uniqlo) start at XS, performance lines start at S.
 // ---------------------------------------------------------------------------
 
-const CLOTHING_SIZES = ["S", "M", "L", "XL", "XXL"];
+const SIZES_S_XXL = ["S", "M", "L", "XL", "XXL"];
+const SIZES_XS_XXL = ["XS", "S", "M", "L", "XL", "XXL"];
 
 const PRODUCTS = [
   // ===== Smartphones =====
@@ -244,7 +252,7 @@ const PRODUCTS = [
     price: 549,
     stock: 30,
     description:
-      "15.6-inch Full HD laptop with a modern Intel Core processor, 16 GB RAM and a 512 GB SSD.",
+      "15.6-inch Full HD laptop with a modern Intel Core processor, 16 GB RAM and a fast SSD.",
     extendedDescription:
       "A budget-friendly everyday laptop with a slim metal cover, a backlit keyboard and a good selection of ports including HDMI and USB-C.",
     colors: ["Steel Gray"],
@@ -256,7 +264,7 @@ const PRODUCTS = [
     price: 479,
     stock: 35,
     description:
-      "15.6-inch laptop with an AMD Ryzen 5 processor, 16 GB RAM and a quick 512 GB SSD for study and office work.",
+      "15.6-inch laptop with an AMD Ryzen 5 processor, 16 GB RAM and a quick SSD for study and office work.",
     extendedDescription:
       "A light, affordable laptop with a webcam privacy shutter, a full-size keyboard and all-day battery life for classes, browsing and documents.",
     colors: ["Arctic Grey", "Abyss Blue"],
@@ -344,7 +352,7 @@ const PRODUCTS = [
     price: 349,
     stock: 10,
     description:
-      "Refurbished 14-inch business laptop with an Intel Core i5 processor, 16 GB RAM and a 256 GB SSD.",
+      "Refurbished 14-inch business laptop with an Intel Core i5 processor, 16 GB RAM and a fast SSD.",
     extendedDescription:
       "A proven workhorse with a great keyboard and swappable battery design. Graded Good: light cosmetic wear, fully tested, with a 12-month warranty.",
     colors: ["Black"],
@@ -356,7 +364,7 @@ const PRODUCTS = [
     price: 489,
     stock: 4,
     description:
-      "Refurbished 14-inch business ultrabook with an 11th-gen Intel Core i5, 16 GB RAM and a 256 GB SSD.",
+      "Refurbished 14-inch business ultrabook with an 11th-gen Intel Core i5, 16 GB RAM and a fast SSD.",
     extendedDescription:
       "A slim, lightweight business laptop with a backlit keyboard and fast Thunderbolt 4 ports. Graded Excellent, fully tested, with a 12-month warranty.",
     colors: ["Carbon Fiber Black"],
@@ -368,7 +376,7 @@ const PRODUCTS = [
     price: 399,
     stock: 7,
     description:
-      "Refurbished 14-inch laptop with a 10th-gen Intel Core i5, 16 GB RAM and a 256 GB SSD for office work.",
+      "Refurbished 14-inch laptop with a 10th-gen Intel Core i5, 16 GB RAM and a fast SSD for office work.",
     extendedDescription:
       "A durable business laptop with a spill-resistant keyboard and a fingerprint reader. Graded Good: light cosmetic wear, fully tested, with a 12-month warranty.",
     colors: ["Silver"],
@@ -386,7 +394,7 @@ const PRODUCTS = [
     extendedDescription:
       "An everyday essential made from breathable cotton jersey with a classic crew neck and a comfortable, slightly relaxed fit. Machine washable.",
     colors: ["Black", "White", "Dark Grey Heather", "Olive"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "T-Shirts",
@@ -398,7 +406,7 @@ const PRODUCTS = [
     extendedDescription:
       "A simple, versatile tee made from 100% cotton single jersey with a ribbed crew neck. Easy to layer and easy to wear every day.",
     colors: ["Black", "White", "Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "T-Shirts",
@@ -410,7 +418,7 @@ const PRODUCTS = [
     extendedDescription:
       "A relaxed, classic tee made from soft cotton jersey with a chest logo graphic. Pairs with jeans, shorts or layered under a jacket.",
     colors: ["White", "Black", "Dress Blues"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_XS_XXL,
   },
   {
     subcategory: "T-Shirts",
@@ -422,7 +430,7 @@ const PRODUCTS = [
     extendedDescription:
       "A durable, regular-fit tee in soft cotton jersey with a ribbed collar and a signature embroidered logo, built to hold its shape wash after wash.",
     colors: ["Black", "White", "Dark Navy", "Hamilton Brown"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_XS_XXL,
   },
   {
     subcategory: "T-Shirts",
@@ -434,7 +442,7 @@ const PRODUCTS = [
     extendedDescription:
       "A thick, structured cotton tee with a wide crew neck and a modern boxy fit. A simple wardrobe basic that works on its own or layered.",
     colors: ["White", "Black", "Grey", "Beige"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_XS_XXL,
   },
   {
     subcategory: "T-Shirts",
@@ -446,7 +454,7 @@ const PRODUCTS = [
     extendedDescription:
       "A soft, durable cotton jersey tee with a ribbed crew neck and a small embroidered logo on the sleeve. A timeless sportswear-inspired basic.",
     colors: ["Oxford Grey", "Black", "White", "Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
 
   // ===== Hoodies =====
@@ -460,7 +468,7 @@ const PRODUCTS = [
     extendedDescription:
       "A warm, comfortable hoodie with a drawcord hood, ribbed cuffs and hem, and a front pouch pocket. A staple for cooler days and casual layering.",
     colors: ["Black", "Dark Grey Heather", "Navy", "Olive"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Hoodies",
@@ -472,7 +480,7 @@ const PRODUCTS = [
     extendedDescription:
       "Made from a soft cotton-blend fleece with a smooth outside and a brushed inside. Ribbed cuffs and hem keep the cold out.",
     colors: ["Black", "Medium Grey Heather", "Team Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Hoodies",
@@ -484,7 +492,7 @@ const PRODUCTS = [
     extendedDescription:
       "A heritage hoodie woven crosswise to reduce shrinkage, with side gussets for flexibility, a lined hood and a front pouch pocket.",
     colors: ["Oxford Grey", "Black", "Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Hoodies",
@@ -496,7 +504,7 @@ const PRODUCTS = [
     extendedDescription:
       "A durable, brushed-fleece hoodie with a double-layered hood, kangaroo pocket and ribbed trims. Built to be worn hard and still look good.",
     colors: ["Black", "Dark Navy", "Hamilton Brown"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_XS_XXL,
   },
   {
     subcategory: "Hoodies",
@@ -508,7 +516,7 @@ const PRODUCTS = [
     extendedDescription:
       "An easy everyday hoodie with a lined hood, kangaroo pocket and ribbed cuffs. Wears well with jeans and sneakers.",
     colors: ["Black", "Grey Heather", "Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_XS_XXL,
   },
   {
     subcategory: "Hoodies",
@@ -520,7 +528,7 @@ const PRODUCTS = [
     extendedDescription:
       "A relaxed-fit hoodie with a drawcord hood, kangaroo pocket and ribbed cuffs and hem. Soft inside and easy to layer.",
     colors: ["Black", "Light Grey Heather", "Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
 
   // ===== Running Tops =====
@@ -534,7 +542,7 @@ const PRODUCTS = [
     extendedDescription:
       "Soft, breathable fabric that moves sweat away from your skin keeps you dry on easy runs and tough workouts, with reflective details for visibility.",
     colors: ["Black", "White", "Royal Blue", "Volt"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Running Tops",
@@ -546,7 +554,7 @@ const PRODUCTS = [
     extendedDescription:
       "Made with recycled materials and AEROREADY moisture management, this tee keeps you comfortable on runs in any weather and stays visible in low light.",
     colors: ["Black", "White", "Semi Solar Green"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Running Tops",
@@ -558,7 +566,7 @@ const PRODUCTS = [
     extendedDescription:
       "A lightweight tee with a soft, textured fabric that dries fast and resists odor, making it suitable for running, gym sessions and everyday wear.",
     colors: ["Black", "Academy Blue", "Pitch Gray"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Running Tops",
@@ -570,7 +578,7 @@ const PRODUCTS = [
     extendedDescription:
       "Designed for regular runs, this tee uses dryCELL fabric to pull moisture away from the body and has reflective details for safer evening running.",
     colors: ["Black", "Puma White", "Electric Blue"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
 
   // ===== Training Shorts =====
@@ -584,7 +592,7 @@ const PRODUCTS = [
     extendedDescription:
       "Mesh panels and sweat-wicking fabric keep you cool, while the built-in brief liner and zip pocket handle comfort and small essentials on the run.",
     colors: ["Black", "Navy", "Grey"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Training Shorts",
@@ -596,7 +604,7 @@ const PRODUCTS = [
     extendedDescription:
       "Made with recycled materials, these shorts feature an elastic waistband with a drawcord, a zip pocket and AEROREADY fabric to keep you dry.",
     colors: ["Black", "Navy", "Solar Red"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_XS_XXL,
   },
   {
     subcategory: "Training Shorts",
@@ -608,7 +616,7 @@ const PRODUCTS = [
     extendedDescription:
       "Stretchy, breathable woven fabric with mesh ventilation and reflective details for visibility. Built for daily runs and fast workouts.",
     colors: ["Black", "Pitch Gray", "Midnight Navy"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
   {
     subcategory: "Training Shorts",
@@ -620,278 +628,196 @@ const PRODUCTS = [
     extendedDescription:
       "Easy, breathable shorts for everyday runs, with a drawcord waist, side vents for movement and a small back pocket for keys or a card.",
     colors: ["Black", "Puma White", "Peacoat"],
-    sizes: CLOTHING_SIZES,
+    sizes: SIZES_S_XXL,
   },
 ];
 
 // ---------------------------------------------------------------------------
 // Demo reviews
+//
+// Each product gets its own review count (0 to ~45) and its own "quality"
+// level, so some products are loved, some are mixed, and some barely have any
+// reviews. Everything is driven by a seeded random generator (seeded from the
+// product title), so re-running the script produces identical data.
 // ---------------------------------------------------------------------------
+
+// Needs to be >= the largest possible review count per product, because a user
+// can only review a product once (composite unique key).
+const DEMO_REVIEWER_COUNT = 60;
 
 // Synthetic accounts used only for local/demo data.
 // Passwords are intentionally omitted because the schema allows password=null.
-const DEMO_REVIEWERS = Array.from({ length: 12 }, (_, i) => ({
+const DEMO_REVIEWERS = Array.from({ length: DEMO_REVIEWER_COUNT }, (_, i) => ({
   email: `reviewer${i + 1}@example.com`,
   username: `reviewer${i + 1}`,
 }));
 
-// Review templates are assigned deterministically to products and reviewers.
-const REVIEW_TEMPLATES = {
-  Smartphones: [
-    {
-      rating: 5,
-      comment:
-        "The display is sharp, performance is smooth, and the camera takes great photos. Very happy with it.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Fast, responsive, and easy to use every day. Battery life has been good for my needs.",
-    },
-    {
-      rating: 4,
-      comment:
-        "A very capable phone with a nice screen and reliable performance. Good overall value.",
-    },
-    {
-      rating: 4,
-      comment:
-        "The phone feels well made and runs smoothly. Setup was straightforward.",
-    },
-    {
-      rating: 3,
-      comment:
-        "A decent phone overall. It does what I need, although I expected a little more from the battery.",
-    },
-    {
-      rating: 2,
-      comment:
-        "It works, but a few things are less impressive than I expected for this price.",
-    },
+// Comment building blocks per subcategory.
+// pros: full sentences. cons: lowercase clauses (they get slotted into
+// sentences like "Only complaint: <con>." or "However, <con>.").
+const REVIEW_PARTS = {
+  Smartphones: {
+    pros: [
+      "The display is bright and sharp.",
+      "Performance is smooth in everyday use.",
+      "The camera takes great photos, even in low light.",
+      "Battery easily lasts a full day.",
+      "Setup was quick and painless.",
+      "It feels well built and premium in the hand.",
+    ],
+    cons: [
+      "the battery drains faster than I expected",
+      "it gets warm when gaming or filming video",
+      "the price feels high for what you get",
+      "the camera struggles in low light",
+      "charging is slower than I hoped",
+    ],
+  },
+  Laptops: {
+    pros: [
+      "The keyboard is comfortable for long typing sessions.",
+      "The screen looks great.",
+      "It handles all my usual apps without slowing down.",
+      "It is light enough to carry around all day.",
+      "Battery lasts a full work day.",
+      "Boots up quickly and feels responsive.",
+    ],
+    cons: [
+      "battery life is only average",
+      "the fan gets loud under load",
+      "the speakers are weak",
+      "the display could be brighter",
+      "the trackpad feels a bit cheap",
+    ],
+  },
+  "Refurbished Smartphones": {
+    pros: [
+      "It arrived clean, reset and well packaged.",
+      "The cosmetic condition matched the grade.",
+      "Battery health was better than I expected.",
+      "Works like a new phone for a lot less money.",
+      "Everything I tested works perfectly.",
+    ],
+    cons: [
+      "there are more scratches than the listing suggested",
+      "the battery health is lower than I hoped",
+      "the screen has a few visible marks",
+      "delivery took longer than expected",
+      "the back of the phone has some scuffs",
+    ],
+  },
+  "Refurbished Laptops": {
+    pros: [
+      "It arrived in very good condition with a clean install.",
+      "Great value for an office machine.",
+      "The keyboard feels barely used.",
+      "Performance is perfectly fine for everyday work.",
+      "Battery holds up well for its age.",
+    ],
+    cons: [
+      "the battery life is shorter than I hoped",
+      "there are noticeable scuffs on the lid",
+      "the fan is noisier than I expected",
+      "the screen is a little dim",
+      "some of the keys show wear",
+    ],
+  },
+  "T-Shirts": {
+    pros: [
+      "The fabric is soft and breathable.",
+      "The fit is true to size.",
+      "It kept its shape after several washes.",
+      "The cut looks clean and goes with everything.",
+      "Good quality for the price.",
+    ],
+    cons: [
+      "the fabric is thinner than I prefer",
+      "it shrank slightly in the wash",
+      "the sizing runs a bit small",
+      "the collar stretched out after a few washes",
+      "the colour faded faster than expected",
+    ],
+  },
+  Hoodies: {
+    pros: [
+      "The inside is soft and warm.",
+      "The fabric feels thick and substantial.",
+      "The hood sits nicely and the drawcord is sturdy.",
+      "The fit is comfortable and not too boxy.",
+      "The cuffs and hem hold their shape.",
+    ],
+    cons: [
+      "it is not as warm as I expected",
+      "it started pilling after a few washes",
+      "the sizing runs large",
+      "the fabric is thinner than the photos suggest",
+      "the pocket is a bit shallow",
+    ],
+  },
+  "Running Tops": {
+    pros: [
+      "The fabric is light and dries quickly.",
+      "No chafing, even on long runs.",
+      "Breathable and comfortable when I sweat a lot.",
+      "The reflective details are a nice touch.",
+      "The fit is comfortable and does not ride up.",
+    ],
+    cons: [
+      "it holds odour after a few runs",
+      "the fabric feels a bit scratchy",
+      "the fit is looser than I expected",
+      "the seams rubbed a little on longer runs",
+      "the colour looks different from the photos",
+    ],
+  },
+  "Training Shorts": {
+    pros: [
+      "Light and comfortable, with good freedom of movement.",
+      "The waistband stays put while running.",
+      "The pocket is big enough for keys and a card.",
+      "Breathable fabric that dries quickly.",
+      "The liner is comfortable and does not bunch up.",
+    ],
+    cons: [
+      "the waistband loosens when I run",
+      "the liner rides up",
+      "the pocket is too small for a phone",
+      "the sizing runs small",
+      "the fabric is a bit noisy",
+    ],
+  },
+};
+
+const REVIEW_OPENERS = {
+  5: [
+    "Excellent purchase.",
+    "Really happy with this.",
+    "Exactly what I was looking for.",
+    "Absolutely love it.",
   ],
-  Laptops: [
-    {
-      rating: 5,
-      comment:
-        "Great laptop for everyday work. It feels fast, the screen looks good, and it is easy to carry around.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Runs smoothly with my usual apps, and the keyboard is comfortable for long sessions.",
-    },
-    {
-      rating: 4,
-      comment:
-        "A solid laptop with good performance and a nice display. Happy with the purchase so far.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Works well for work and browsing. Setup was simple and the overall build feels good.",
-    },
-    {
-      rating: 3,
-      comment:
-        "Good enough for everyday tasks, but the display and battery life are fairly average.",
-    },
-    {
-      rating: 2,
-      comment:
-        "It handles basic tasks, but I expected better performance and overall quality at this price.",
-    },
+  4: [
+    "Very good overall.",
+    "Happy with this purchase.",
+    "Solid choice.",
+    "Good value for money.",
   ],
-  "Refurbished Smartphones": [
-    {
-      rating: 5,
-      comment:
-        "The phone arrived clean, reset, and in better cosmetic condition than I expected. Everything I tested works well.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Very good refurbished purchase. The phone works smoothly and the signs of use are minimal.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Good condition for a refurbished device. There are a few small marks, but the phone works as expected.",
-    },
-    {
-      rating: 4,
-      comment:
-        "A practical way to get a good phone for less. Setup was easy and everything seems to work correctly.",
-    },
-    {
-      rating: 3,
-      comment:
-        "The phone works fine, although the cosmetic condition is more noticeable than I had hoped.",
-    },
-    {
-      rating: 2,
-      comment:
-        "It works, but the visible wear is more than I expected from the listing.",
-    },
+  3: [
+    "It is okay.",
+    "Decent, but not perfect.",
+    "Average overall.",
+    "Does the job.",
   ],
-  "Refurbished Laptops": [
-    {
-      rating: 5,
-      comment:
-        "A great refurbished laptop for everyday work. It runs well and arrived in very good condition.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Everything I need for office tasks, and the keyboard is especially comfortable. Good value.",
-    },
-    {
-      rating: 4,
-      comment:
-        "The laptop works well and looks good for a refurbished device. A few light marks, but nothing major.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Good performance for everyday use. Setup was easy and the device seems to have been checked properly.",
-    },
-    {
-      rating: 3,
-      comment:
-        "It does the job, but the battery does not last as long as I would have liked.",
-    },
-    {
-      rating: 2,
-      comment:
-        "Usable for basic tasks, though the cosmetic wear was more noticeable than expected.",
-    },
+  2: [
+    "Disappointed.",
+    "Not quite what I hoped for.",
+    "Underwhelming.",
+    "Below my expectations.",
   ],
-  "T-Shirts": [
-    {
-      rating: 5,
-      comment:
-        "Comfortable fabric and a great fit. It has held its shape well after washing.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Exactly what I wanted for everyday wear. The material feels good and the fit is spot on.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Nice quality and comfortable to wear. The fit is just slightly different from what I expected.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Good everyday T-shirt with a clean look. Seems well made for the price.",
-    },
-    {
-      rating: 3,
-      comment:
-        "A decent basic T-shirt, although the fabric is a little thinner than I prefer.",
-    },
-    {
-      rating: 2,
-      comment:
-        "The fit did not work well for me, and the material was not what I expected.",
-    },
-  ],
-  Hoodies: [
-    {
-      rating: 5,
-      comment:
-        "Really comfortable hoodie with a soft inside and a good fit. Great for cooler days.",
-    },
-    {
-      rating: 5,
-      comment:
-        "The fabric feels substantial and the hoodie is warm without being uncomfortable.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Comfortable and looks good. The fit is slightly roomy, but that works for me.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Good quality for everyday use. The cuffs and overall shape feel well made.",
-    },
-    {
-      rating: 3,
-      comment:
-        "Comfortable enough, but I expected a thicker material for this style.",
-    },
-    {
-      rating: 2,
-      comment:
-        "The fit was not quite right for me, and the fabric felt lighter than expected.",
-    },
-  ],
-  "Running Tops": [
-    {
-      rating: 5,
-      comment:
-        "Lightweight and comfortable during runs. It dries quickly and does not feel restrictive.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Good fit for training, with breathable fabric that stays comfortable when I work up a sweat.",
-    },
-    {
-      rating: 4,
-      comment:
-        "A comfortable running top that does its job well. The fit is good and the fabric feels light.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Works well for gym sessions and runs. Comfortable fabric and a simple design.",
-    },
-    {
-      rating: 3,
-      comment:
-        "Fine for casual workouts, although I expected the fabric to feel a little softer.",
-    },
-    {
-      rating: 2,
-      comment:
-        "The fit did not suit me very well, and it was less comfortable during longer runs.",
-    },
-  ],
-  "Training Shorts": [
-    {
-      rating: 5,
-      comment:
-        "Lightweight and comfortable for running. They allow good movement and the waistband stays in place.",
-    },
-    {
-      rating: 5,
-      comment:
-        "Great for workouts, with breathable fabric and a comfortable fit.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Good running shorts that feel light and practical. The pockets are useful too.",
-    },
-    {
-      rating: 4,
-      comment:
-        "Comfortable for training and easy to move in. Happy with the quality so far.",
-    },
-    {
-      rating: 3,
-      comment:
-        "They work fine for shorter runs, but the fit is not quite perfect for me.",
-    },
-    {
-      rating: 2,
-      comment:
-        "The fit felt awkward during exercise, so they were not the best choice for me.",
-    },
+  1: [
+    "Would not recommend.",
+    "Very disappointed.",
+    "Not worth the money.",
+    "Poor experience.",
   ],
 };
 
@@ -906,6 +832,132 @@ const slugify = (text) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+
+// Small deterministic PRNG (mulberry32) so seeded data is reproducible.
+const hashString = (str) => {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+};
+
+const createRng = (seed) => {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const pick = (rng, list) => list[Math.floor(rng() * list.length)];
+
+const shuffle = (rng, list) => {
+  const copy = [...list];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+};
+
+const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
+
+// How many reviews a product gets: a few barely-reviewed items, some with a
+// handful, and some popular ones with dozens.
+const reviewCountFor = (rng) => {
+  const roll = rng();
+  if (roll < 0.1) return Math.floor(rng() * 3); // 0-2
+  if (roll < 0.35) return 3 + Math.floor(rng() * 6); // 3-8
+  if (roll < 0.75) return 9 + Math.floor(rng() * 12); // 9-20
+  return 21 + Math.floor(rng() * 25); // 21-45
+};
+
+// Average "true" quality of a product, between roughly 2.8 and 4.8.
+const qualityFor = (rng, subcategoryName) => {
+  const base = 3.0 + rng() * 1.8;
+  const penalty = subcategoryName.startsWith("Refurbished") ? 0.2 : 0;
+  return Math.min(4.8, Math.max(2.8, base - penalty));
+};
+
+// Draw a 1-5 rating clustered around the product's quality, so a 4.6 product
+// gets mostly 5s and 4s, while a 3.0 product gets a real spread including 1s.
+const sampleRating = (rng, quality) => {
+  const weights = [1, 2, 3, 4, 5].map(
+    (r) =>
+      Math.exp(-((r - quality) ** 2) / (2 * 0.8 ** 2)) * (r === 5 ? 1.15 : 1) +
+      0.03,
+  );
+  const total = weights.reduce((sum, w) => sum + w, 0);
+  let roll = rng() * total;
+
+  for (let i = 0; i < weights.length; i++) {
+    roll -= weights[i];
+    if (roll <= 0) return i + 1;
+  }
+  return 5;
+};
+
+const buildReviewTitle = (rng, rating) => {
+  return pick(rng, REVIEW_OPENERS[rating]);
+};
+
+const buildComment = (rng, subcategoryName, rating) => {
+  const parts = REVIEW_PARTS[subcategoryName] ?? REVIEW_PARTS.Smartphones;
+  const [pro1, pro2] = shuffle(rng, parts.pros);
+  const con = pick(rng, parts.cons);
+
+  let body;
+
+  if (rating === 5) {
+    body = rng() < 0.4 ? [pro1] : [pro1, pro2];
+  } else if (rating === 4) {
+    body = [pro1, `Only complaint: ${con}.`];
+  } else if (rating === 3) {
+    body = [pro1, `However, ${con}.`];
+  } else {
+    body = [`${capitalize(con)}.`];
+  }
+
+  return body.join(" ");
+};
+
+const buildReviewsForProduct = (product, reviewerIds) => {
+  const rng = createRng(hashString(product.title));
+  const subcategoryName = product.subcategory.name;
+
+  const count = reviewCountFor(rng);
+  const quality = qualityFor(rng, subcategoryName);
+  const reviewers = shuffle(rng, reviewerIds).slice(0, count);
+
+  const usedComments = new Set();
+
+  return reviewers.map((userId) => {
+    const rating = sampleRating(rng, quality);
+
+    const title = buildReviewTitle(rng, rating);
+
+    let comment = buildComment(rng, subcategoryName, rating);
+
+    for (let attempt = 0; attempt < 6 && usedComments.has(comment); attempt++) {
+      comment = buildComment(rng, subcategoryName, rating);
+    }
+
+    usedComments.add(comment);
+
+    return {
+      userId,
+      productId: product.id,
+      title,
+      rating,
+      comment,
+      status: "APPROVED",
+    };
+  });
+};
 
 // If you ran `node fetchImages.js`, on-topic Pexels photos live in
 // frontend/public/product-images and are listed in manifest.json.
@@ -1026,9 +1078,18 @@ async function main() {
     reviewerIds.push(user.id);
   }
 
-  // 5. Generate three approved reviews per product.
-  // The composite unique key makes this safe to run repeatedly.
+  // 5. Regenerate demo reviews.
+  // Old demo reviews are cleared first, so changing the generator above
+  // (or the number of reviews per product) never leaves stale rows behind.
+  const cleared = await prisma.review.deleteMany({
+    where: { userId: { in: reviewerIds } },
+  });
+  if (cleared.count > 0) {
+    console.log(`Cleared ${cleared.count} old demo reviews`);
+  }
+
   const seededProducts = await prisma.product.findMany({
+    where: { title: { in: PRODUCTS.map((p) => p.title) } },
     select: {
       id: true,
       title: true,
@@ -1039,42 +1100,11 @@ async function main() {
     orderBy: { title: "asc" },
   });
 
-  let generatedReviewCount = 0;
+  const allReviews = seededProducts.flatMap((product) =>
+    buildReviewsForProduct(product, reviewerIds),
+  );
 
-  for (let i = 0; i < seededProducts.length; i++) {
-    const product = seededProducts[i];
-    const templates =
-      REVIEW_TEMPLATES[product.subcategory.name] ??
-      REVIEW_TEMPLATES.Smartphones;
-
-    for (let j = 0; j < 3; j++) {
-      const userId = reviewerIds[(i * 3 + j) % reviewerIds.length];
-      const template = templates[(i + j * 2) % templates.length];
-
-      await prisma.review.upsert({
-        where: {
-          userId_productId: {
-            userId,
-            productId: product.id,
-          },
-        },
-        update: {
-          rating: template.rating,
-          comment: template.comment,
-          status: "APPROVED",
-        },
-        create: {
-          userId,
-          productId: product.id,
-          rating: template.rating,
-          comment: template.comment,
-          status: "APPROVED",
-        },
-      });
-
-      generatedReviewCount++;
-    }
-  }
+  await prisma.review.createMany({ data: allReviews });
 
   // 6. Recalculate each product's average rating and approved review count.
   for (const product of seededProducts) {
@@ -1090,14 +1120,16 @@ async function main() {
     await prisma.product.update({
       where: { id: product.id },
       data: {
-        ratingsAverage: aggregate._avg.rating ?? 0,
+        ratingsAverage: aggregate._avg.rating
+          ? Math.round(aggregate._avg.rating * 10) / 10
+          : 0,
         ratingsQuantity: aggregate._count._all,
       },
     });
   }
 
   console.log(
-    `Seeded ${CATEGORIES.length} categories, ${SUBCATEGORIES.length} subcategories, ${PRODUCTS.length} products and ${generatedReviewCount} reviews`,
+    `Seeded ${CATEGORIES.length} categories, ${SUBCATEGORIES.length} subcategories, ${PRODUCTS.length} products and ${allReviews.length} reviews`,
   );
   console.log(
     MANIFEST
