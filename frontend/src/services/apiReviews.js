@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "../globalVariables";
 
 export const getReviewsByProduct = async (prodId, searchParams) => {
-  console.log("params:", searchParams);
   if (!prodId) return;
 
   const res = await fetch(

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../features/wishlist/useWishlist";
@@ -35,9 +36,6 @@ function ProductDetailPage() {
   const [itemCount, setItemCount] = useState(1);
   const [selectedImage, setSelectedImage] = useState(1);
   const refContainer = useRef(null);
-  const [rating, setRating] = useState(null);
-  const [title, setTitle] = useState("");
-  const [comment, setComment] = useState("");
 
   const navigate = useNavigate();
   const { user, isAuthLoading } = useAuth();
@@ -77,6 +75,19 @@ function ProductDetailPage() {
     deleteWishlistItemError,
   } = useDeleteWishlistItem();
 
+  const reviews = reviewsData?.data?.reviews ?? [];
+  const paginationDetails = reviewsData?.pagination;
+  const userReview = reviews.find((review) => review.user.id === user.id);
+  const [review, setReview] = useState(null);
+
+  const initialReview = {
+    rating: userReview?.rating ?? 0,
+    title: userReview?.title ?? "",
+    comment: userReview?.comment ?? "",
+  };
+
+  const currentReview = review ?? initialReview;
+
   if (isFetchingProduct) {
     return <ProductDetailPageSkeleton />;
   }
@@ -84,9 +95,6 @@ function ProductDetailPage() {
   if (productError) {
     return <LoaderError />;
   }
-
-  const reviews = reviewsData?.data?.reviews ?? [];
-  const paginationDetails = reviewsData?.pagination;
 
   const color = selectedColor ?? product?.variants?.colors?.[0] ?? "";
   const size = selectedSize ?? product?.variants?.sizes?.[0] ?? "";
@@ -130,14 +138,25 @@ function ProductDetailPage() {
 
   function handleSubmitReview(e) {
     e.preventDefault();
-    submitReview({
-      title,
-      comment,
-      rating: Number(rating),
-    });
 
-    setTitle("");
-    setComment("");
+    if (!currentReview.rating) {
+      toast.error("Please select a rating"); // import toast from "react-hot-toast"
+      return;
+    }
+
+    submitReview(currentReview, {
+      onSuccess: () => {
+        setReview(null);
+        refetch();
+      },
+    });
+  }
+
+  function setReviewField(key, value) {
+    setReview((prev) => ({
+      ...(prev ?? initialReview),
+      [key]: value,
+    }));
   }
 
   return (
@@ -277,7 +296,6 @@ function ProductDetailPage() {
                 className="btn-primary grow flex items-center justify-center gap-3 relative overflow-hidden"
                 disabled={product.stock === 0}
                 onClick={() => {
-                  // onAddTotalCartCount(itemCount);
                   onAddCartProducts(product.id, itemCount);
                 }}
               >
@@ -383,29 +401,38 @@ function ProductDetailPage() {
               <label className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1">
                 Your Rating
               </label>
-              <StarsList len={5} interactive={true} onSetRating={setRating} />
+              <StarsList
+                len={5}
+                interactive={true}
+                setReviewField={setReviewField}
+                defaultRating={currentReview.rating}
+              />
               <input
                 className="input-field w-full text-xs"
                 placeholder="Headline (e.g. Incredible build quality)"
                 ref={refContainer}
-                value={title}
+                value={currentReview.title}
                 onInput={(e) => {
-                  setTitle(e.target.value);
+                  setReviewField("title", e.target.value);
                 }}
               />
               <textarea
                 className="input-field w-full text-xs"
                 placeholder="Share your experience with this product..."
-                value={comment}
+                value={currentReview.comment}
                 onInput={(e) => {
-                  setComment(e.target.value);
+                  setReviewField("comment", e.target.value);
                 }}
               ></textarea>
               <button
                 disabled={isSubmittingReview}
                 className="btn-primary w-full text-xs py-2.5 uppercase"
               >
-                {isSubmittingReview ? "Subimtting..." : "Submit Review"}
+                {userReview
+                  ? "Update Review"
+                  : isSubmittingReview
+                    ? "Subimtting..."
+                    : "Submit Review"}
               </button>
               {submitReviewError && (
                 <p className="text-red-400 text-xs flex items-center gap-2 mt-2">
@@ -452,29 +479,30 @@ function ProductDetailPage() {
             </div>
           ) : (
             reviews.map((review) => (
-              <>
-                <article className="glass-card p-6 rounded-2xl space-y-3 border border-white/5">
-                  <div className="flex gap-2">
-                    <StarsList len={5} />
-                    <p className="text-header font-bold text-sm">
-                      {review.title}
-                    </p>
-                  </div>
-                  <p>{review.comment}</p>
-                  <div className="flex items-center gap-3 text-xs text-main pt-1">
-                    <span className="font-semibold text-zinc-200">
-                      {review.user.username}
-                    </span>
-                    <span>·</span>
-                    <span className="text-emerald-400 flex items-center gap-1">
-                      <CheckCircle2 size={12} />
-                      Verified Purchase
-                    </span>
-                    <span>·</span>
-                    <span>Awesome Iceblue·126GB</span>
-                  </div>
-                </article>
-              </>
+              <article
+                key={review.id}
+                className="glass-card p-6 rounded-2xl space-y-3 border border-white/5"
+              >
+                <div className="flex gap-2">
+                  <StarsList len={5} />
+                  <p className="text-header font-bold text-sm">
+                    {review.title}
+                  </p>
+                </div>
+                <p>{review.comment}</p>
+                <div className="flex items-center gap-3 text-xs text-main pt-1">
+                  <span className="font-semibold text-zinc-200">
+                    {review.user.username}
+                  </span>
+                  <span>·</span>
+                  <span className="text-emerald-400 flex items-center gap-1">
+                    <CheckCircle2 size={12} />
+                    Verified Purchase
+                  </span>
+                  <span>·</span>
+                  <span>Awesome Iceblue·126GB</span>
+                </div>
+              </article>
             ))
           )}
           <Pagination paginationDetails={paginationDetails} limit={3} />

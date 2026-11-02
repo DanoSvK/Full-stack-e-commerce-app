@@ -6,7 +6,7 @@ function StarsList({
   color = "#ffde21",
   size = 16,
   defaultRating = 0,
-  onSetRating,
+  setReviewField,
   ratingsCount,
 }) {
   const [rating, setRating] = useState(defaultRating);
@@ -14,7 +14,7 @@ function StarsList({
 
   function handleRating(rating) {
     setRating(rating);
-    onSetRating(rating);
+    setReviewField("rating", rating);
   }
 
   if (interactive) {
