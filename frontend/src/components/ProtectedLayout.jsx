@@ -7,7 +7,7 @@ function ProtectedLayout() {
   if (loading) return <div>Loading...</div>;
 
   if (!user) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;
