@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import catchAsync from "./catchAsync.js";
+import * as z from "zod";
 
 const validate = (schema) => (req, res, next) => {
   try {
@@ -11,7 +11,10 @@ const validate = (schema) => (req, res, next) => {
     if (err instanceof ZodError) {
       return res.status(400).json({
         status: "fail",
-        errors: err.flatten(),
+        message: [...new Set(err.issues.map((issue) => issue.message))].join(
+          ". ",
+        ),
+        errors: z.treeifyError(err),
       });
     }
 

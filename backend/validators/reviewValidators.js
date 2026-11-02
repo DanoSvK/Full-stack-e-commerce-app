@@ -4,7 +4,8 @@ import * as z from "zod";
 const titleSchema = z
   .string()
   .trim()
-  .max(50, "Title cannot be longer than 50 characters");
+  .min(3, "Headline must have at least 3 characters")
+  .max(50, "Headline cannot be longer than 50 characters");
 
 const commentSchema = z
   .string()
@@ -21,7 +22,8 @@ const ratingSchema = z
 // productId is optional here because /products/:prodId/reviews supplies it via the URL.
 export const createReviewSchema = z.object({
   title: titleSchema,
-  comment: commentSchema.optional(),
+  // an empty comment becomes "no comment" instead of saving ""
+  comment: commentSchema.optional().transform((value) => value || undefined),
   rating: ratingSchema,
   productId: z.uuid().optional(),
 });

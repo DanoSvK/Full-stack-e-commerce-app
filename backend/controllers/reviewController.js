@@ -59,7 +59,6 @@ export const getAllReviews = catchAsync(async (req, res) => {
 });
 
 export const createReview = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const { title, comment, rating } = req.body;
   const productId = req.params.prodId ?? req.body.productId;
 
