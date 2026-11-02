@@ -1,5 +1,5 @@
-function CatalogPage() {
+function CollectionsPage() {
   return <div>In development</div>;
 }
 
-export default CatalogPage;
+export default CollectionsPage;

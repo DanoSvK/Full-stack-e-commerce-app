@@ -20,12 +20,12 @@ export default function Navbar() {
           </NavLink>
         </li>
         <li className="hover:text-accent">
-          <NavLink to="/catalogs" className={navLinkClass}>
+          <NavLink to="/collections" className={navLinkClass}>
             Collections
           </NavLink>
         </li>
         <li className="hover:text-accent">
-          <NavLink to="/experiments" className={navLinkClass}>
+          <NavLink to="/deals" className={navLinkClass}>
             Deals & Drops
           </NavLink>
         </li>
