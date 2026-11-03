@@ -91,6 +91,7 @@ export const createReview = catchAsync(async (req, res, next) => {
 });
 
 export const updateReview = catchAsync(async (req, res, next) => {
+  console.log("test");
   const review = await findReview(req);
 
   // Only the author can edit their review
@@ -98,12 +99,12 @@ export const updateReview = catchAsync(async (req, res, next) => {
     return next(new AppError("You can only edit your own reviews", 403));
   }
 
-  const { rating, comment } = req.body;
+  const { rating, title, comment } = req.body;
 
   const updated = await prisma.$transaction(async (tx) => {
     const result = await tx.review.update({
       where: { id: review.id },
-      data: { rating, comment },
+      data: { rating, title, comment },
     });
     await updateProductRatings(review.productId, tx);
     return result;

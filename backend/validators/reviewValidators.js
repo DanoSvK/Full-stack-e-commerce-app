@@ -30,6 +30,7 @@ export const createReviewSchema = z.object({
 
 export const updateReviewSchema = z
   .object({
+    title: titleSchema,
     rating: ratingSchema,
     comment: commentSchema,
   })
