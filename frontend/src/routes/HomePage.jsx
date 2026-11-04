@@ -1,4 +1,4 @@
-import Hero from "../ui/Hero";
+import Hero from "../components/Hero";
 import PageCard from "../components/PageCard";
 import { Smartphone, Shirt, Zap, ShieldCheck } from "lucide-react";
 

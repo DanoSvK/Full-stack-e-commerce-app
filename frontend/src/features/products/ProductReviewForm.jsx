@@ -1,4 +1,4 @@
-import StarsList from "../../components/StarsList";
+import StarsList from "../../ui/StarsList";
 import { AlertCircle } from "lucide-react";
 
 function ProductReviewForm({

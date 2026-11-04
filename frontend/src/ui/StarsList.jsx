@@ -38,14 +38,18 @@ function StarsList({
 
   return (
     <div className="flex items-center text-accent group">
-      {Array.from({ length: maxRating }, (_, i) => (
-        <Star
-          key={i}
-          color={`${ratingsCount === 0 ? "#52525c" : color}`}
-          full={true}
-          size={size}
-        />
-      ))}
+      {Array.from({ length: 5 }, (_, i) =>
+        i < maxRating ? (
+          <Star
+            key={i}
+            color={`${ratingsCount === 0 ? "#52525c" : color}`}
+            full={true}
+            size={size}
+          />
+        ) : (
+          <Star key={i} color={"#52525c"} full={false} size={size} />
+        ),
+      )}
     </div>
   );
 }

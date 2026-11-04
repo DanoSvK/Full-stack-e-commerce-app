@@ -1,6 +1,3 @@
-import Logo from "./Logo";
-import SearchBar from "../components/SearchBar";
-import CartIcon from "../components/CartIcon";
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {

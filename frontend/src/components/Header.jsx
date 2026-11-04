@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import Navbar from "./Navbar";
-import Logo from "./Logo";
+import Navbar from "../ui/Navbar";
+import Logo from "../ui/Logo";
 
 import {
   Search,

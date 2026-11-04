@@ -26,7 +26,7 @@ import { useAddReview } from "../features/products/useAddReview";
 
 import ProductDetailPageSkeleton from "../components/skeletons/ProductDetailPageSkeleton";
 import LoaderError from "../ui/LoaderError";
-import StarsList from "../components/StarsList";
+import StarsList from "../ui/StarsList";
 import ReviewSkeleton from "../components/skeletons/ReviewSkeleton";
 import Pagination from "../ui/Pagination";
 import ProductReviewForm from "../features/products/ProductReviewForm";
@@ -449,7 +449,7 @@ function ProductDetailPage() {
                   </h3>
                   <section className="border border-white/5 p-3 bg-zinc-900">
                     <div className="flex gap-2">
-                      <StarsList len={5} defaultRating={currentReview.rating} />
+                      <StarsList maxRating={currentReview.rating} />
                       <p className="text-header font-bold text-sm">
                         {currentReview.title}
                       </p>
