@@ -11,9 +11,10 @@ const DEFAULT_CONFIG = {
     price: "number",
     stock: "number",
     ratingsAverage: "number",
+    ratingsQuantitiy: "number",
   },
   // Fields clients may sort by (?sort=price or ?sort=-price)
-  sortable: ["price", "createdAt", "title", "ratingsAverage"],
+  sortable: ["price", "createdAt", "title", "ratingsAverage", "highestRated"],
   // Fields clients may pick with ?fields=a,b. Empty = feature disabled.
   selectable: [],
   // Used when no valid ?sort= is given
@@ -78,7 +79,7 @@ class APIFeatures {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.prismaQuery = { where: {} };
 
-    // Filled in by paginate(), read these in your controller
+    // Filled in by paginate(), read these in controller
     this.page = 1;
     this.pageSize = this.config.defaultLimit;
   }

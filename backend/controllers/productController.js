@@ -17,7 +17,7 @@ export const getProduct = getOne("product", {
 });
 
 export const getAllProducts = catchAsync(async (req, res) => {
-  const { category, subcategory, ...restQuery } = req.query;
+  const { category, subcategory, take, ...restQuery } = req.query;
 
   const features = new APIFeatures(restQuery)
     .filter()
@@ -38,11 +38,63 @@ export const getAllProducts = catchAsync(async (req, res) => {
       },
     };
   }
+  console.log("query:", where);
+  const isHighestRated = req.query.sort === "highestRated";
+  if (isHighestRated) {
+    console.log("query:", where);
+    const products = await prisma.product.findMany({
+      where,
+      include: {
+        subcategory: {
+          include: {
+            categories: {
+              include: { category: true },
+            },
+          },
+        },
+      },
+    });
+
+    const totalAverageRatingsCount = products.reduce(
+      (a, b) => a + b.ratingsAverage * b.ratingsQuantity,
+      0,
+    );
+
+    const totalProductAveragesQuantity = products.reduce(
+      (a, b) => a + b.ratingsQuantity,
+      0,
+    );
+
+    const c = totalAverageRatingsCount / totalProductAveragesQuantity;
+
+    const prods = products.map((p) => {
+      const v = p.ratingsQuantity;
+      // Ratings quantity threshold (to be considered)
+      const m = 10;
+      const r = p.ratingsAverage;
+
+      // Bayesian average formula
+      const WR = (v / (v + m)) * r + (m / (v + m)) * c;
+      p.bayesanRating = WR;
+
+      return p;
+    });
+
+    console.log(prods);
+
+    return res.json({
+      products,
+    });
+  }
+
+  // Simple filter for Trending home page products
+  const parsedTake = take !== undefined ? Number(take) : undefined;
 
   const [products, categories, total] = await Promise.all([
     prisma.product.findMany({
       where,
       ...rest,
+      ...(parsedTake !== undefined && { take: parsedTake }),
       include: {
         subcategory: {
           include: { categories: { include: { category: true } } },
