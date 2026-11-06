@@ -1,13 +1,33 @@
 import Hero from "../components/Hero";
 import PageCard from "../components/PageCard";
 import { Smartphone, Shirt, Zap, ShieldCheck } from "lucide-react";
+import ProductList from "../features/products/ProductList";
+import { useProducts } from "../features/products/useProducts";
+import ProductListSkeleton from "../components/skeletons/ProductListSkeleton";
+import LoaderError from "../ui/LoaderError";
 
 function HomePage() {
+  const {
+    data: productsData,
+    isPending: isLoadingProducts,
+    error: productsError,
+  } = useProducts({ take: 6 });
+
+  if (isLoadingProducts) {
+    return <ProductListSkeleton length={6} />;
+  }
+
+  const products = productsData?.products ?? [];
+
+  if (productsError) {
+    return <LoaderError />;
+  }
+
   return (
-    <>
+    <div className="space-y-24">
       <Hero />
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      <section
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 scroll-mt-22"
         id="home-cards"
       >
         <PageCard
@@ -58,8 +78,33 @@ function HomePage() {
             to: "/products?category=refurbished",
           }}
         />
-      </div>
-    </>
+      </section>
+      <section>
+        <div className="flex justify-between mb-8">
+          <div>
+            <p className="text-accent text-xs font-bold uppercase tracking-widest mb-1">
+              Most Wanted Right Now
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tighter text-header uppercase">
+              Featured Products
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 bg-zinc-900/80 p-1.5 rounded-2xl border border-white/5 self-start">
+            <button className="px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 bg-accent text-zinc-950">
+              Trending Now
+            </button>
+            <button className="px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 text-main hover:text-header">
+              Highest Rated
+            </button>
+            <button className="px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 text-main hover:text-header">
+              Refurbished Steals
+            </button>
+          </div>
+        </div>
+
+        <ProductList products={products} layout={"grid"} />
+      </section>
+    </div>
   );
 }
 

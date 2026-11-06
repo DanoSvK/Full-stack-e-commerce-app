@@ -482,12 +482,12 @@ function ProductDetailPage() {
               <ReviewSkeleton />
             ) : reviewsError ? (
               <LoaderError
-                message={"Couldn´t load reviews"}
+                message={"Could not load reviews"}
                 onRetry={refetch}
                 isRetrying={isFetchingReviews}
               />
             ) : !reviews.length ? (
-              <div className="py-16 px-8 text-center space-y-4 bg-zinc-900/30 rounded-[40px] border border-dashed border-zinc-800 flex flex-col items-center justify-center h-full min-h-[300px]">
+              <div className="py-16 px-8 text-center space-y-4 bg-zinc-900/30 rounded-[40px] border border-dashed border-zinc-800 flex flex-col items-center justify-center h-full min-h-75">
                 <div className="w-16 h-16 rounded-full bg-zinc-900 border border-white/5 flex items-center justify-center text-zinc-600">
                   <MessageSquarePlus size={32} />
                 </div>

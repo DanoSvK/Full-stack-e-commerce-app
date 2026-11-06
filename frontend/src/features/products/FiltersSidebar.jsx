@@ -321,7 +321,7 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
                   onMouseDown={() => navigate()}
                 />
                 {isSuggestionsModal && (
-                  <div className="absolute bg-zinc-900/60 backdrop-blur-lg border border-header-text text-header/5 rounded-lg w-full z-20 p-3 space-y-1">
+                  <div className="absolute bg-zinc-900/85 backdrop-blur-lg border border-header-text text-header/5 rounded-lg w-full z-20 p-3 space-y-1">
                     {!searchQuery ? (
                       <p className="text-sm text-main">Start typing...</p>
                     ) : isFetchingSuggestedProducts ? (
