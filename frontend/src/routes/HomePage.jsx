@@ -30,10 +30,6 @@ function HomePage() {
     error: productsError,
   } = useProducts({ sort: featuredSelected, take: 6 });
 
-  if (isLoadingProducts) {
-    return <ProductListSkeleton length={6} />;
-  }
-
   const products = productsData?.products ?? [];
 
   if (productsError) {
@@ -160,7 +156,11 @@ function HomePage() {
         </div>
 
         <section className="space-y-8">
-          <ProductList products={products} layout={"grid"} />
+          {isLoadingProducts ? (
+            <ProductListSkeleton length={6} />
+          ) : (
+            <ProductList products={products} layout={"grid"} />
+          )}
 
           <div className="flex justify-center">
             <Link to="/products" className="btn-secondary">
