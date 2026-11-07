@@ -39,8 +39,6 @@ export const addReview = async (title, comment, rating, prodId) => {
 };
 
 export const editReview = async (reviewId, rating, title, comment) => {
-  console.log(reviewId, rating, title, comment);
-
   const res = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
     method: "PATCH",
     credentials: "include",

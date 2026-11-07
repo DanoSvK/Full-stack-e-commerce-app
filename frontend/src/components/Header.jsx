@@ -34,7 +34,7 @@ function Header() {
           >
             <Heart />
             {totalCartCount > 0 && (
-              <span className="absolute top-0 right-0 bg-accent text-zinc-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="absolute top-0.5 right-0.5 bg-zinc-800 border border-accent/40 text-accent text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
                 {/* Add wishlist count */}
               </span>
             )}
@@ -46,7 +46,7 @@ function Header() {
           >
             <ShoppingCart />
             {totalCartCount > 0 && (
-              <span className="absolute top-0 right-0 bg-accent text-zinc-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="absolute top-0.5 right-0.5 bg-zinc-800 border border-accent/40 text-accent text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
                 {totalCartCount}
               </span>
             )}

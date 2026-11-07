@@ -27,7 +27,7 @@ function PageCard({ content }) {
           {title}
         </h3>
         <p className="text-main text-sm mb-6 leading-relaxed">{description}</p>
-        <div className="mt-auto flex items-center text-accent text-sm font-bold group-hover:gap-2 ">
+        <div className="mt-auto flex items-center text-accent text-sm font-bold group-hover:gap-2">
           <span>{linkText}</span>
           <ArrowRight className="flex items-center text-accent text-sm font-bold" />
         </div>

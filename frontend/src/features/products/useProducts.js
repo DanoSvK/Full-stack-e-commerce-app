@@ -3,11 +3,11 @@ import { getAllProducts } from "../../services/apiProducts";
 import { useSearchParams } from "react-router-dom";
 
 export function useProducts(options = {}) {
-  const take = options;
+  const queryParams = options;
   const [searchParams] = useSearchParams();
   const { data, isPending, isPlaceholderData, error } = useQuery({
-    queryKey: ["product", searchParams.toString(), take],
-    queryFn: () => getAllProducts(searchParams.toString(), take),
+    queryKey: ["product", searchParams.toString(), queryParams],
+    queryFn: () => getAllProducts(searchParams.toString(), queryParams),
     placeholderData: keepPreviousData,
   });
 

@@ -1,13 +1,13 @@
 import { API_BASE_URL } from "../globalVariables";
 
-export const getAllProducts = async (searchParams, limit) => {
+export const getAllProducts = async (searchParams, queryParams) => {
   const params = new URLSearchParams(searchParams);
 
-  if (limit.take !== undefined) {
-    params.set("take", limit.take);
+  if (queryParams.take !== undefined && queryParams.sort !== undefined) {
+    params.set("sort", queryParams.sort);
+    params.set("take", queryParams.take);
   }
 
-  console.log(`${API_BASE_URL}/products?${params}`);
   const res = await fetch(`${API_BASE_URL}/products?${params}`);
 
   if (!res.ok) {
