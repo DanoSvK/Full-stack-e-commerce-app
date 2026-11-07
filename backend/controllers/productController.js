@@ -116,6 +116,7 @@ export const getAllProducts = catchAsync(async (req, res) => {
   }
 
   if (req.query.sort === "trending-now") {
+    where.stock = {};
     where.stock.gt = 0;
   }
 
