@@ -38,12 +38,17 @@ export const getAllProducts = catchAsync(async (req, res) => {
       },
     };
   }
-  console.log("query:", where);
-  const isHighestRated = req.query.sort === "highestRated";
+  // Simple filter for Trending home page products
+  const parsedTake = take !== undefined ? Number(take) : undefined;
+
+  const isHighestRated = req.query.sort === "highest-rated";
+
   if (isHighestRated) {
-    console.log("query:", where);
+    where.stock.gt = 0;
+
     const products = await prisma.product.findMany({
       where,
+      ...(parsedTake !== undefined && { take: parsedTake }),
       include: {
         subcategory: {
           include: {
@@ -80,15 +85,39 @@ export const getAllProducts = catchAsync(async (req, res) => {
       return p;
     });
 
-    console.log(prods);
+    prods.sort((a, b) => b.bayesanRating - a.bayesanRating);
 
     return res.json({
+      result: prods.length,
+      products: prods,
+    });
+  }
+
+  if (req.query.sort === "refurbished-steals") {
+    const products = await prisma.product.findMany({
+      where: {
+        stock: { gt: 0 },
+        subcategory: {
+          categories: { some: { category: { slug: "refurbished" } } },
+        },
+      },
+      ...(parsedTake !== undefined && { take: parsedTake }),
+      include: {
+        subcategory: {
+          include: { categories: { include: { category: true } } },
+        },
+      },
+    });
+
+    return res.json({
+      result: products.length,
       products,
     });
   }
 
-  // Simple filter for Trending home page products
-  const parsedTake = take !== undefined ? Number(take) : undefined;
+  if (req.query.sort === "trending-now") {
+    where.stock.gt = 0;
+  }
 
   const [products, categories, total] = await Promise.all([
     prisma.product.findMany({

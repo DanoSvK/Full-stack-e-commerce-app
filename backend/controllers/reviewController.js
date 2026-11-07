@@ -91,7 +91,6 @@ export const createReview = catchAsync(async (req, res, next) => {
 });
 
 export const updateReview = catchAsync(async (req, res, next) => {
-  console.log("test");
   const review = await findReview(req);
 
   // Only the author can edit their review
