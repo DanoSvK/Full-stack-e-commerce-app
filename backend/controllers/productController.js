@@ -40,7 +40,7 @@ export const getAllProducts = catchAsync(async (req, res) => {
   }
 
   /* Handling home page featured sorting
-  NOTE: Trending now is simple take 6, no extra if statement required */
+  NOTE: Trending now is simple take x products, no extra if statement required */
 
   // Simple filter for Trending home page products
   const parsedTake = take !== undefined ? Number(take) : undefined;
@@ -49,6 +49,7 @@ export const getAllProducts = catchAsync(async (req, res) => {
   const isHighestRated = req.query.sort === "highest-rated";
   const isRefurbishedSteals = req.query.sort === "refurbished-steals";
 
+  // Excluding out of stock products in home page featured products
   if (isTrendingNow || isHighestRated || isRefurbishedSteals) {
     where.stock = {};
     where.stock.gt = 0;
