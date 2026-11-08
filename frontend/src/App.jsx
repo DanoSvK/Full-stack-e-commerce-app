@@ -18,7 +18,7 @@ import NotFoundPage from "./routes/NotFoundPage";
 import TermsOfServicePage from "./routes/TermsOfServicePage";
 import PrivacyPolicyPage from "./routes/PrivacyPolicyPage";
 import CheckoutPage from "./routes/CheckoutPage";
-import CollectionsPage from "./routes/CatalogPage";
+import CollectionsPage from "./routes/CollectionsPage";
 import DealsPage from "./routes/DealsPage";
 
 const queryClient = new QueryClient({

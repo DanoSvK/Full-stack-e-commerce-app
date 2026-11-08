@@ -28,10 +28,10 @@ function Hero() {
           <ShoppingBag size={24} />
           <span>Shop All Products</span>
         </Link>
-        <button className="btn-secondary flex gap-2">
+        <Link to="/deals" className="btn-secondary flex gap-2">
           <Sparkles size={24} />
           <span>Explore Deals & Drops</span>
-        </button>
+        </Link>
       </div>
       <button
         type="button"

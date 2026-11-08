@@ -16,11 +16,14 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import MenuModal from "./MenuModal";
+import { useWishlist } from "../features/wishlist/useWishlist";
 
 function Header() {
-  const { totalCartCount } = useCart();
-  const { logout, user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { logout, user } = useAuth();
+  const { totalCartCount } = useCart();
+  const { data: wishlist } = useWishlist();
 
   return (
     <header className="backdrop-blur-md py-5 sticky top-0 z-15 bg-zinc-950/80 shadow-lg mb-24 w-full border-b border-white/10">
@@ -33,9 +36,9 @@ function Header() {
             to="/account?tab=wishlist"
           >
             <Heart />
-            {totalCartCount > 0 && (
+            {wishlist?.length > 0 && (
               <span className="absolute top-0.5 right-0.5 bg-zinc-800 border border-accent/40 text-accent text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
-                {/* Add wishlist count */}
+                {wishlist.length}
               </span>
             )}
           </Link>

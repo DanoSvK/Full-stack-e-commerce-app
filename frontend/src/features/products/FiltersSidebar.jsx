@@ -446,7 +446,7 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
                 <label className="text-header text-[10px] uppercase font-bold tracking-widest mb-2">
                   Price Range (€)
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-main">
                   <input
                     type="number"
                     value={localMin}
