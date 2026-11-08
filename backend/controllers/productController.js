@@ -38,17 +38,25 @@ export const getAllProducts = catchAsync(async (req, res) => {
       },
     };
   }
+
+  /* Handling home page featured sorting
+  NOTE: Trending now is simple take 6, no extra if statement required */
+
   // Simple filter for Trending home page products
   const parsedTake = take !== undefined ? Number(take) : undefined;
 
+  const isTrendingNow = req.query.sort === "trending-now";
   const isHighestRated = req.query.sort === "highest-rated";
+  const isRefurbishedSteals = req.query.sort === "refurbished-steals";
+
+  if (isTrendingNow || isHighestRated || isRefurbishedSteals) {
+    where.stock = {};
+    where.stock.gt = 0;
+  }
 
   if (isHighestRated) {
-    where.stock.gt = 0;
-
     const products = await prisma.product.findMany({
       where,
-      ...(parsedTake !== undefined && { take: parsedTake }),
       include: {
         subcategory: {
           include: {
@@ -74,26 +82,30 @@ export const getAllProducts = catchAsync(async (req, res) => {
 
     const prods = products.map((p) => {
       const v = p.ratingsQuantity;
-      // Ratings quantity threshold (to be considered)
       const m = 10;
       const r = p.ratingsAverage;
 
-      // Bayesian average formula
-      const WR = (v / (v + m)) * r + (m / (v + m)) * c;
-      p.bayesanRating = WR;
+      const weightedRating = (v / (v + m)) * r + (m / (v + m)) * c;
 
-      return p;
+      return {
+        ...p,
+        bayesianRating: weightedRating,
+      };
     });
 
-    prods.sort((a, b) => b.bayesanRating - a.bayesanRating);
+    const rankedProducts = prods
+      .sort((a, b) => b.bayesianRating - a.bayesianRating)
+      .slice(0, 6);
+
+    const finalProducts = rankedProducts.slice(0, parsedTake ?? prods.length);
 
     return res.json({
       result: prods.length,
-      products: prods,
+      products: finalProducts,
     });
   }
 
-  if (req.query.sort === "refurbished-steals") {
+  if (isRefurbishedSteals) {
     const products = await prisma.product.findMany({
       where: {
         stock: { gt: 0 },
@@ -113,11 +125,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
       result: products.length,
       products,
     });
-  }
-
-  if (req.query.sort === "trending-now") {
-    where.stock = {};
-    where.stock.gt = 0;
   }
 
   const [products, categories, total] = await Promise.all([
