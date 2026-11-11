@@ -12,6 +12,7 @@ import ProductListSkeleton from "../components/skeletons/ProductListSkeleton";
 
 import { useProducts } from "../features/products/useProducts";
 import LoaderError from "../ui/LoaderError";
+import FiltersSidebarSkeleton from "../components/skeletons/FiltersSidebarSkeleton";
 
 function ProductPage() {
   const [layoutStyle, setLayoutStyle] = useState("grid");
@@ -77,7 +78,14 @@ function ProductPage() {
   };
 
   if (isLoadingProducts || !paginationDetails) {
-    return <ProductListSkeleton length={10} />;
+    return (
+      <div className="lg:flex px-4 gap-8">
+        <FiltersSidebarSkeleton />
+        <div className="flex-1">
+          <ProductListSkeleton length={10} />
+        </div>
+      </div>
+    );
   }
 
   if (productsError) {
