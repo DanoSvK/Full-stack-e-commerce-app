@@ -17,7 +17,7 @@ export const getProduct = getOne("product", {
 });
 
 export const getAllProducts = catchAsync(async (req, res) => {
-  const { category, subcategory, take, ...restQuery } = req.query;
+  const { category, subcategory, ...restQuery } = req.query;
 
   const features = new APIFeatures(restQuery)
     .filter()
@@ -41,9 +41,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
 
   /* Handling home page featured sorting
   NOTE: Trending now is simple take x products, no extra if statement required */
-
-  // Simple filter for Trending home page products
-  const parsedTake = take !== undefined ? Number(take) : undefined;
 
   const isTrendingNow = req.query.sort === "trending-now";
   const isHighestRated = req.query.sort === "highest-rated";
@@ -98,7 +95,10 @@ export const getAllProducts = catchAsync(async (req, res) => {
       .sort((a, b) => b.bayesianRating - a.bayesianRating)
       .slice(0, 6);
 
-    const finalProducts = rankedProducts.slice(0, parsedTake ?? prods.length);
+    const finalProducts = rankedProducts.slice(
+      0,
+      req.query.limit ?? prods.length,
+    );
 
     return res.json({
       result: prods.length,
@@ -114,7 +114,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
           categories: { some: { category: { slug: "refurbished" } } },
         },
       },
-      ...(parsedTake !== undefined && { take: parsedTake }),
       include: {
         subcategory: {
           include: { categories: { include: { category: true } } },
@@ -132,7 +131,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
     prisma.product.findMany({
       where,
       ...rest,
-      ...(parsedTake !== undefined && { take: parsedTake }),
       include: {
         subcategory: {
           include: { categories: { include: { category: true } } },
