@@ -70,7 +70,7 @@ function ProductCard({ product, layout = "grid" }) {
               <span className="bg-zinc-900/80 backdrop-blur-md text-main text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
                 {product.subcategory.categories[0].category.name}
               </span>
-              <span className="bg-zinc-900/80 backdrop-blur-md text-main text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+              <span className="bg-zinc-900/80 backdrop-blur-md text-main text-[1f0px] font-bold px-2 py-1 rounded uppercase tracking-wider">
                 {product.subcategory.name}
               </span>
             </div>
@@ -110,13 +110,27 @@ function ProductCard({ product, layout = "grid" }) {
         </div>
 
         <div className="flex flex-col items-center justify-around">
-          <div>
+          <div className="text-right self-end">
             <p className="text-main text-[10px] uppercase font-bold tracking-widest">
               Price
             </p>
-            <p className="text-header font-black text-xl">
-              {product.price.toFixed(2)} €
-            </p>
+            {product.discountPrice ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-header font-black text-2xl tabular-nums">
+                  {product.discountPrice.toFixed(2)} €
+                </p>
+                <span className="text-main text-xs line-through tabular-nums">
+                  {" "}
+                  {product.price.toFixed(2)} €
+                </span>
+              </div>
+            ) : (
+              <div className="gap-2">
+                <p className="text-header font-black text-2xl tabular-nums">
+                  {product.price.toFixed(2)} €
+                </p>
+              </div>
+            )}
           </div>
           <div className="flex gap-2">
             <button
@@ -249,9 +263,23 @@ function ProductCard({ product, layout = "grid" }) {
               <p className="text-main text-[10px] uppercase font-bold tracking-widest">
                 Price
               </p>
-              <p className="text-header font-black text-xl">
-                {product.price.toFixed(2)} €
-              </p>
+              {product.discountPrice ? (
+                <div className="flex items-baseline gap-2">
+                  <p className="text-header font-black text-2xl tabular-nums">
+                    {product.discountPrice.toFixed(2)} €
+                  </p>
+                  <span className="text-main text-xs line-through tabular-nums">
+                    {" "}
+                    {product.price.toFixed(2)} €
+                  </span>
+                </div>
+              ) : (
+                <div className="gap-2">
+                  <p className="text-header font-black text-2xl tabular-nums">
+                    {product.price.toFixed(2)} €
+                  </p>
+                </div>
+              )}
             </div>
             {isAddedToCart ? (
               <p className="self-end-safe text-green-500">Added to cart</p>

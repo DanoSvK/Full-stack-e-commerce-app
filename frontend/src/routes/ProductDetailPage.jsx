@@ -83,8 +83,9 @@ function ProductDetailPage() {
   } = useDeleteWishlistItem();
 
   const reviews = reviewsData?.data?.reviews ?? [];
+
   const paginationDetails = reviewsData?.pagination;
-  const userReview = reviews.find((review) => review?.user.id === user.id);
+  const userReview = reviews.find((review) => review?.user.id === user?.id);
   const [review, setReview] = useState(null);
 
   const initialReview = {
@@ -267,13 +268,23 @@ function ProductDetailPage() {
               <h1 className="text-4xl mb-4 md:text-5xl font-black tracking-tighter text-header leading-tight">
                 {product.title}
               </h1>
-              <p className="text-4xl font-black text-header mb-6 tabular-nums">
-                {product.price.toFixed(2)} €
-                <span className="line-through text-main text-lg font-medium ml-2">
-                  {" "}
-                  516.00 €
-                </span>
-              </p>
+              {product.discountPrice ? (
+                <div className="flex items-baseline gap-2">
+                  <p className="text-header font-black text-4xl tabular-nums">
+                    {product.discountPrice.toFixed(2)} €
+                  </p>
+                  <span className="text-main text-lm line-through tabular-nums">
+                    {" "}
+                    {product.price.toFixed(2)} €
+                  </span>
+                </div>
+              ) : (
+                <div className="gap-2">
+                  <p className="text-header font-black text-2xl tabular-nums">
+                    {product.price.toFixed(2)} €
+                  </p>
+                </div>
+              )}
               <div
                 className={`flex items-center gap-2 font-bold text-sm mb-6 ${stockLevelColor}`}
               >
@@ -471,6 +482,7 @@ function ProductDetailPage() {
                   currentReview={currentReview}
                   isSubmittingReview={isSubmittingReview}
                   submitReviewError={submitReviewError}
+                  user={user}
                 />
               )}
             </div>
