@@ -9,6 +9,7 @@ function ProductReviewForm({
   isSubmittingReview,
   submitReviewError,
   modal = false,
+  user,
 }) {
   return (
     <form
@@ -43,10 +44,14 @@ function ProductReviewForm({
         }}
       ></textarea>
       <button
-        disabled={isSubmittingReview}
+        disabled={isSubmittingReview || !user}
         className="btn-primary w-full text-xs py-2.5 uppercase"
       >
-        {isSubmittingReview ? "Subimtting..." : "Submit Review"}
+        {!user
+          ? "Login to review"
+          : isSubmittingReview
+            ? "Subimtting..."
+            : "Submit Review"}
       </button>
       {submitReviewError && (
         <p className="text-red-400 text-xs flex items-center gap-2 mt-2">
