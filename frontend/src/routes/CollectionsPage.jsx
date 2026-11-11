@@ -18,7 +18,8 @@ function CollectionsPage() {
         { label: "Smartphones", to: "/products?subcategory=smartphones" },
         { label: "Laptops & Ultrabooks", to: "/products?subcategory=laptops" },
       ],
-      order: "order-1",
+      orderImg: "lg:order-1",
+      orderDetails: "lg:order-2",
     },
     {
       id: "heavyweight-streetwear",
@@ -35,7 +36,8 @@ function CollectionsPage() {
         { label: "Pullover Hoodies", to: "/products?subcategory=hoodies" },
         { label: "Crewneck T-Shirts", to: "/products?subcategory=t-shirts" },
       ],
-      order: "order-2",
+      orderImg: "lg:order-2",
+      orderDetails: "lg:order-1",
     },
     {
       id: "performance-running",
@@ -55,7 +57,8 @@ function CollectionsPage() {
           to: "/products?subcategory=training-shorts",
         },
       ],
-      order: "order-1",
+      orderImg: "lg:order-1",
+      orderDetails: "lg:order-2",
     },
     {
       id: "certified-refurbished",
@@ -78,13 +81,14 @@ function CollectionsPage() {
           to: "/products?subcategory=refurbished-laptops",
         },
       ],
-      order: "order-2",
+      orderImg: "lg:order-2",
+      orderDetails: "lg:order-1",
     },
   ];
 
   return (
     <main className="space-y-16">
-      <header className="max-w-2xl space-y-4">
+      <header className="max-w-3xl space-y-4">
         <p className="text-accent text-xs font-black uppercase tracking-widest">
           Curated Storefront Editions
         </p>
@@ -110,7 +114,8 @@ function CollectionsPage() {
               to={card.to}
               Icon={card.icon}
               sublinks={card.subLinks}
-              order={card.order}
+              orderImg={card.orderImg}
+              orderDetails={card.orderDetails}
             />
           );
         })}

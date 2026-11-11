@@ -10,12 +10,13 @@ function CollectionPageCard({
   to,
   Icon,
   sublinks,
-  order,
+  orderImg,
+  orderDetails,
 }) {
   return (
     <article className="glass-card rounded-3xl p-6 sm:p-10 border border-white/5 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
       <div
-        className={`lg:col-span-5 grid gap-4 place-items-center lg:${order}`}
+        className={`lg:col-span-5 grid gap-4 place-items-center ${orderImg}`}
       >
         <img
           src={image}
@@ -24,7 +25,7 @@ function CollectionPageCard({
         />
       </div>
 
-      <div className="lg:col-span-7 space-y-5">
+      <div className={`lg:col-span-7 space-y-5 ${orderDetails}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
             <Icon size={20} />
