@@ -12,6 +12,7 @@ const DEFAULT_CONFIG = {
     stock: "number",
     ratingsAverage: "number",
     ratingsQuantitiy: "number",
+    discountPrice: "boolean",
   },
   // Fields clients may sort by (?sort=price or ?sort=-price)
   sortable: ["price", "createdAt", "title", "ratingsAverage", "highestRated"],
@@ -52,6 +53,14 @@ const buildPrismaWhere = (query, allowedFilters) => {
     if (type === "string") {
       // Strings: only plain "?title=foo" -> case-insensitive contains
       if (!match) where[field] = { contains: value, mode: "insensitive" };
+      continue;
+    }
+
+    if (type === "boolean") {
+      if (value !== "true") continue;
+
+      where[field] = value === "true" ? { not: null } : null;
+
       continue;
     }
 

@@ -1042,16 +1042,23 @@ async function main() {
     SUBCATEGORIES.map((sub) => [sub.name, sub.slug]),
   );
   const countBySubcategory = {};
+  let productIndex = 0;
 
   for (const item of PRODUCTS) {
     const index = countBySubcategory[item.subcategory] ?? 0;
     countBySubcategory[item.subcategory] = index + 1;
+
+    // Give half of the products a discountPrice (~20% off), alternating deterministically
+    const hasDiscount = productIndex % 2 === 0;
+    const discountPrice = hasDiscount ? Math.round(item.price * 0.8) : null;
+    productIndex++;
 
     const data = {
       title: item.title,
       description: item.description,
       extendedDescription: item.extendedDescription,
       price: item.price,
+      discountPrice,
       stock: item.stock,
       imageUrl: imageFor(item.title, slugByName[item.subcategory], index),
       variants: { colors: item.colors, sizes: item.sizes },
