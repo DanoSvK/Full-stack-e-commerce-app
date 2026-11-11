@@ -21,14 +21,14 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
 function HomePage() {
-  const [featuredSelected, setfeaturedSelected] = useState("trending-now");
+  const [featuredSelected, setFeaturedSelected] = useState("trending-now");
   const [isCopying, setIsCopying] = useState(false);
 
   const {
     data: productsData,
     isPending: isLoadingProducts,
     error: productsError,
-  } = useProducts({ sort: featuredSelected, take: 6 });
+  } = useProducts({ sort: featuredSelected, limit: 6 });
 
   const products = productsData?.products ?? [];
 
@@ -136,19 +136,19 @@ function HomePage() {
           <div className="flex items-center gap-2 bg-zinc-900/80 p-1.5 rounded-2xl border border-white/5 self-start">
             <button
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${featuredSelected === "trending-now" ? "bg-accent text-zinc-950" : "text-main hover:text-header"}`}
-              onClick={() => setfeaturedSelected("trending-now")}
+              onClick={() => setFeaturedSelected("trending-now")}
             >
               Trending Now
             </button>
             <button
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${featuredSelected === "highest-rated" ? "bg-accent text-zinc-950" : "text-main hover:text-header"}`}
-              onClick={() => setfeaturedSelected("highest-rated")}
+              onClick={() => setFeaturedSelected("highest-rated")}
             >
               Highest Rated
             </button>
             <button
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${featuredSelected === "refurbished-steals" ? "bg-accent text-zinc-950" : "text-main hover:text-header"}`}
-              onClick={() => setfeaturedSelected("refurbished-steals")}
+              onClick={() => setFeaturedSelected("refurbished-steals")}
             >
               Refurbished Steals
             </button>

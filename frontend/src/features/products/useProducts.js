@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 export function useProducts(options = {}) {
   const queryParams = options;
+
   const [searchParams] = useSearchParams();
   const { data, isPending, isPlaceholderData, error } = useQuery({
     queryKey: ["product", searchParams.toString(), queryParams],
