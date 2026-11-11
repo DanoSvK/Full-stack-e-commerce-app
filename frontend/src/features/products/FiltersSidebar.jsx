@@ -145,9 +145,21 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
     });
   };
 
-  const handleCategory = (categoryQuery) => {
-    onUpdateFilter("stockLevel", "all");
+  const handleDiscount = (isDiscount) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
 
+      if (isDiscount) {
+        next.set("discountPrice", isDiscount);
+      } else {
+        next.delete("discountPrice");
+      }
+
+      return next;
+    });
+  };
+
+  const handleCategory = (categoryQuery) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
 
@@ -167,8 +179,6 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
   };
 
   const handleSubcategory = (subcategoryQuery) => {
-    onUpdateFilter("stockLevel", "all");
-
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
 
@@ -268,9 +278,9 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
   return (
     <aside>
       <section className="w-full lg:w-64 shrink-0 mb-8 lg:mb-0">
-        <div className="glass-card p-5 rounded-3xl">
+        <div className="glass-card p-5 rounded-3xl space-y-8">
           <div className="flex justify-between items-start">
-            <h3 className="text-header font-black text-xl tracking-tighter uppercase mb-8">
+            <h3 className="text-header font-black text-xl tracking-tighter uppercase">
               FILTERS
             </h3>
             <button
@@ -281,9 +291,9 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
               <span className="group-hover:underline">Reset</span>{" "}
             </button>
           </div>
-          <div>
+          <div className="space-y-8">
             {/* SEARCH */}
-            <div className="mb-8">
+            <div>
               <label
                 htmlFor="search"
                 className="text-header text-[10px] uppercase font-bold tracking-widest"
@@ -347,7 +357,7 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
 
             {/* PRODUCT ID */}
             {user?.role === "ADMIN" && (
-              <div className="mb-8">
+              <div>
                 <label
                   htmlFor="product-id"
                   className="text-header text-[10px] uppercase font-bold tracking-widest"
@@ -384,8 +394,42 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
               </div>
             )}
 
+            {/* DISCOUNT */}
+            <div>
+              <input
+                type="checkbox"
+                id="default-checkbox"
+                className="peer sr-only"
+                onChange={(e) => handleDiscount(e.target.checked)}
+              />
+
+              <label
+                htmlFor="default-checkbox"
+                className="
+      flex items-center gap-2
+      cursor-pointer select-none
+      text-sm font-medium text-header
+
+      before:content-['']
+      before:w-5 before:h-5
+      before:border-[0.1px] before:border-zinc-700
+      before:rounded
+      before:flex before:items-center before:justify-center
+      
+      hover:before:border-accent
+
+      peer-checked:before:content-['✔']
+      peer-checked:before:bg-accent
+      peer-checked:before:border-accent
+      peer-checked:before:text-black
+    "
+              >
+                Discounted prices only{" "}
+              </label>
+            </div>
+
             {/* CATEGORY */}
-            <div className="mb-8">
+            <div>
               <label
                 htmlFor="category"
                 className="text-header text-[10px] uppercase font-bold tracking-widest"
@@ -415,7 +459,7 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
 
             {/* SUBCATEGORY */}
             {filters.category !== "all" && (
-              <div className="mb-8">
+              <div>
                 <label className="text-header text-[10px] uppercase font-bold tracking-widest">
                   Subcategories
                 </label>
@@ -438,7 +482,7 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
 
             {/* PRICE RANGE */}
             {isFetchingPrices ? (
-              <div className="mb-8 text-header text-sm">Loading prices...</div>
+              <div className="text-header text-sm">Loading prices...</div>
             ) : pricesError ? (
               <LoaderError />
             ) : (

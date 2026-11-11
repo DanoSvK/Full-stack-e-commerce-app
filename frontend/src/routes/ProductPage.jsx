@@ -51,6 +51,7 @@ function ProductPage() {
   const [filters, setFilters] = useState({
     search: searchParams.get("title") || "",
     productId: searchParams.get("id") || "",
+    discount: false,
     category: searchParams.get("category") || "all",
     subcategory: searchParams.get("subcategory") || "all",
     priceRange:
@@ -97,6 +98,7 @@ function ProductPage() {
     setFilters({
       search: "",
       productId: "",
+      discount: false,
       category: "all",
       subcategory: "all",
       priceRange: null, // the sidebar fills in the default range again when it mounts
