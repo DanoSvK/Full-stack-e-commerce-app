@@ -150,9 +150,9 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
       const next = new URLSearchParams(prev);
 
       if (isDiscount) {
-        next.set("discountPrice", isDiscount);
+        next.set("discounted", isDiscount);
       } else {
-        next.delete("discountPrice");
+        next.delete("discounted");
       }
 
       return next;
@@ -197,6 +197,9 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
   };
 
   function handlePrice(type, value) {
+    const minPriceType = pricesData.priceTypes.minPriceType;
+    const maxPriceType = pricesData.priceTypes.maxPriceType;
+
     // Treat empty string natively to allow full backspaces
     if (value === "") {
       onUpdateFilter("priceRange", {
@@ -239,8 +242,9 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
 
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (targetMinPrice !== "") next.set("price_gte", targetMinPrice);
-      if (targetMaxPrice !== "") next.set("price_lte", targetMaxPrice);
+      if (targetMinPrice !== "") next.set("effectivePrice_gte", targetMinPrice);
+
+      if (targetMaxPrice !== "") next.set("effectivePrice_lte", targetMaxPrice);
       return next;
     });
   }
