@@ -199,14 +199,8 @@ export const getMinMaxPrice = catchAsync(async (req, res) => {
   const minPrice = Math.min(minPrices._min.price, minPrices._min.discountPrice);
   const maxPrice = Math.max(maxPrices._max.price, maxPrices._max.discountPrice);
 
-  const minPriceType =
-    minPrice === minPrices._min.price ? "price" : "discountPrice";
-  const maxPriceType =
-    maxPrice === maxPrices._max.price ? "price" : "discountPrice";
-
   res.json({
     prices: { min: minPrice, max: maxPrice },
-    priceTypes: { minPriceType, maxPriceType },
   });
 });
 
