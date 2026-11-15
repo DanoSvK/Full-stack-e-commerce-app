@@ -54,8 +54,8 @@ function HomePage() {
   return (
     <div className="space-y-24">
       <Hero />
-      <section id="home-cards" className="scroll-mt-22">
-        <div className="flex justify-between mb-8">
+      <div id="home-cards" className="scroll-mt-22">
+        <header className="flex justify-between mb-8">
           <div>
             <p className="text-accent text-xs font-bold uppercase tracking-widest mb-1">
               Curated Departments
@@ -71,7 +71,7 @@ function HomePage() {
             <span>View All Collections</span>
             <ArrowRight size={20} />
           </Link>
-        </div>
+        </header>
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <PageCard
             content={{
@@ -122,9 +122,9 @@ function HomePage() {
             }}
           />
         </section>
-      </section>
-      <section className="space-y-8">
-        <div className="flex justify-between">
+      </div>
+      <div className="space-y-8">
+        <header className="flex justify-between">
           <div>
             <p className="text-accent text-xs font-bold uppercase tracking-widest mb-1">
               Most Wanted Right Now
@@ -153,7 +153,7 @@ function HomePage() {
               Refurbished Steals
             </button>
           </div>
-        </div>
+        </header>
 
         <section className="space-y-8">
           {isLoadingProducts ? (
@@ -168,7 +168,7 @@ function HomePage() {
             </Link>
           </div>
         </section>
-      </section>
+      </div>
 
       <section className="glass-card rounded-3xl p-8 sm:p-12 border border-accent/20 relative overflow-hidden">
         <div className="absolute -right-12 -bottom-12 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
