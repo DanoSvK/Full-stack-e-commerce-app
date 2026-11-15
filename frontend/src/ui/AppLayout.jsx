@@ -15,9 +15,7 @@ function AppLayout() {
           <CartProvider>
             <Header />
             <main className="flex-1 max-w-7xl m-auto w-full px-4 sm:px-6 lg:px-8">
-              <div>
-                <Outlet />
-              </div>
+              <Outlet />
             </main>
           </CartProvider>
           <Footer />
