@@ -228,10 +228,10 @@ function CheckoutPage() {
             </header>
             <div className="flex flex-col sm:flex-row gap-4">
               <button className="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer bg-accent text-zinc-950 border-accent">
-                Credit/Debit Card
+                Credit / Debit Card
               </button>
               <button className="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800">
-                Apple Pay/GooglePa
+                Apple Pay / GooglePay
               </button>
               <button className="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800">
                 Cash on Delivery
@@ -292,11 +292,13 @@ function CheckoutPage() {
           <div className="text-sm space-y-4 pt-4">
             <div className="flex items-center justify-between">
               <p className="text-main">Subtotal (Excl. VAT) </p>
-              <p className="text-header font-bold">{totalBeforeTax} €</p>
+              <p className="text-header font-bold">
+                {totalBeforeTax.toFixed(2)} €
+              </p>
             </div>
             <div className="flex items-center justify-between">
               <p className="text-main">Estimated Taxes (23%)</p>
-              <p className="text-header font-bold">{taxPrice} €</p>
+              <p className="text-header font-bold">{taxPrice.toFixed(2)} €</p>
             </div>
             <div className="flex items-center justify-between">
               <p className="text-main">Shipping</p>
@@ -304,7 +306,9 @@ function CheckoutPage() {
             </div>
             <div className="border-t border-white/5 pt-4 flex justify-between items-baseline">
               <p className="text-header font-bold  ">Grand Total</p>
-              <p className="text-3xl font-black text-accent">{totalPrice} €</p>
+              <p className="text-3xl font-black text-accent">
+                {totalPrice.toFixed(2)} €
+              </p>
             </div>
           </div>
 
