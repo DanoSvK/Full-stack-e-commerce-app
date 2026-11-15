@@ -35,7 +35,7 @@ function DealsPage() {
   const products = productsData?.products ?? [];
 
   return (
-    <main className="space-y-16">
+    <div className="space-y-16">
       <header className="max-w-3xl space-y-4">
         <div className="flex items-center gap-2 text-accent text-xs font-black uppercase tracking-widest">
           <Sparkles size={20} />
@@ -74,7 +74,7 @@ function DealsPage() {
         </div>
         <ProductList products={products} />
       </section>
-    </main>
+    </div>
   );
 }
 
