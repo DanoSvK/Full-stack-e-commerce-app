@@ -120,13 +120,13 @@ function CartPage() {
                   </div>
                 </section>
               ))}
-              <button
-                onClick={() => navigate(-1)}
-                className="btn-secondary flex items-center justify-center gap-2"
+              <Link
+                to={navigate(-1)}
+                className="btn-secondary inline-flex items-center justify-center gap-2"
               >
                 <ArrowLeft size={16} />
                 Go back
-              </button>
+              </Link>
             </div>
             <section className="space-y-8">
               <section className="space-y-6 p-8 glass-card rounded-3xl">
