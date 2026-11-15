@@ -188,16 +188,25 @@ export const getProductCategories = catchAsync(async (req, res) => {
 });
 
 export const getMinMaxPrice = catchAsync(async (req, res) => {
-  const maxPrice = await prisma.product.aggregate({
-    _max: { price: true },
+  const maxPrices = await prisma.product.aggregate({
+    _max: { price: true, discountPrice: true },
   });
 
-  const minPrice = await prisma.product.aggregate({
-    _min: { price: true },
+  const minPrices = await prisma.product.aggregate({
+    _min: { price: true, discountPrice: true },
   });
+
+  const minPrice = Math.min(minPrices._min.price, minPrices._min.discountPrice);
+  const maxPrice = Math.max(maxPrices._max.price, maxPrices._max.discountPrice);
+
+  const minPriceType =
+    minPrice === minPrices._min.price ? "price" : "discountPrice";
+  const maxPriceType =
+    maxPrice === maxPrices._max.price ? "price" : "discountPrice";
 
   res.json({
-    prices: { min: minPrice._min.price, max: maxPrice._max.price },
+    prices: { min: minPrice, max: maxPrice },
+    priceTypes: { minPriceType, maxPriceType },
   });
 });
 

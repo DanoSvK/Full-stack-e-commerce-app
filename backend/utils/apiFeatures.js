@@ -12,7 +12,7 @@ const DEFAULT_CONFIG = {
     stock: "number",
     ratingsAverage: "number",
     ratingsQuantitiy: "number",
-    discountPrice: "boolean",
+    discountPrice: "number",
   },
   // Fields clients may sort by (?sort=price or ?sort=-price)
   sortable: ["price", "createdAt", "title", "ratingsAverage", "highestRated"],
@@ -36,35 +36,51 @@ const OPERATORS = {
 
 // Converts URL query params into a Prisma-compatible `where` object.
 // Unknown fields and malformed values are silently ignored.
+
 const buildPrismaWhere = (query, allowedFilters) => {
   const where = {};
+  const effectivePrice = {};
 
   for (const [key, value] of Object.entries(query)) {
-    // Only plain strings are accepted (blocks ?price=1&price=2 arrays etc.)
     if (typeof value !== "string" || value === "") continue;
 
-    // e.g. "price_gte" -> field "price", op "gte"
+    // Special filter: products with/without a discount
+    if (key === "discounted") {
+      if (value === "true") {
+        where.discountPrice = { not: null };
+      } else if (value === "false") {
+        where.discountPrice = null;
+      }
+
+      continue;
+    }
+
+    /* Special filter: effective selling price 
+    to filter price based on discountPrice if it exists, otherwise price */
+    const effectiveMatch = key.match(/^effectivePrice_(gte|lte|gt|lt)$/);
+
+    if (effectiveMatch) {
+      const num = Number(value);
+
+      if (!Number.isFinite(num)) continue;
+
+      effectivePrice[effectiveMatch[1]] = num;
+      continue;
+    }
+
     const match = key.match(/^(.+)_(gte|lte|gt|lt|ne|e)$/);
     const field = match ? match[1] : key;
     const type = allowedFilters[field];
 
-    if (!type) continue; // not whitelisted
+    if (!type) continue;
 
     if (type === "string") {
-      // Strings: only plain "?title=foo" -> case-insensitive contains
-      if (!match) where[field] = { contains: value, mode: "insensitive" };
+      if (!match) {
+        where[field] = { contains: value, mode: "insensitive" };
+      }
       continue;
     }
 
-    if (type === "boolean") {
-      if (value !== "true") continue;
-
-      where[field] = value === "true" ? { not: null } : null;
-
-      continue;
-    }
-
-    // type === "number"
     const num = Number(value);
     if (!Number.isFinite(num)) continue;
 
@@ -76,7 +92,19 @@ const buildPrismaWhere = (query, allowedFilters) => {
     if (typeof where[field] !== "object" || where[field] === null) {
       where[field] = {};
     }
+
     where[field][OPERATORS[match[2]]] = num;
+  }
+
+  // Apply effective price range
+  if (Object.keys(effectivePrice).length > 0) {
+    where.OR = [
+      { discountPrice: effectivePrice },
+      {
+        discountPrice: null,
+        price: effectivePrice,
+      },
+    ];
   }
 
   return where;
