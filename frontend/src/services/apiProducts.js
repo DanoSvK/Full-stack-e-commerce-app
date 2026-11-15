@@ -6,7 +6,6 @@ export const getAllProducts = async (searchParams, queryParams) => {
   for (const [key, value] of Object.entries(queryParams)) {
     params.set(key, value);
   }
-  console.log(queryParams);
   const res = await fetch(`${API_BASE_URL}/products?${params}`);
 
   if (!res.ok) {
