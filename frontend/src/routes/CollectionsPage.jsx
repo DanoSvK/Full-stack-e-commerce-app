@@ -87,7 +87,7 @@ function CollectionsPage() {
   ];
 
   return (
-    <main className="space-y-16">
+    <div className="space-y-16">
       <header className="max-w-3xl space-y-4">
         <p className="text-accent text-xs font-black uppercase tracking-widest">
           Curated Storefront Editions
@@ -120,7 +120,7 @@ function CollectionsPage() {
           );
         })}
       </section>
-    </main>
+    </div>
   );
 }
 
