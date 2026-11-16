@@ -197,9 +197,6 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
   };
 
   function handlePrice(type, value) {
-    const minPriceType = pricesData.priceTypes.minPriceType;
-    const maxPriceType = pricesData.priceTypes.maxPriceType;
-
     // Treat empty string natively to allow full backspaces
     if (value === "") {
       onUpdateFilter("priceRange", {
