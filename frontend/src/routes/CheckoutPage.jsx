@@ -5,13 +5,16 @@ import {
   ShieldCheck,
   Truck,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useProducts } from "../features/products/useProducts";
 import CartPageSkeleton from "../components/skeletons/CartPageSkeleton";
 import LoaderError from "../ui/LoaderError";
+import { getEffectivePrice } from "../utils/getEffectivePrice";
 
 function CheckoutPage() {
+  const navigate = useNavigate();
+
   const {
     cartProducts,
     onAddOneProduct,
@@ -23,7 +26,7 @@ function CheckoutPage() {
     data: products,
     isPending: isFetchingProducts,
     error: productsError,
-  } = useProducts();
+  } = useProducts({ shouldPaginate: false });
 
   // Guard before doing anything with products
   if (isFetchingProducts) return <CartPageSkeleton />;
@@ -39,7 +42,7 @@ function CheckoutPage() {
   }));
 
   const totalPrice = cartWithProducts.reduce(
-    (total, product) => total + product.price * product.quantity,
+    (total, product) => total + getEffectivePrice(product) * product.quantity,
     0,
   );
 
@@ -288,7 +291,38 @@ function CheckoutPage() {
           <h3 className="text-header font-bold text-xl uppercase tracking-tight">
             Order summary
           </h3>
-          <div></div>
+          <div>
+            <ul>
+              {cartWithProducts.map((p) => {
+                return (
+                  <li className="flex items-center justify-between gap-3 text-xs border-b border-white/5 pb-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src={p.imageUrl}
+                        alt=""
+                        className="w-11 h-11 rounded-lg object-cover bg-zinc-900 shrink-0 cursor-pointer hover:opacity-85"
+                        onClick={() => navigate(`/product/${p.id}`)}
+                      />
+                      <div className="min-w-0">
+                        <p
+                          className="text-header font-bold truncate cursor-pointer hover:text-accent"
+                          onClick={() => navigate(`/product/${p.id}`)}
+                        >
+                          {p.title}
+                        </p>
+                        <p className="text-main">
+                          {`${p.quantity}`} · Black Titanium · 128GB
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-header font-bold tabular-nums shrink-0">
+                      {getEffectivePrice(p)} €
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
           <div className="text-sm space-y-4 pt-4">
             <div className="flex items-center justify-between">
               <p className="text-main">Subtotal (Excl. VAT) </p>
