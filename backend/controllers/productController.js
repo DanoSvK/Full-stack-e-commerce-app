@@ -19,11 +19,11 @@ export const getProduct = getOne("product", {
 export const getAllProducts = catchAsync(async (req, res) => {
   const { category, subcategory, ...restQuery } = req.query;
 
-  const features = new APIFeatures(restQuery)
-    .filter()
-    .sort()
-    .fieldLimit()
-    .paginate();
+  const features = new APIFeatures(restQuery).filter().sort().fieldLimit();
+
+  if (!req.query.shouldPaginate) {
+    features.paginate();
+  }
 
   const { where: baseWhere = {}, ...rest } = features.prismaQuery;
 
