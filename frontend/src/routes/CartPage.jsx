@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Tag, Ticket, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useProducts } from "../features/products/useProducts";
 import CartPageSkeleton from "../components/skeletons/CartPageSkeleton";
+import { getEffectivePrice } from "../utils/getEffectivePrice";
 
 function CartPage() {
   const {
@@ -17,7 +18,7 @@ function CartPage() {
     data: products,
     isPending: isFetchingProducts,
     error: productsError,
-  } = useProducts();
+  } = useProducts({ shouldPaginate: false });
 
   const navigate = useNavigate();
 
@@ -35,15 +36,15 @@ function CartPage() {
   }));
 
   const totalPrice = cartWithProducts.reduce(
-    (total, product) => total + product.price * product.quantity,
+    (total, product) => total + getEffectivePrice(product) * product.quantity,
     0,
   );
-
+  console.log(products);
   const VAT = 0.23;
 
   const taxPrice = totalPrice * VAT;
   const totalBeforeTax = totalPrice - taxPrice;
-
+  console.log(cartWithProducts);
   return (
     <main>
       {!cartWithProducts.length ? (
@@ -113,7 +114,10 @@ function CartPage() {
                           Total
                         </p>
                         <p className="text-header font-black text-lg">
-                          {(product.price * product.quantity).toFixed(2)} €
+                          {(
+                            getEffectivePrice(product) * product.quantity
+                          ).toFixed(2)}{" "}
+                          €
                         </p>
                       </div>
                     </div>
