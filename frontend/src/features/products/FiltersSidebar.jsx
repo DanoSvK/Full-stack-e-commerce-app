@@ -13,6 +13,7 @@ import CategoriesSkeleton from "../../components/skeletons/CategoriesSkeleton";
 import { usePrices } from "../products/usePrices";
 import LoaderError from "../../ui/LoaderError";
 import { useAuth } from "../../context/AuthContext";
+import Checkbox from "../../ui/Checkbox";
 
 function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
   const [suggestedQuery, setSuggestedQuery] = useState("");
@@ -396,38 +397,11 @@ function FiltersSidebar({ onUpdateFilter, filters, onResetFilters }) {
             )}
 
             {/* DISCOUNT */}
-            <div>
-              <input
-                type="checkbox"
-                id="default-checkbox"
-                className="peer sr-only"
-                onChange={(e) => handleDiscount(e.target.checked)}
-              />
-
-              <label
-                htmlFor="default-checkbox"
-                className="
-      flex items-center gap-2
-      cursor-pointer select-none
-      text-sm font-medium text-header
-
-      before:content-['']
-      before:w-5 before:h-5
-      before:border-[0.1px] before:border-zinc-700
-      before:rounded
-      before:flex before:items-center before:justify-center
-      
-      hover:before:border-accent
-
-      peer-checked:before:content-['✔']
-      peer-checked:before:bg-accent
-      peer-checked:before:border-accent
-      peer-checked:before:text-black
-    "
-              >
-                Discounted prices only{" "}
-              </label>
-            </div>
+            <Checkbox
+              setChecked={handleDiscount}
+              label={"Discounted prices only"}
+              id={"discount"}
+            />
 
             {/* CATEGORY */}
             <div>
