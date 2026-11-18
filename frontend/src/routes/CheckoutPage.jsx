@@ -1,18 +1,41 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import {
+  AlertCircle,
+  AlertTriangle,
   ArrowLeft,
   CreditCard,
   MapPin,
   ShieldCheck,
   Truck,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+
 import { useCart } from "../context/CartContext";
 import { useProducts } from "../features/products/useProducts";
+import { getEffectivePrice } from "../utils/getEffectivePrice";
 import CartPageSkeleton from "../components/skeletons/CartPageSkeleton";
 import LoaderError from "../ui/LoaderError";
-import { getEffectivePrice } from "../utils/getEffectivePrice";
+import { useState } from "react";
+import AddressForm from "../components/AddressForm";
+import Checkbox from "../ui/Checkbox";
 
 function CheckoutPage() {
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+
+  const [sameAsShipping, setSameAsShipping] = useState(true);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      shipping: {},
+      billing: {},
+    },
+  });
+
   const navigate = useNavigate();
 
   const {
@@ -51,9 +74,12 @@ function CheckoutPage() {
   const taxPrice = totalPrice * VAT;
   const totalBeforeTax = totalPrice - taxPrice;
 
+  const onSubmit = (data) => console.log("VALID DATA:", data);
+
+  const onInvalid = (errors) => console.log("INVALID:", errors);
   return (
     <>
-      <header>
+      <header className="mb-6">
         <Link
           to={"/cart"}
           className="inline-flex items-center gap-2 text-xs font-bold text-main hover:text-accent transition-colors mb-4"
@@ -66,7 +92,10 @@ function CheckoutPage() {
         </h1>
       </header>
 
-      <form className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+      <form
+        className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start"
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
+      >
         <div className="lg:col-span-2 space-y-6">
           <section className="glass-card p-8 rounded-3xl space-y-6">
             <header className="flex items-center justify-between">
@@ -85,107 +114,32 @@ function CheckoutPage() {
                 </p>
               </div>
             </header>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
-              <div className="flex flex-col lg:col-span-1">
-                <label
-                  htmlFor="full-name"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  Full Name
-                </label>
-                <input
-                  id="full-name"
-                  name="fullName"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-              <div className="flex flex-col lg:col-span-1">
-                <label
-                  htmlFor="email"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  Email for Recipient & Tracking
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-              <div className="flex flex-col sm:col-span-2">
-                <label
-                  htmlFor="address"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  Street Address & Apartment
-                </label>
-                <input
-                  id="address"
-                  name="address"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label
-                  htmlFor="city"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  City
-                </label>
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label
-                  htmlFor="zip"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  Postal / Zip Code
-                </label>
-                <input
-                  id="zip"
-                  name="zip"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label
-                  htmlFor="country"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  Country
-                </label>
-                <input
-                  id="country"
-                  name="country"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label
-                  htmlFor="phone"
-                  className="text-main text-[10px] uppercase font-bold tracking-widest block mb-1"
-                >
-                  Phone Number
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="text"
-                  className="input-field w-full text-sm"
-                />
-              </div>
-            </div>
+
+            {/* SHIPPING FORM */}
+            <AddressForm
+              register={register}
+              errors={errors}
+              prefix={"shipping"}
+            />
+
+            <Checkbox
+              checked={sameAsShipping}
+              setChecked={setSameAsShipping}
+              label={"Billing address is the same as shipping"}
+              id={"billing"}
+            />
+
+            {/* BILLING FORM */}
+            {!sameAsShipping && (
+              <AddressForm
+                register={register}
+                errors={errors}
+                prefix={"billing"}
+              />
+            )}
           </section>
+
+          {/* DELIVERY METHOD */}
           <section className="glass-card p-8 rounded-3xl space-y-5">
             <header className="flex items-center gap-2">
               <Truck size={22} color={"#ffde21"} />
@@ -194,7 +148,11 @@ function CheckoutPage() {
               </h2>
             </header>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <button className="p-4 sm:flex-1 rounded-2xl border text-left transition-all cursor-pointer bg-zinc-900/50 border-white/5 hover:border-white/20">
+              <button
+                type="button"
+                className={`p-4 sm:flex-1 rounded-2xl border text-left transition-all cursor-pointer ${deliveryMethod === "courier" ? "bg-accent/10 border-accent" : "bg-zinc-900/50 border-white/5 hover:border-white/20"}`}
+                onClick={() => setDeliveryMethod("courier")}
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-header font-bold text-sm">
                     Express Next-Day Courier (Free)
@@ -207,7 +165,11 @@ function CheckoutPage() {
                   Door-to-door insured delivery in 1-2 business days
                 </p>
               </button>
-              <button className="p-4 sm:flex-1 rounded-2xl border text-left transition-all cursor-pointer bg-zinc-900/50 border-white/5 hover:border-white/20">
+              <button
+                type="button"
+                className={`p-4 sm:flex-1 rounded-2xl border text-left transition-all cursor-pointer ${deliveryMethod === "locker" ? "bg-accent/10 border-accent" : "bg-zinc-900/50 border-white/5 hover:border-white/20"}`}
+                onClick={() => setDeliveryMethod("locker")}
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-header font-bold text-sm">
                     Parcel Locker Pickup (Free)
@@ -222,24 +184,46 @@ function CheckoutPage() {
               </button>
             </div>
           </section>
+
+          {/* PAYMENT METHOD */}
           <section className="glass-card p-8 rounded-3xl space-y-6">
             <header className="flex items-center gap-2">
               <CreditCard size={22} color={"#ffde21"} />
               <h2 className="text-xl font-bold text-header">
-                2. Delivery Method
+                3. Payment Method
               </h2>
             </header>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer bg-accent text-zinc-950 border-accent">
+              <button
+                type="button"
+                className={`flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${paymentMethod === "card" ? "bg-accent text-zinc-950 border-accent" : "bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800"}`}
+                onClick={() => setPaymentMethod("card")}
+              >
                 Credit / Debit Card
               </button>
-              <button className="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800">
-                Apple Pay / GooglePay
+              <button
+                type="button"
+                className={`flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${paymentMethod === "apple" ? "bg-accent text-zinc-950 border-accent" : "bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800"}`}
+                onClick={() => setPaymentMethod("apple")}
+              >
+                Apple Pay
               </button>
-              <button className="flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800">
+              <button
+                type="button"
+                className={`flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${paymentMethod === "google" ? "bg-accent text-zinc-950 border-accent" : "bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800"}`}
+                onClick={() => setPaymentMethod("google")}
+              >
+                Google Pay
+              </button>
+              <button
+                type="button"
+                className={`flex-1 p-3.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${paymentMethod === "cash" ? "bg-accent text-zinc-950 border-accent" : "bg-zinc-900 border-white/5 text-zinc-300 hover:bg-zinc-800"}`}
+                onClick={() => setPaymentMethod("cash")}
+              >
                 Cash on Delivery
               </button>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 ">
               <div className="flex flex-col col-span-3">
                 <label
@@ -346,7 +330,10 @@ function CheckoutPage() {
             </div>
           </div>
 
-          <button className="btn-primary w-full flex items-center justify-center gap-2 group">
+          <button
+            type="submit"
+            className="btn-primary w-full flex items-center justify-center gap-2 group"
+          >
             <span>Place Order</span>
             <ShieldCheck size={16} />
           </button>
