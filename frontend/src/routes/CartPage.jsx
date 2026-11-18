@@ -39,12 +39,10 @@ function CartPage() {
     (total, product) => total + getEffectivePrice(product) * product.quantity,
     0,
   );
-  console.log(products);
   const VAT = 0.23;
 
   const taxPrice = totalPrice * VAT;
   const totalBeforeTax = totalPrice - taxPrice;
-  console.log(cartWithProducts);
   return (
     <main>
       {!cartWithProducts.length ? (
