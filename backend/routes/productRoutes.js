@@ -11,6 +11,7 @@ import {
   getProductCategories,
   getMinMaxPrice,
   searchProductSuggestion,
+  getProductsById,
 } from "../controllers/productController.js";
 import { protect } from "../controllers/authController.js";
 import reviewRouter from "./reviewRoutes.js";
@@ -31,6 +32,7 @@ router
     createProduct,
   );
 
+router.route("/by-ids").get(getProductsById);
 router.get("/categories", getProductCategories);
 router.get("/prices", getMinMaxPrice);
 router.get("/suggestions", searchProductSuggestion);
