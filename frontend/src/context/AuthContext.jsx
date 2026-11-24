@@ -2,10 +2,13 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { API_BASE_URL } from "../globalVariables";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
+  const queryClient = useQueryClient();
+
   const [resetLinkSent, setResetLinkSent] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -107,6 +110,8 @@ function AuthProvider({ children }) {
       credentials: "include",
     });
     if (!res.ok) throw new Error("Logout failed");
+    queryClient.clear();
+    window.dispatchEvent(new Event("user-logout"));
     setUser(null);
     navigate("/home"); // redirect after logout
   };
