@@ -11,7 +11,7 @@ import {
   MessageSquarePlus,
   X,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -31,6 +31,7 @@ import ReviewSkeleton from "../components/skeletons/ReviewSkeleton";
 import Pagination from "../ui/Pagination";
 import ProductReviewForm from "../features/products/ProductReviewForm";
 import { useUpdateReview } from "../features/products/useUpdateReview";
+import { WishlistContext } from "../context/WishlistContext";
 
 function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState(null);
@@ -58,6 +59,9 @@ function ProductDetailPage() {
     isFetching: isFetchingWishlist,
     error: wishlistError,
   } = useWishlist(!isAuthLoading && !!user);
+
+  const { wishlistCtx, addToWishlistCtx, removeFromWishlistCtx } =
+    useContext(WishlistContext);
 
   const {
     data: reviewsData,
@@ -122,10 +126,16 @@ function ProductDetailPage() {
         : "text-orange-400";
 
   const active = wishlist?.some((prod) => prod.productId === product.id);
+  const activeCtx = wishlistCtx?.some((prodId) => prodId === product?.id);
 
   function handleAddDeleteWishlistItem(productId) {
     if (!user) {
-      navigate("/login");
+      if (!activeCtx) {
+        addToWishlistCtx(productId);
+      } else {
+        removeFromWishlistCtx(productId);
+      }
+
       return;
     }
 
@@ -367,7 +377,7 @@ function ProductDetailPage() {
                 <button
                   type="button"
                   aria-label="Add to wishlist"
-                  className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active ? " border-accent text-accent" : "text-main border-white/5 enabled:hover:text-header"} ${addToWishlistError || deleteWishlistItemError ? "border-red-500" : ""}`}
+                  className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active || activeCtx ? " border-accent text-accent" : "text-main border-white/5 enabled:hover:text-header"} ${addToWishlistError || deleteWishlistItemError ? "border-red-500" : ""}`}
                   disabled={
                     isAuthLoading ||
                     (!!user && isPendingWishlist) ||
@@ -376,7 +386,10 @@ function ProductDetailPage() {
                   }
                   onClick={() => handleAddDeleteWishlistItem(product.id)}
                 >
-                  <Heart size={24} fill={`${active ? "#ffde21" : "none"}`} />
+                  <Heart
+                    size={24}
+                    fill={`${active || activeCtx ? "#ffde21" : "none"}`}
+                  />
                 </button>
                 <button
                   type="button"
