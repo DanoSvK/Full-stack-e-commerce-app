@@ -6,7 +6,6 @@ import { useWishlist } from "../wishlist/useWishlist";
 import { useDeleteWishlistItem } from "../wishlist/useDeleteWishlistItem";
 import { useContext, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { WishlistContext } from "../../context/WishlistContext";
 
 function ProductCard({ product, layout = "grid" }) {
@@ -14,8 +13,6 @@ function ProductCard({ product, layout = "grid" }) {
   const { onAddCartProducts } = useCart();
   const { user, isAuthLoading } = useAuth();
   const [imgError, setImgError] = useState(false);
-
-  const navigate = useNavigate();
 
   const {
     data: wishlist,
