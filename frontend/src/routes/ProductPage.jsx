@@ -175,7 +175,7 @@ function ProductPage() {
                 <>
                   Showing{" "}
                   <span className="font-bold text-white">
-                    {rangeStart}–{rangeEnd}
+                    {rangeStart}-{rangeEnd}
                   </span>{" "}
                   of{" "}
                   <span className="font-bold text-accent">
@@ -236,7 +236,7 @@ function ProductPage() {
         >
           <ProductList products={products} layout={layoutStyle} />
         </div>
-        <Pagination paginationDetails={paginationDetails} limit={11} />
+        <Pagination paginationDetails={paginationDetails} limit={10} />
       </section>
     </div>
   );
