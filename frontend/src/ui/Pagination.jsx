@@ -1,7 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { buildPagination } from "../utils/pagination";
-import { useEffect } from "react";
 
 function Pagination({ paginationDetails, limit }) {
   const totalPages = paginationDetails?.totalPages ?? 0;
