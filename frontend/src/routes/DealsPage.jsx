@@ -30,7 +30,7 @@ function DealsPage() {
     isPending: isLoadingProducts,
     isPlaceholderData,
     error: productsError,
-  } = useProducts({ discountPrice: "true", limit: 9 });
+  } = useProducts({ discounted: true, limit: 9 });
 
   const products = productsData?.products ?? [];
 
@@ -59,6 +59,7 @@ function DealsPage() {
           {VOUCHERS.map((voucher) => {
             return (
               <PromoCard
+                key={voucher.code}
                 code={voucher.code}
                 discount={voucher.discount}
                 description={voucher.description}
