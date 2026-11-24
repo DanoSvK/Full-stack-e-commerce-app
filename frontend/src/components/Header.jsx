@@ -33,7 +33,7 @@ function Header() {
         <div className="flex gap-7 items-center ml-auto">
           <Link
             className="relative p-2 hover:text-accent transition-colors"
-            to="/account?tab=wishlist"
+            to="/wishlist"
           >
             <Heart />
             {wishlist?.length > 0 && (
