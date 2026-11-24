@@ -279,7 +279,10 @@ function CheckoutPage() {
             <ul>
               {cartWithProducts.map((p) => {
                 return (
-                  <li className="flex items-center justify-between gap-3 text-xs border-b border-white/5 pb-3">
+                  <li
+                    key={p.id}
+                    className="flex items-center justify-between gap-3 text-xs border-b border-white/5 pb-3"
+                  >
                     <div className="flex items-center gap-3 min-w-0">
                       <img
                         src={p.imageUrl}
@@ -300,7 +303,7 @@ function CheckoutPage() {
                       </div>
                     </div>
                     <p className="text-header font-bold tabular-nums shrink-0">
-                      {getEffectivePrice(p)} €
+                      {getEffectivePrice(p).toFixed(2)} €
                     </p>
                   </li>
                 );
