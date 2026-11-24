@@ -41,7 +41,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
 
   /* Handling home page featured sorting
   NOTE: Trending now is simple take x products, no extra if statement required */
-
   const isTrendingNow = req.query.sort === "trending-now";
   const isHighestRated = req.query.sort === "highest-rated";
   const isRefurbishedSteals = req.query.sort === "refurbished-steals";
@@ -126,7 +125,6 @@ export const getAllProducts = catchAsync(async (req, res) => {
       products,
     });
   }
-
   const [products, categories, total] = await Promise.all([
     prisma.product.findMany({
       where,
@@ -165,6 +163,40 @@ export const getAllProducts = catchAsync(async (req, res) => {
       pageSize: Number(req.query.limit) || 10,
       totalPages: Math.ceil(total / (Number(req.query.limit) || 10)),
     },
+  });
+});
+
+export const getProductsById = catchAsync(async (req, res) => {
+  const ids = req.query.ids;
+  const idsArr = ids.split(",");
+
+  const products = await prisma.product.findMany({
+    where: {
+      id: {
+        in: idsArr,
+      },
+    },
+    include: {
+      subcategory: {
+        include: {
+          categories: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!products || products.length === 0) {
+    return next(new AppError("Error fetching products"));
+  }
+
+  res.status(200).json({
+    status: "success",
+    results: products.length,
+    data: products,
   });
 });
 
