@@ -36,9 +36,17 @@ const productBaseSchema = z.object({
   variants: z.record(z.string(), z.array(z.string())),
 
   subcategoryId: z.uuid("Product must have a valid subcategory ID"),
+
+  discountPrice: z.number().int().positive().nullable().optional(),
 });
 
-export const createProductSchema = productBaseSchema;
+export const createProductSchema = productBaseSchema.refine(
+  (d) => d.discountPrice == null || d.discountPrice < d.price,
+  {
+    message: "Discount price must be lower than the regular price",
+    path: ["discountPrice"],
+  },
+);
 
 export const updateProductSchema = productBaseSchema
   .partial()
