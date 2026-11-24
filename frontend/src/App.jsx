@@ -20,6 +20,7 @@ import PrivacyPolicyPage from "./routes/PrivacyPolicyPage";
 import CheckoutPage from "./routes/CheckoutPage";
 import CollectionsPage from "./routes/CollectionsPage";
 import DealsPage from "./routes/DealsPage";
+import WishlistPage from "./routes/WishlistPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
           { path: "/collections", element: <CollectionsPage /> },
           { path: "/deals", element: <DealsPage /> },
           { path: "/cart", element: <CartPage /> },
+          { path: "/wishlist", element: <WishlistPage /> },
           { path: "/checkout", element: <CheckoutPage /> },
           { path: "/product/:prodId", element: <ProductDetailPage /> },
           { path: "/login", element: <LoginPage /> },
