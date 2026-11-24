@@ -7,6 +7,7 @@ export function useProducts(options = {}) {
 
   const [searchParams] = useSearchParams();
   const { data, isPending, isPlaceholderData, error } = useQuery({
+    // Adding search params for UI filters and query params for backend filtering (sort, limit...)
     queryKey: ["product", searchParams.toString(), queryParams],
     queryFn: () => getAllProducts(searchParams.toString(), queryParams),
     placeholderData: keepPreviousData,
