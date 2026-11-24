@@ -5,14 +5,16 @@ const router = Router();
 import {
   getWishlist,
   addToWishlist,
-  deleteFromWishlist,
+  deleteOneFromWishlist,
+  deleteAllWishlist,
+  syncWishlist,
 } from "../controllers/wishlistController.js";
 import { protect } from "../controllers/authController.js";
 
 router.use(protect);
 
-router.route("/").get(getWishlist);
+router.route("/").get(getWishlist).post(syncWishlist).delete(deleteAllWishlist);
 
-router.route("/:productId").post(addToWishlist).delete(deleteFromWishlist);
+router.route("/:productId").post(addToWishlist).delete(deleteOneFromWishlist);
 
 export default router;
