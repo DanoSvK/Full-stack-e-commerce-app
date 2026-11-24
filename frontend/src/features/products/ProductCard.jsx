@@ -4,9 +4,10 @@ import { useCart } from "../../context/CartContext";
 import { useCreateWishlistItem } from "../wishlist/useCreateWishlistItem";
 import { useWishlist } from "../wishlist/useWishlist";
 import { useDeleteWishlistItem } from "../wishlist/useDeleteWishlistItem";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { WishlistContext } from "../../context/WishlistContext";
 
 function ProductCard({ product, layout = "grid" }) {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
@@ -24,6 +25,8 @@ function ProductCard({ product, layout = "grid" }) {
 
   const { addToWishlist, isAddingToWishlist, addToWishlistError } =
     useCreateWishlistItem();
+  const { wishlistCtx, addToWishlistCtx, removeFromWishlistCtx } =
+    useContext(WishlistContext);
 
   const {
     deleteWishlistItem,
@@ -32,10 +35,16 @@ function ProductCard({ product, layout = "grid" }) {
   } = useDeleteWishlistItem();
 
   const active = wishlist?.some((prod) => prod.productId === product?.id);
+  const activeCtx = wishlistCtx?.some((prodId) => prodId === product?.id);
 
   function handleAddDeleteWishlistItem(productId) {
     if (!user) {
-      navigate("/login");
+      if (!activeCtx) {
+        addToWishlistCtx(productId);
+      } else {
+        removeFromWishlistCtx(productId);
+      }
+
       return;
     }
 
@@ -142,7 +151,7 @@ function ProductCard({ product, layout = "grid" }) {
                 isDeletingWishlistItem
               }
               className={`flex items-center justify-center p-3 rounded-xl border border-white/10 hover:border-accent/40 backdrop-blur-md transition-all duration-300 text-header cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                active
+                active || activeCtx
                   ? "bg-accent"
                   : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"
               } ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
@@ -150,8 +159,8 @@ function ProductCard({ product, layout = "grid" }) {
             >
               <Heart
                 size={18}
-                color={active ? "#000" : "#fff"}
-                fill={active ? "#000" : "none"}
+                color={active || activeCtx ? "#000" : "#fff"}
+                fill={active || activeCtx ? "#000" : "none"}
               />
             </button>
             {isAddedToCart ? (
@@ -207,13 +216,13 @@ function ProductCard({ product, layout = "grid" }) {
             isAddingToWishlist ||
             isDeletingWishlistItem
           }
-          className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-header cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${active ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
+          className={`absolute z-10 top-4 right-4 p-2 rounded-full backdrop-blur-md transition-all duration-300 text-header cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${active || activeCtx ? "bg-accent" : "bg-zinc-900/40 enabled:hover:bg-zinc-900/80"} ${addToWishlistError || deleteWishlistItemError ? "border border-red-500" : ""}`}
           onClick={() => handleAddDeleteWishlistItem(product.id)}
         >
           <Heart
             size={16}
-            color={active ? "#000" : "#fff"}
-            fill={active ? "#000" : "none"}
+            color={active || activeCtx ? "#000" : "#fff"}
+            fill={active || activeCtx ? "#000" : "none"}
           />
         </button>
 
