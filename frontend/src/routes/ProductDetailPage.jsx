@@ -209,6 +209,7 @@ function ProductDetailPage() {
               isSubmittingReview={isUpdatingReview}
               submitReviewError={updateReviewError}
               modal={isModalOpen}
+              user={user}
             />
             <button
               className="absolute top-2 right-3 cursor-pointer hover:text-red-500"
