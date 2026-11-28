@@ -5,8 +5,8 @@ import { useSyncWishlist } from "../features/wishlist/useSyncWishlist";
 
 export const WishlistContext = createContext({
   wishlistCtx: [],
-  addToWishlistCtx: (id) => {},
-  removeFromWishlistCtx: (id) => {},
+  addToWishlistCtx: () => {},
+  removeFromWishlistCtx: () => {},
   removeWishlistCtx: () => {},
 });
 
@@ -15,11 +15,11 @@ export function WishlistContextProvider({ children }) {
     return JSON.parse(localStorage.getItem("wishlist") || "[]");
   });
 
-  const { user } = useAuth();
+  const { user, isAuthLoading } = useAuth();
 
   const { mutateAsync: syncWishlist } = useSyncWishlist();
 
-  const { data: wishlistDB = [] } = useWishlist(!!user);
+  const { data: wishlistDB = [] } = useWishlist(!!user && !isAuthLoading);
 
   const hasSynced = useRef(false);
 
