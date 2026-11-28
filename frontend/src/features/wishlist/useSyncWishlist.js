@@ -9,6 +9,7 @@ export const useSyncWishlist = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
     },
+    retry: 1,
   });
 
   return { mutateAsync, isPending, error };

@@ -10,6 +10,7 @@ export function useProducts(options = {}) {
     // Adding search params for UI filters and query params for backend filtering (sort, limit...)
     queryKey: ["product", searchParams.toString(), queryParams],
     queryFn: () => getAllProducts(searchParams.toString(), queryParams),
+    retry: 1,
     placeholderData: keepPreviousData,
   });
 

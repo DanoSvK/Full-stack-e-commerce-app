@@ -5,6 +5,7 @@ export function usePrices() {
   const { data, isPending, error } = useQuery({
     queryKey: ["price"],
     queryFn: getMinMaxPrice,
+    retry: 1,
   });
 
   return { data, isPending, error };

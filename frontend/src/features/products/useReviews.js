@@ -9,6 +9,7 @@ export function useReviews() {
   const { data, isPending, error, refetch, isFetching } = useQuery({
     queryKey: ["review", params.prodId, searchParams.toString()],
     queryFn: () => getReviewsByProduct(params.prodId, searchParams.toString()),
+    retry: 1,
   });
 
   return { data, isPending, error, refetch, isFetching };

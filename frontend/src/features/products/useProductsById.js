@@ -6,6 +6,7 @@ export function useProductsById(ids = []) {
     queryKey: ["product", "by-ids", ids],
     queryFn: () => getProductsById(ids),
     placeholderData: keepPreviousData,
+    retry: 1,
     enabled: ids.length > 0,
   });
 

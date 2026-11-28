@@ -8,6 +8,7 @@ export function useProduct() {
   const { data, isPending, error } = useQuery({
     queryKey: ["product", prodId],
     queryFn: () => getOneProduct(prodId),
+    retry: 1,
   });
 
   return { data, isPending, error };
