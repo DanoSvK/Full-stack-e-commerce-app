@@ -4,13 +4,16 @@ import { Link } from "react-router-dom";
 import { useWishlist } from "../../features/wishlist/useWishlist";
 import ProductListSkeleton from "../../components/skeletons/ProductListSkeleton";
 import LoaderError from "../../ui/LoaderError";
+import { useAuth } from "../../context/AuthContext";
 
 function Wishlist() {
+  const { user, isAuthLoading } = useAuth();
+
   const {
     data: wishlist,
     isPending: isFetchingWishlist,
     error: wishlistError,
-  } = useWishlist();
+  } = useWishlist(!!user && !isAuthLoading);
 
   if (wishlistError) {
     return <LoaderError />;
