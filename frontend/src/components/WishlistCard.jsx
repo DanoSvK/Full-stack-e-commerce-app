@@ -15,10 +15,10 @@ function WishlistCard({ product, user = {} }) {
   const { removeFromWishlistCtx } = useContext(WishlistContext);
 
   const {
-    deleteWishlistItem,
-    isDeletingWishlistItem,
-    deleteWishlistItemError,
-  } = useDeleteWishlistItem(!!user);
+    mutate: deleteWishlistItem,
+    isPending: isDeletingWishlistItem,
+    error: deleteWishlistItemError,
+  } = useDeleteWishlistItem();
 
   function handleAddToCart(productId) {
     onAddOneProduct(productId);

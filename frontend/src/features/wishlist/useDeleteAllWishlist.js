@@ -4,11 +4,7 @@ import toast from "react-hot-toast";
 
 export const useDeleteAllWishlist = (enabled = true) => {
   const queryClient = useQueryClient();
-  const {
-    mutate: deleteWishlist,
-    isPending: isDeletingWishlist,
-    error: deleteWishlistError,
-  } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationKey: ["wishlist"],
     mutationFn: () => deleteAllWishlist(),
     onSuccess: () => {
@@ -20,8 +16,8 @@ export const useDeleteAllWishlist = (enabled = true) => {
   });
 
   return {
-    deleteWishlist,
-    isDeletingWishlist,
-    deleteWishlistError,
+    mutate,
+    isPending,
+    error,
   };
 };

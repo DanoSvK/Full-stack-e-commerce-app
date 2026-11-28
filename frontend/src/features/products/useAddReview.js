@@ -7,11 +7,7 @@ export function useAddReview() {
   const { prodId } = useParams();
   const queryClient = useQueryClient();
 
-  const {
-    mutate: submitReview,
-    isPending: isSubmittingReview,
-    error: submitReviewError,
-  } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: ({ title, comment, rating }) =>
       addReview(title, comment, rating, prodId),
     onSuccess: () => {
@@ -22,8 +18,8 @@ export function useAddReview() {
   });
 
   return {
-    submitReview,
-    isSubmittingReview,
-    submitReviewError,
+    mutate,
+    isPending,
+    error,
   };
 }

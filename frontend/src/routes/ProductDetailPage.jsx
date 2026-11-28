@@ -70,19 +70,28 @@ function ProductDetailPage() {
     isFetching: isFetchingReviews,
   } = useReviews();
 
-  const { submitReview, isSubmittingReview, submitReviewError } =
-    useAddReview();
-
-  const { updateReview, isUpdatingReview, updateReviewError } =
-    useUpdateReview();
-
-  const { addToWishlist, isAddingToWishlist, addToWishlistError } =
-    useCreateWishlistItem();
+  const {
+    mutate: submitReview,
+    isPending: isSubmittingReview,
+    error: submitReviewError,
+  } = useAddReview();
 
   const {
-    deleteWishlistItem,
-    isDeletingWishlistItem,
-    deleteWishlistItemError,
+    mutate: updateReview,
+    isPending: isUpdatingReview,
+    error: updateReviewError,
+  } = useUpdateReview();
+
+  const {
+    mutate: addToWishlist,
+    isPending: isAddingToWishlist,
+    error: addToWishlistError,
+  } = useCreateWishlistItem();
+
+  const {
+    mutate: deleteWishlistItem,
+    isPending: isDeletingWishlistItem,
+    error: deleteWishlistItemError,
   } = useDeleteWishlistItem();
 
   const wishlistUnavailable = !!user && !!wishlistError && !wishlist;

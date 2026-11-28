@@ -4,11 +4,7 @@ import toast from "react-hot-toast";
 
 export function useDeleteCustomerProperty() {
   const queryClient = useQueryClient();
-  const {
-    mutate: deleteCustomerProperty,
-    isPending: isDeletingCustomerProperty,
-    error: deleteCustomerPropertyError,
-  } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: (key) => deleteCustomerPropertyApi(key),
     onSuccess: () => {
       toast.success("Customer property successfully deleted");
@@ -18,8 +14,8 @@ export function useDeleteCustomerProperty() {
   });
 
   return {
-    deleteCustomerProperty,
-    isDeletingCustomerProperty,
-    deleteCustomerPropertyError,
+    mutate,
+    isPending,
+    error,
   };
 }

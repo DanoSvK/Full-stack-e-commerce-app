@@ -4,11 +4,7 @@ import toast from "react-hot-toast";
 
 export function useCreateCustomerProperty() {
   const queryClient = useQueryClient();
-  const {
-    mutate: createCustomerProperty,
-    isPending: isCreatingCustomerPropertyReq,
-    error: createCustomerPropertyError,
-  } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: ({ action, key, value }) =>
       createUpdateCustomerProperty(action, key, value),
     onSuccess: () => {
@@ -19,8 +15,8 @@ export function useCreateCustomerProperty() {
   });
 
   return {
-    createCustomerProperty,
-    isCreatingCustomerPropertyReq,
-    createCustomerPropertyError,
+    mutate,
+    isPending,
+    error,
   };
 }

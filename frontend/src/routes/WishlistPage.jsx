@@ -21,8 +21,11 @@ function WishlistPage() {
     error: wishlistError,
   } = useWishlist(!!user && !isAuthLoading);
 
-  const { deleteWishlist, isDeletingWishlist, deleteWishlistError } =
-    useDeleteAllWishlist();
+  const {
+    mutate: deleteWishlist,
+    isPending: isDeletingWishlist,
+    error: deleteWishlistError,
+  } = useDeleteAllWishlist();
 
   const { wishlistCtx, removeWishlistCtx } = useContext(WishlistContext);
 

@@ -20,15 +20,18 @@ function ProductCard({ product, layout = "grid" }) {
     error: wishlistError,
   } = useWishlist(!!user && !isAuthLoading);
 
-  const { addToWishlist, isAddingToWishlist, addToWishlistError } =
-    useCreateWishlistItem();
+  const {
+    mutate: addToWishlist,
+    isPending: isAddingToWishlist,
+    error: addToWishlistError,
+  } = useCreateWishlistItem();
   const { wishlistCtx, addToWishlistCtx, removeFromWishlistCtx } =
     useContext(WishlistContext);
 
   const {
-    deleteWishlistItem,
-    isDeletingWishlistItem,
-    deleteWishlistItemError,
+    mutate: deleteWishlistItem,
+    isPending: isDeletingWishlistItem,
+    error: deleteWishlistItemError,
   } = useDeleteWishlistItem();
 
   const wishlistUnavailable = !!user && !!wishlistError && !wishlist;

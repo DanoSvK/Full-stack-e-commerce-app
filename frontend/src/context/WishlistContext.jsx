@@ -17,7 +17,7 @@ export function WishlistContextProvider({ children }) {
 
   const { user, isAuthLoading } = useAuth();
 
-  const { mutateAsync: syncWishlist } = useSyncWishlist();
+  const { mutate: syncWishlist } = useSyncWishlist();
 
   const { data: wishlistDB = [] } = useWishlist(!!user && !isAuthLoading);
 

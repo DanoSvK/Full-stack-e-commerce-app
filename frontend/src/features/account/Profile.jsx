@@ -25,19 +25,19 @@ function Profile() {
     error: customerPropertiesError,
   } = useCustomerProperties();
   const {
-    updateCustomerProperty,
-    isUpdatingCustomerProperty,
-    updateCustomerPropertyError,
+    mutate: updateCustomerProperty,
+    isPending: isUpdatingCustomerProperty,
+    error: updateCustomerPropertyError,
   } = useUpdateCustomerProperty();
   const {
-    createCustomerProperty,
-    isCreatingCustomerProperty,
-    createCustomerPropertyError,
+    mutate: createCustomerProperty,
+    isPending: isCreatingCustomerProperty,
+    error: createCustomerPropertyError,
   } = useCreateCustomerProperty();
   const {
-    deleteCustomerProperty,
-    isDeletingCustomerProperty,
-    deleteCustomerPropertyError,
+    mutate: deleteCustomerProperty,
+    isPending: isDeletingCustomerProperty,
+    error: deleteCustomerPropertyError,
   } = useDeleteCustomerProperty();
 
   function safeParse(value) {

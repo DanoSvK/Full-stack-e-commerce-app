@@ -4,7 +4,7 @@ import { syncWishlist } from "../../services/apiWishlist";
 export const useSyncWishlist = () => {
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isPending, error } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: (wishlist) => syncWishlist(wishlist),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wishlist"] });
@@ -12,5 +12,5 @@ export const useSyncWishlist = () => {
     retry: 1,
   });
 
-  return { mutateAsync, isPending, error };
+  return { mutate, isPending, error };
 };

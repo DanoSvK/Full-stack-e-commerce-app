@@ -4,11 +4,7 @@ import toast from "react-hot-toast";
 
 export const useCreateWishlistItem = () => {
   const queryClient = useQueryClient();
-  const {
-    mutate: addToWishlist,
-    isPending: isAddingToWishlist,
-    error: addToWishlistError,
-  } = useMutation({
+  const { mutate, isPending, error } = useMutation({
     mutationFn: (productId) => addItemToWishlist(productId),
     onSuccess: () => {
       toast.success("Item successfully added to wishlist.");
@@ -17,5 +13,5 @@ export const useCreateWishlistItem = () => {
     onError: (err) => toast.error(err.message),
   });
 
-  return { addToWishlist, isAddingToWishlist, addToWishlistError };
+  return { mutate, isPending, error };
 };

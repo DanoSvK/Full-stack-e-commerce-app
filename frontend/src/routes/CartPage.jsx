@@ -23,7 +23,7 @@ function CartPage() {
   // Fetch products (using separate API accepting multiple IDs) based on IDs of cartProducts context
   const {
     data: populatedCartProducts = [],
-    isFetching: isFetchingProducts,
+    isPending: isFetchingProducts,
     error: productsError,
   } = useProductsById(prods);
 
