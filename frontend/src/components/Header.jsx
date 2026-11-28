@@ -2,29 +2,23 @@ import { Link } from "react-router-dom";
 import Navbar from "../ui/Navbar";
 import Logo from "../ui/Logo";
 
-import {
-  Search,
-  ShoppingCart,
-  User,
-  LogOut,
-  Menu,
-  X,
-  Heart,
-  LogIn,
-} from "lucide-react";
+import { ShoppingCart, User, LogOut, Menu, Heart, LogIn } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import MenuModal from "./MenuModal";
 import { useWishlist } from "../features/wishlist/useWishlist";
+import { WishlistContext } from "../context/WishlistContext";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const { logout, user } = useAuth();
+  const { logout, user, isAuthLoading } = useAuth();
   const { totalCartCount } = useCart();
-  const { data: wishlist } = useWishlist();
+  const { data: wishlistDB } = useWishlist(!!user && !isAuthLoading);
+  const { wishlistCtx } = useContext(WishlistContext);
 
+  const wishlist = user ? wishlistDB?.length : wishlistCtx?.length;
   return (
     <header className="backdrop-blur-md py-5 sticky top-0 z-15 bg-zinc-950/80 shadow-lg mb-24 w-full border-b border-white/10">
       <div className="flex justify-between items-center max-w-7xl m-auto px-4 sm:px-6 lg:px-8">
@@ -36,9 +30,9 @@ function Header() {
             to="/wishlist"
           >
             <Heart />
-            {wishlist?.length > 0 && (
+            {wishlist > 0 && (
               <span className="absolute top-0.5 right-0.5 bg-zinc-800 border border-accent/40 text-accent text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
-                {wishlist.length}
+                {wishlist}
               </span>
             )}
           </Link>
@@ -49,7 +43,7 @@ function Header() {
           >
             <ShoppingCart />
             {totalCartCount > 0 && (
-              <span className="absolute top-0.5 right-0.5 bg-zinc-800 border border-accent/40 text-accent text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
+              <span className="absolute top-0.5 right-0.5 bg-accent border border-accent/40 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
                 {totalCartCount}
               </span>
             )}
