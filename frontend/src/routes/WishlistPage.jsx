@@ -13,16 +13,16 @@ import { useContext } from "react";
 import { useDeleteAllWishlist } from "../features/wishlist/useDeleteAllWishlist";
 
 function WishlistPage() {
-  const { user } = useAuth();
+  const { user, isAuthLoading } = useAuth();
 
   const {
     data: wishlist,
     isPending: isFetchingWishlist,
     error: wishlistError,
-  } = useWishlist(!!user);
+  } = useWishlist(!!user && !isAuthLoading);
 
   const { deleteWishlist, isDeletingWishlist, deleteWishlistError } =
-    useDeleteAllWishlist(!!user);
+    useDeleteAllWishlist();
 
   const { wishlistCtx, removeWishlistCtx } = useContext(WishlistContext);
 
@@ -56,17 +56,17 @@ function WishlistPage() {
   const wishlistProducts = user
     ? wishlist?.map((item) => ({
         ...productMap[item.productId],
-        quantity: item.quantity,
       }))
     : guestWishlist?.map((item) => ({
         ...productMap[item],
-        quantity: item.quantity,
       }));
 
   const totalPrice = wishlistProducts?.reduce(
-    (total, product) => total + getEffectivePrice(product) * product.quantity,
+    (total, product) => total + getEffectivePrice(product) * 1,
     0,
   );
+
+  const productsInStock = wishlistProducts.filter((p) => p.stock > 0).length;
 
   const VAT = 0.23;
   const taxPrice = totalPrice * VAT;
@@ -142,15 +142,19 @@ function WishlistPage() {
                 <div className="text-sm space-y-4 pt-4">
                   <div className="flex items-center justify-between">
                     <p className="text-main">Saved items</p>
-                    <p className="text-header font-bold">1</p>
+                    <p className="text-header font-bold">
+                      {wishlistProducts.length}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-main">In stock</p>
-                    <p className="text-header font-bold">1</p>
+                    <p className="text-header font-bold">{productsInStock}</p>
                   </div>
                   <div className="border-t border-white/5 pt-4 flex justify-between items-baseline">
                     <p className="text-header font-bold  ">Estimated value</p>
-                    <p className="font-black text-accent">64.00 €</p>
+                    <p className="font-black text-accent">
+                      {totalPrice.toFixed(2)} €
+                    </p>
                   </div>
                   <p>
                     Move items to your cart when you are ready. Removing an item
