@@ -21,8 +21,15 @@ body {
 }
 
 .glass-card {
-  @apply bg-zinc-900/60 backdrop-blur-lg border border-white/5 hover:border-accent/30 transition-all duration-300;
-  @supports (color: color-mix(in lab, red, red)) {
+  @apply bg-zinc-900/60 backdrop-blur-lg border border-white/5 transition-all duration-300;
+}
+
+.glass-card:not(.no-hover) {
+  @apply hover:border-accent/30;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .glass-card {
     background-color: color-mix(
       in oklab,
       var(--color-zinc-900) 60%,
