@@ -56,7 +56,6 @@ function ProductDetailPage() {
   const {
     data: wishlist,
     isPending: isPendingWishlist,
-    isFetching: isFetchingWishlist,
     error: wishlistError,
   } = useWishlist(!isAuthLoading && !!user);
 
@@ -85,6 +84,8 @@ function ProductDetailPage() {
     isDeletingWishlistItem,
     deleteWishlistItemError,
   } = useDeleteWishlistItem();
+
+  const wishlistUnavailable = !!user && !!wishlistError && !wishlist;
 
   const reviews = reviewsData?.data?.reviews ?? [];
 
@@ -377,14 +378,32 @@ function ProductDetailPage() {
                 </button>
                 <button
                   type="button"
-                  aria-label="Add to wishlist"
-                  className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active || activeCtx ? " border-accent text-accent" : "text-main border-white/5 enabled:hover:text-header"} ${addToWishlistError || deleteWishlistItemError ? "border-red-500" : ""}`}
+                  aria-label={
+                    wishlistUnavailable
+                      ? "Wishlist temporarily unavailable"
+                      : active || activeCtx
+                        ? "Remove from wishlist"
+                        : "Add to wishlist"
+                  }
+                  title={
+                    wishlistUnavailable
+                      ? "Wishlist temporarily unavailable. Please try again later."
+                      : ""
+                  }
                   disabled={
                     isAuthLoading ||
                     (!!user && isPendingWishlist) ||
+                    wishlistUnavailable ||
                     isAddingToWishlist ||
                     isDeletingWishlistItem
                   }
+                  className={`cursor-pointer flex justify-center p-4 rounded-xl border transition-all bg-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed ${active || activeCtx ? " border-accent text-accent" : "text-main border-white/5 enabled:hover:text-header"} ${
+                    addToWishlistError ||
+                    deleteWishlistItemError ||
+                    wishlistUnavailable
+                      ? "border border-red-500"
+                      : ""
+                  }`}
                   onClick={() => handleAddDeleteWishlistItem(product.id)}
                 >
                   <Heart
