@@ -15,10 +15,19 @@ function Header() {
 
   const { logout, user, isAuthLoading } = useAuth();
   const { totalCartCount } = useCart();
-  const { data: wishlistDB } = useWishlist(!!user && !isAuthLoading);
+  const { data: wishlistDB, error: isWishlistError } = useWishlist(
+    !!user && !isAuthLoading,
+  );
   const { wishlistCtx } = useContext(WishlistContext);
 
-  const wishlist = user ? wishlistDB?.length : wishlistCtx?.length;
+  const wishlistCount = wishlistDB?.length ?? 0;
+
+  const wishlist = user
+    ? isWishlistError
+      ? 0
+      : wishlistCount
+    : (wishlistCtx?.length ?? 0);
+
   return (
     <header className="backdrop-blur-md py-5 sticky top-0 z-15 bg-zinc-950/80 shadow-lg mb-24 w-full border-b border-white/10">
       <div className="flex justify-between items-center max-w-7xl m-auto px-4 sm:px-6 lg:px-8">
@@ -43,7 +52,7 @@ function Header() {
           >
             <ShoppingCart />
             {totalCartCount > 0 && (
-              <span className="absolute top-0.5 right-0.5 bg-accent border border-accent/40 text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
+              <span className="absolute top-0.5 right-0.5 bg-accent border border-accent/40 text-blackgit text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center tabular-nums">
                 {totalCartCount}
               </span>
             )}
