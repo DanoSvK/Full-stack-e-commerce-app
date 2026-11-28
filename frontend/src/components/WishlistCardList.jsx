@@ -4,7 +4,7 @@ function WishlistCardList({ wishlistProducts, user }) {
   return (
     <>
       {wishlistProducts.map((product) => (
-        <WishlistCard product={product} user={user} />
+        <WishlistCard key={product.id} product={product} user={user} />
       ))}
     </>
   );
